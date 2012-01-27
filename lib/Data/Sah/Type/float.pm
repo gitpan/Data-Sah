@@ -1,15 +1,12 @@
-package Data::Sah;
+package Data::Sah::Type::float;
 {
-  $Data::Sah::VERSION = '0.02';
+  $Data::Sah::Type::float::VERSION = '0.02';
 }
+# ABSTRACT: Specification for 'float' type
 
-use 5.010;
-use Data::Dump::OneLine;
+use Moo::Role;
+with 'Data::Sah::Type::num';
 
-sub _dump {
-    my $self = shift;
-    return Data::Dump::OneLine::dump_one_line(@_);
-}
 
 1;
 
@@ -18,11 +15,15 @@ __END__
 
 =head1 NAME
 
-Data::Sah
+Data::Sah::Type::float - Specification for 'float' type
 
 =head1 VERSION
 
 version 0.02
+
+=head1 CLAUSES
+
+See L<Data::Sah::Type::Num>.
 
 =head1 AUTHOR
 

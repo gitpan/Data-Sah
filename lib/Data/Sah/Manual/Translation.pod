@@ -1,28 +1,27 @@
-package Data::Sah;
-{
-  $Data::Sah::VERSION = '0.02';
-}
-
-use 5.010;
-use Data::Dump::OneLine;
-
-sub _dump {
-    my $self = shift;
-    return Data::Dump::OneLine::dump_one_line(@_);
-}
+package Data::Sah::Manual::Translation; # just to make PodWeaver happy
 
 1;
+# ABSTRACT: Translating Sah messages
+
 
 __END__
 =pod
 
 =head1 NAME
 
-Data::Sah
+Data::Sah::Manual::Translation - Translating Sah messages
 
 =head1 VERSION
 
 version 0.02
+
+=head1 DESCRIPTION
+
+This document explains how to translate messages in Sah.
+
+=head1 TRANSLATING THE HUMAN COMPILER
+
+=head1 CUSTOM ERROR MESSAGES
 
 =head1 AUTHOR
 

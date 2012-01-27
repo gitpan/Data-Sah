@@ -7,7 +7,7 @@ build_requires:
 configure_requires:
   Module::Build: 0.3601
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 4.200007, CPAN::Meta::Converter version 2.110930'
+generated_by: 'Dist::Zilla version 4.300006, CPAN::Meta::Converter version 2.113640'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -15,6 +15,7 @@ meta-spec:
 name: Data-Sah
 requires:
   Algorithm::Dependency: 0
+  Class::Inspector: 0
   Data::Clone: 0
   Data::Dump::OneLine: 0.02
   Data::ModeMerge: 0.21
@@ -39,4 +40,4 @@ requires:
 resources:
   homepage: http://search.cpan.org/dist/Data-Sah/
   repository: http://github.com/sharyanto/perl-Data-Sah
-version: 0.01
+version: 0.02

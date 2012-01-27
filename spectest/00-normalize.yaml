@@ -1,0 +1,37 @@
+tests:
+  - name: 'string + suffix *'
+    input: 'int*'
+    result: [int, {req: Yes}]
+
+  # this is just to test
+  #- name: test
+  #  input: []
+  #  result: []
+
+  - name: empty array (error)
+    input: []
+    dies: Yes
+
+  - name: array 1 element
+    input: ['int']
+    result: [int, {}]
+
+  - name: 'array 1 element + suffix *'
+    input: ['int*']
+    result: [int, {req: Yes}]
+
+  - name: 'array 2 element + suffix *'
+    input: ['int*', {min_len: 2}]
+    result: [int, {min_len: 2, req: Yes}]
+
+  - name: 'array 2 element + suffix * (req already defined)'
+    input: ['int*', {req: Yes}]
+    result: [int, {req: Yes}]
+
+  - name: 'array 2 element + suffix * (req clause forced from suffix)'
+    input: ['int*', {req: No}]
+    result: [int, {req: Yes}]
+
+  - name: hash form no longer recognized
+    input: {}
+    dies: Yes
