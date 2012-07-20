@@ -1,13 +1,12 @@
 package Data::Sah::Type::buf;
-{
-  $Data::Sah::Type::buf::VERSION = '0.02';
-}
 
 use Moo::Role;
 with 'Data::Sah::Type::str';
 
+our $VERSION = '0.03'; # VERSION
+
 1;
-# Specification for type 'buf'
+# ABSTRACT: Specification for type 'buf'
 
 
 __END__
@@ -15,11 +14,11 @@ __END__
 
 =head1 NAME
 
-Data::Sah::Type::buf
+Data::Sah::Type::buf - Specification for type 'buf'
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 DESCRIPTION
 

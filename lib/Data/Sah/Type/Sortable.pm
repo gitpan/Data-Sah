@@ -1,53 +1,52 @@
 package Data::Sah::Type::Sortable;
-{
-  $Data::Sah::Type::Sortable::VERSION = '0.02';
-}
 
 use Moo::Role;
 use Data::Sah::Util 'has_clause';
+
+our $VERSION = '0.03'; # VERSION
 
 requires 'superclause_sortable';
 
 has_clause 'min',
     arg     => 'any*',
     code    => sub {
-        my ($self, %args) = @_;
-        $self->superclause_sortable(%args, -which => 'min');
+        my ($self, $cd) = @_;
+        $self->superclause_sortable('min', $cd);
     };
 
 has_clause 'xmin',
     arg     => 'any*',
     code    => sub {
-        my ($self, %args) = @_;
-        $self->superclause_sortable(%args, -which => 'xmin');
+        my ($self, $cd) = @_;
+        $self->superclause_sortable('xmin', $cd);
     };
 
 has_clause 'max',
     arg     => 'any*',
     code    => sub {
-        my ($self, %args) = @_;
-        $self->superclause_sortable(%args, -which => 'max');
+        my ($self, $cd) = @_;
+        $self->superclause_sortable('max', $cd);
     };
 
 has_clause 'xmax',
     arg     => 'any*',
     code    => sub {
-        my ($self, %args) = @_;
-        $self->superclause_sortable(%args, -which => 'xmax');
+        my ($self, $cd) = @_;
+        $self->superclause_sortable('xmax', $cd);
     };
 
 has_clause 'between',
     arg  => '[any*, any*]*',
     code => sub {
-        my ($self, %args) = @_;
-        $self->superclause_sortable(%args, -which => 'between');
+        my ($self, $cd) = @_;
+        $self->superclause_sortable('between', $cd);
     };
 
 has_clause 'xbetween',
     arg  => '[any*, any*]*',
     code => sub {
-        my ($self, %args) = @_;
-        $self->superclause_sortable(%args, -which => 'xbetween');
+        my ($self, $cd) = @_;
+        $self->superclause_sortable('xbetween', $cd);
     };
 
 1;
@@ -63,7 +62,7 @@ Data::Sah::Type::Sortable - Specification for sortable types
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 DESCRIPTION
 

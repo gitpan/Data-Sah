@@ -1,9 +1,14 @@
-package Data::Sah::Manual::Translation; # just to make PodWeaver happy
+package Data::Sah::Compiler::BaseCompiler::TH;
+
+use Moo;
 
 our $VERSION = '0.03'; # VERSION
 
+# reference to compiler object
+has compiler => (is => 'rw');
+
 1;
-# ABSTRACT: Translating Sah messages
+# ABSTRACT: Base class for type handlers
 
 
 __END__
@@ -11,19 +16,11 @@ __END__
 
 =head1 NAME
 
-Data::Sah::Manual::Translation - Translating Sah messages
+Data::Sah::Compiler::BaseCompiler::TH - Base class for type handlers
 
 =head1 VERSION
 
 version 0.03
-
-=head1 DESCRIPTION
-
-This document explains how to translate messages in Sah.
-
-=head1 TRANSLATING THE HUMAN COMPILER
-
-=head1 CUSTOM ERROR MESSAGES
 
 =head1 AUTHOR
 

@@ -1,11 +1,10 @@
 package Data::Sah::Schemas::Common;
-{
-  $Data::Sah::Schemas::Common::VERSION = '0.02';
-}
 
 use 5.010;
 use strict;
 use warnings;
+
+our $VERSION = '0.03'; # VERSION
 
 sub schemas {
     {
@@ -45,17 +44,18 @@ _
 }
 
 1;
+# ABSTRACT: Collection of common schemas
 
 __END__
 =pod
 
 =head1 NAME
 
-Data::Sah::Schemas::Common
+Data::Sah::Schemas::Common - Collection of common schemas
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 AUTHOR
 

@@ -1,14 +1,11 @@
 package Data::Sah::Compiler::BaseProg;
-{
-  $Data::Sah::Compiler::BaseProg::VERSION = '0.02';
-}
 
 use 5.010;
 use Moo;
 extends 'Data::Sah::Compiler::BaseCompiler';
 use Log::Any qw($log);
 
-has expr_compiler => (is => 'rw');
+our $VERSION = '0.03'; # VERSION
 
 #use Digest::MD5 qw(md5_hex);
 
@@ -33,7 +30,7 @@ sub compile {
     }
     my $vrt = $args{validator_return_type}
         or $self->_die("Please specify validator_return_type");
-    if ($vf !~ /\A(bool|str|obj)\z/) {
+    if ($vrt !~ /\A(bool|str|obj)\z/) {
         $self->_die("Invalid value for validator_return_type, ".
                         "use bool|str|obj");
     }
@@ -104,7 +101,7 @@ Data::Sah::Compiler::BaseProg - Base class for programming language compilers
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 SYNOPSIS
 

@@ -1,7 +1,4 @@
 package Data::Sah::Type::BaseType;
-{
-  $Data::Sah::Type::BaseType::VERSION = '0.02';
-}
 # why name it BaseType instead of Base? because I'm sick of having 5 files named
 # Base.pm in my editor (there would be Type::Base and the various
 # Compiler::*::Type::Base).
@@ -11,14 +8,13 @@ use Moo::Role;
 #use Data::Sah::Schemas::Schema;
 use Data::Sah::Util 'has_clause';
 
+our $VERSION = '0.03'; # VERSION
+
+# XXX define 'cset' schema
+
 has_clause 'default', prio => 1, arg => 'any', tags=>[];
 
-has_clause 'min_ok',  prio => 2, arg => 'pos_int*', tags=>['meta'];
-has_clause 'min_nok', prio => 2, arg => 'pos_int*', tags=>['meta'];
-has_clause 'max_ok',  prio => 2, arg => 'pos_int*', tags=>['meta'];
-has_clause 'max_nok', prio => 2, arg => 'pos_int*', tags=>['meta'];
-
-#has_clause 'lang',    prio => 2, arg => 'str*', tags=>['meta'];
+#has_clause 'default_lang',    prio => 2, arg => 'str*', tags=>['meta'];
 
 has_clause 'req',         prio => 3, arg => 'bool', tags=>['constraint'];
 has_clause 'forbidden',   prio => 3, arg => 'bool', tags=>['constraint'];
@@ -36,6 +32,8 @@ has_clause 'tags',        arg => ['array*', of=>'str*'], tags=>['meta'];
 
 has_clause 'noop', arg => 'any',  tags=>['constraint'];
 has_clause 'fail', arg => 'bool', tags=>['constraint'];
+
+#has_clause 'cset', arg => ['cset*'], tags=>['constraint'];
 
 #has_clause 'if', ..., tags=>['constraint']
 #has_clause 'prefilters', prio => 10, arg => '((expr*)[])*', tags=>[''];
@@ -55,7 +53,7 @@ Data::Sah::Type::BaseType - Specification for base type
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 DESCRIPTION
 
@@ -163,6 +161,15 @@ Set language for this schema.
 
 Priority: 2 (very high)
 
+=head2 default_lang => LOCALECODE (defaut: en_US)
+
+NOT YET IMPLEMENTED.
+
+Set default language for this schema. Language-dependant attribute values (e.g.
+C<summary>, C<description>) will be assumed to be in the default language.
+
+Priority: 2 (very high)
+
 =head2 name => STR
 
 A short short (usually single-word, without any formatting) to name the schema,
@@ -260,6 +267,10 @@ perhaps just use the attributes of this clause to do things).
 If set to 1, validation of this clause always fails. This is just a convenience
 to force failure.
 
+=head2 cset => HASH
+
+Evaluate a clause set.
+
 =head2 if => [CLAUSE1=>VAL, CLAUSE2=>VAL] or [CLAUSE_SET(S)1, CLAUSE_SET(S)2]
 
 NOT YET IMPLEMENTED.
@@ -269,7 +280,7 @@ used. The first form (4-argument) states that if CLAUSE1 succeeds, then CLAUSE2
 must also succeed. The second form (2-argument) operates on a clause set (hash)
 or clause sets (array of hashes).
 
-Example:
+Examples:
 
  # leap year
  [int => {div_by=>4, if => [div_by => 100, div_by => 400]]
@@ -284,108 +295,20 @@ The above says that if a string has length between 4 and 6 then it must be a
 palindrome. Otherwise it doesn't have to be one. But nevertheless, all input
 must be between 1 and 10 characters long.
 
+ [str => {if => [ [{match=>'a'}, {match=>'b'}],
+                  [{match=>'c'}, {match=>'d'}] ]}]
+
+The above says that if a string matches 'a' and 'b', it must also match 'c' and
+'d'. As a side note, the above schema can also be written as:
+
+ [str => {if => [ 'match&'=>['a', 'b'], 'match&'=>['c', 'd'] ]}]
+
 =head2 check => EXPR
 
 NOT YET IMPLEMENTED.
 
 Evaluate expression, which must evaluate to a true value for this clause to
 succeed.
-
-=head2 min_ok => N
-
-This clause specifies the required minimum number of check clauses that must
-succeed in order for the whole clause set to be considered a success. By default
-this is not defined. You can use this clause to only require certain number of
-(instead of all) checks.
-
-Note that the {min,max}_{ok,nok} themselves are not counted into number of
-successes/failures, as they are not considered as constraint clauses.
-
-Priority: 2 (very high, evaluated after B<default> clause).
-
-Example:
-
- [str => {min_ok=>1, min_len=>8, match=>qr/\W/}]
-
-The above schema requires a string to be at least 8 characters long, B<or>
-contains a non-word character. Strings that would validate include: C<abcdefgh>
-or C<$> or C<$abcdefg>. Strings that would not validate include: C<abcd> (fails
-both C<min_len> and C<match> clauses).
-
-Note that the {min,max}_{ok,nok} themselves are not counted into number of
-successes/failures, as they are not considered as constraint clauses.
-
-See also: B<max_ok>, B<min_nok>, B<max_nok>.
-
-=head2 max_ok => N
-
-This clause specifies the maximum number of check clauses that succeed in order
-for the whole clause set to be considered a success. By default this is not
-defined. You can use this clause to require a number of failures in the checks.
-
-Note that the {min,max}_{ok,nok} themselves are not counted into number of
-successes/failures, as they are not considered as constraint clauses.
-
-Priority: 2 (very high, evaluated after B<default> clause).
-
-Example:
-
- [str => {min_ok=>1, max_ok=>1, min_len=>8, match=>qr/\W/}]
-
-The above schema states that string must either be longer than 8 characters or
-contains a non-word character, I<but not both>. Strings that would validate
-include: C<abcdefgh> or C<$>. Strings that would not validate include:
-C<$abcdefg> (match both clauses, so max_ok is not satisfied).
-
-See also: B<max_ok>, B<min_nok>, B<max_nok>.
-
-=head2 min_nok => N
-
-This clause specifies the required minimum number of check clauses that must
-fail in order for the whole clause set to be considered a success. By default
-this is not defined. You can use this clause to require a certain number of
-failures.
-
-Note that the {min,max}_{ok,nok} themselves are not counted into number of
-successes/failures, as they are not considered as constraint clauses.
-
-Priority: 2 (very high, evaluated after B<default> clause).
-
-Example:
-
- [str => {min_nok=>1, min_len=>8, match=>qr/\W/}]
-
-The above schema requires a string to be shorter than 8 characters or devoid of
-non-word characters. Strings that would validate include: C<abcdefghi> (fails
-the C<match> clause), C<$abcd> (fails C<min_len> clause), or C<a> (fails both
-clauses). Strings that would not validate include: C<$abcdefg>.
-
-See also: B<max_ok>, B<min_nok>, B<max_nok>.
-
-=head2 max_nok => N
-
-This clause specifies the maximum number of check failures that succeed in order
-for the whole clause set to be considered a success. By default this is not
-defined (but when none of the {min,max}_{ok,nok} is defined, the default
-behavior is to require all clauses to succeed, in other words, as if C<max_nok>
-were 0). You can use this clause to allow a certain number of failures in the
-checks.
-
-Note that the {min,max}_{ok,nok} themselves are not counted into number of
-successes/failures, as they are not considered as constraint clauses.
-
-Priority: 2 (very high, evaluated after B<default> clause).
-
-Example:
-
- [str => {max_nok=>1, min_len=>8, match=>qr/\W/}]
-
-The above schema states that string must either be longer than 8 characters or
-contains two non-word characters, I<or both>. Strings that would validate
-include: C<abcdefgh>, C<$$>, C<$abcdefgh>. Strings that would not validate
-include: C<abcd> (fails both C<min_len> and C<match> clauses).
-
-See also: B<max_ok>, B<min_nok>, B<max_nok>.
 
 =head1 AUTHOR
 

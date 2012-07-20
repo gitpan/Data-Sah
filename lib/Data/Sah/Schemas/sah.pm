@@ -1,25 +1,25 @@
 package Data::Sah::Schemas::sah;
-{
-  $Data::Sah::Schemas::sah::VERSION = '0.02';
-}
 
 use 5.010;
 use strict;
 use warnings;
 
+our $VERSION = '0.03'; # VERSION
+
 # commented temporarily, unfinished refactoring
 1;
+# ABSTRACT: Collection of schemas related to Sah
 
 
 =pod
 
 =head1 NAME
 
-Data::Sah::Schemas::sah
+Data::Sah::Schemas::sah - Collection of schemas related to Sah
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 DESCRIPTION
 

@@ -1,12 +1,11 @@
 package Data::Sah::Compiler::js;
-{
-  $Data::Sah::Compiler::js::VERSION = '0.02';
-}
 
 use 5.010;
 use Moo;
 use Log::Any qw($log);
 extends 'Data::Sah::Compiler::BaseProg';
+
+# VERSION
 
 1;
 #ABSTRACT: Compile Sah schema to JavaScript code
@@ -166,18 +165,6 @@ sub errif {
 1;
 # ABSTRACT: Compile schema to Perl code
 
-
-__END__
-=pod
-
-=head1 NAME
-
-Data::Sah::Compiler::js - Compile Sah schema to JavaScript code
-
-=head1 VERSION
-
-version 0.02
-
 =head1 SYNOPSIS
 
  use Data::Sah;
@@ -191,17 +178,3 @@ version 0.02
  ); # return Perl code in string
 
 =head1 DESCRIPTION
-
-=head1 AUTHOR
-
-Steven Haryanto <stevenharyanto@gmail.com>
-
-=head1 COPYRIGHT AND LICENSE
-
-This software is copyright (c) 2012 by Steven Haryanto.
-
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
-
-=cut
-

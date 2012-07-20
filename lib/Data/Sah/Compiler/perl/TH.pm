@@ -1,28 +1,24 @@
-package Data::Sah;
-{
-  $Data::Sah::VERSION = '0.02';
-}
+package Data::Sah::Compiler::perl::TH;
 
-use 5.010;
-use Data::Dump::OneLine;
+use Moo;
+extends 'Data::Sah::Compiler::BaseProg::TH';
 
-sub _dump {
-    my $self = shift;
-    return Data::Dump::OneLine::dump_one_line(@_);
-}
+our $VERSION = '0.03'; # VERSION
 
 1;
+# ABSTRACT: Base class for perl type handlers
+
 
 __END__
 =pod
 
 =head1 NAME
 
-Data::Sah
+Data::Sah::Compiler::perl::TH - Base class for perl type handlers
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 AUTHOR
 

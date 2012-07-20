@@ -1,13 +1,19 @@
 package Data::Sah::Compiler::Human;
-{
-  $Data::Sah::Compiler::Human::VERSION = '0.02';
-}
 
+=head1 SYNOPSIS
+
+    use Sah;
+    my $ds = new Sah;
+    my $human = $ds->human($schema);
+
+=cut
 
 use Moo;
 use warnings::register;
 use Log::Any qw($log);
 extends 'Data::Sah::Compiler::BaseCompiler';
+
+# VERSION
 
 sub after_clause {
     my ($self, %args) = @_;
@@ -72,34 +78,3 @@ sub translate {
 
 1;
 # ABSTRACT: Emit human text from Sah schema
-
-__END__
-=pod
-
-=head1 NAME
-
-Data::Sah::Compiler::Human - Emit human text from Sah schema
-
-=head1 VERSION
-
-version 0.02
-
-=head1 SYNOPSIS
-
-    use Sah;
-    my $ds = new Sah;
-    my $human = $ds->human($schema);
-
-=head1 AUTHOR
-
-Steven Haryanto <stevenharyanto@gmail.com>
-
-=head1 COPYRIGHT AND LICENSE
-
-This software is copyright (c) 2012 by Steven Haryanto.
-
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
-
-=cut
-

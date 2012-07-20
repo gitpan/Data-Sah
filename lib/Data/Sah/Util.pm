@@ -1,11 +1,12 @@
 package Data::Sah::Util;
-{
-  $Data::Sah::Util::VERSION = '0.02';
-}
 
 use 5.010;
 use strict;
 use warnings;
+use Log::Any '$log';
+
+our $VERSION = '0.03'; # VERSION
+
 use Sub::Install qw(install_sub);
 
 require Exporter;
@@ -19,10 +20,11 @@ sub has_clause {
     my ($name, %args) = @_;
     my $caller = caller;
 
-    eval "package $caller; use Moo::Role; requires 'clause_$name';";
     if ($args{code}) {
         install_sub({code => $args{code}, into => $caller,
                      as => "clause_$name"});
+    } else {
+        eval "package $caller; use Moo::Role; requires 'clause_$name';";
     }
     install_sub({code => sub {
                      state $names = [$name];
@@ -121,7 +123,7 @@ Data::Sah::Util - Sah utility routines
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 DESCRIPTION
 

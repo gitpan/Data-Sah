@@ -1,5 +1,7 @@
 package Data::Sah::Manual::Schema; # just to make PodWeaver happy
 
+our $VERSION = '0.03'; # VERSION
+
 1;
 # ABSTRACT: Description of Sah schema language
 
@@ -13,7 +15,7 @@ Data::Sah::Manual::Schema - Description of Sah schema language
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 OVERVIEW AND TERMINOLOGY
 
@@ -24,23 +26,15 @@ B<Data::Sah::Type::*> for the complete list.
 
 A type can have B<clauses>, which mostly declare constraints. Each clause has a
 B<clause name> and a hash of B<clause attributes>, probably the most commonly
-used attribute is the B<value> attribute. So common that, when specifying a
-clause in a schema, only its C<value> attribute is specified unless when using
-the normalized form.
+used attribute is the B<val> attribute. So common that, when specifying a clause
+in a schema, by default it sets the C<val> attribute.
 
  min => 10
 
  # is actually equivalent to:
- 'min.*' => {value=>10}
+ 'min.val' => 10
 
-Another example:
-
- between => [1, 10]
-
- # equivalent to the normalized form:
- 'between.*' => {value=>[1, 10]}
-
-Aside from the C<value> attribute, there are others, serving various functions.
+Aside from the C<val> attribute, there are others, serving various functions.
 See L</"Clause attributes"> for more information.
 
 When validating a data each clause will be tested and must succeed for the whole
@@ -61,17 +55,18 @@ is very much like subtyping. See L</"BASE SCHEMA"> for more information.
 
 Sah schema is an array:
 
- [TYPE, CLAUSE_SET, EXTRA_STUFFS]
+ [TYPE_NAME, CLAUSE_SET, EXTRAS]
 
-CLAUSE_SET and EXTRA_STUFFS are optional.
+TYPE_NAME is a string and must be started by a letter/underscore and contain
+only letters/numbers/underscores. CLAUSE_SET and EXTRAS are optional.
 
 Examples:
 
  ['int']
  ['int', {min=>1, max=>10}]
 
-If you don't have EXTRA_STUFFS, you can also write it like this (saves a couple
-of characters):
+If you don't have EXTRAS, you can also write it like this (saves a couple of
+characters):
 
  ["int", min=>1, max=>10]
 
@@ -79,9 +74,9 @@ If you don't have any clauses, you can use the scalar/string form:
 
  "int"
 
-EXTRA_STUFFS is a hashref. Currently the only known key is B<def>, for defining
-base schemas locally (see L</"BASE SCHEMA"> for more information). The other
-keys are reserved for future use.
+EXTRAS is a hashref. Currently the only known key is B<def>, for defining base
+schemas locally (see L</"BASE SCHEMA"> for more information). The other keys are
+reserved for future use.
 
 Text/strings should be in Unicode (UTF-8).
 
@@ -121,8 +116,8 @@ sign:
 
  [int => {min=>0} + {div_by=>5}]
 
-You can also declare base schemas/types locally using the B<def> key in
-EXTRA_STUFFS (the third element of the array schema), for example:
+You can also declare base schemas/types locally using the B<def> key in EXTRAS
+(the third element of the array schema), for example:
 
  [throws => {},
   {
@@ -132,7 +127,7 @@ EXTRA_STUFFS (the third element of the array schema), for example:
           dice_pair_throw    => [array => {len=>2, elems=>["sdt", "sdt"]}],
           dpt                => "dice_pair_throw",   # short notation
           throw              => [any => {of => ["sdt", "dpt"]}],
-          throws             => 'throw[]',
+          throws             => [array => {of => 'throw'}],
       },
   }
  ]
@@ -175,39 +170,36 @@ something probably better (a stricter or more precise definition of email).
 
 =head1 CLAUSE
 
-A clause set is a mapping of clause names and attributes:
+A clause set is a mapping of clause attributes and its values:
 
  {
-     'CLAUSENAME1.*' => {value=>VAL, ATTR1=>..., ATTR2=>, ...},
-     'CLAUSENAME2.*' => {...},
+     'CLAUSENAME1.ATTR1' => ...,
+     'CLAUSENAME1.ATTR2' => ...,
+     ...
+     'CLAUSENAME2.ATTR1' => ...,
+     'CLAUSENAME2.ATTR2' => ...,
+     ...
  }
 
-For convenience, there are also some shortcuts:
+For convenience, there are also some shortcuts. First, the previously mentioned:
 
  CLAUSENAME => VAL
 
-is a shortcut for:
+as a shortcut for:
 
- 'CLAUSENAME.*' => {value=>VAL}
+ 'CLAUSENAME.val' => VAL
 
-(This is Huffman encoding principle at work, since the B<value> attribute is the
+(This is Huffman encoding principle at work, since the B<val> attribute is the
 most common, it has the shortest syntax.)
-
-Attribute can also be specified separately (they will be combined during
-normalization).
-
- "CLAUSENAME.ATTRNAME1" => ATTRVAL1,
- "CLAUSENAME.ATTRNAME2" => ATTRVAL2,
- ...
 
 Another shortcut is:
 
- "CLAUSENAME+" => [VAL, ...]
  "CLAUSENAME&" => [VAL, ...]
 
 for:
 
- "CLAUSENAME.values" => [VAL, ...]
+ "CLAUSENAME.vals" => [VAL, ...]
+ "CLAUSENAME.max_nok" => 0,
 
 and:
 
@@ -215,7 +207,7 @@ and:
 
 for:
 
- "CLAUSENAME.values" => [VAL, ...],
+ "CLAUSENAME.vals" => [VAL, ...],
  "CLAUSENAME.min_ok" => 1,
 
 Also this:
@@ -225,7 +217,7 @@ Also this:
 is a shortcut for this:
 
  CLAUSENAME => VAL,
- "CLAUSENAME.revert" => 1,
+ "CLAUSENAME.max_ok" => 0,
 
 An attribute can contain literal value or an expression. To specify an
 expression, add C<=> suffix:
@@ -255,16 +247,16 @@ Currently known attributes:
 
 =over 4
 
-=item * value
+=item * val
 
 This is the most commonly used attribute.
 
-=item * values
+=item * vals
 
 This attribute can be used to store more than one values to a clause. The values
 will be evaluated. Example:
 
- ['int*' => {"div_by.values"=>[2, 3, 5]}]
+ ['int*' => {"div_by.vals"=>[2, 3, 5]}]
 
 The above schema requires an integer which is divisible by 2, 3, I<and> 5.
 
@@ -276,7 +268,7 @@ whole schema. If B<err_level> is set to C<warn>, however, this only generates a
 warning and does not cause the validation to fail.
 
  [str=>{min_len=>4},
-       {min_len=>8, 'min_len:err_level' => 'warn'},]
+       {min_len=>8, 'min_len.err_level' => 'warn'},]
 
 Example:
 
@@ -330,6 +322,103 @@ This attribute is used to store alternative clause value. Examples are:
 to store alternative value for different language. This applies to clauses which
 contain a translatable text, like B<name>, B<summary>, B<description>.
 
+=item * min_ok => N
+
+This attribute specifies the required minimum number of comparisons that must
+succeed in order for clause to be considered a success. By default this is not
+defined. You can use this attribute to only require certain number of (instead
+of all) passing checks.
+
+Example:
+
+ [str => {cset => {min_len=>8, match=>qr/\W/}, 'cset.min_ok'=>1}]
+
+The above schema requires a string to be at least 8 characters long, B<or>
+contains a non-word character. Strings that would validate include: C<abcdefgh>
+or C<$> or C<$abcdefg>. Strings that would not validate include: C<abcd> (fails
+both C<min_len> and C<match> clauses). Without the .min_ok attribute, by default
+all checks in the B<cset> clause must pass.
+
+Another example:
+
+ [str => {'match.vals'=>[RE1, RE2, RE3], 'match.min_ok'=>2}]
+
+The above schema specifies that strnig must match at least two of RE1/RE2/RE3.
+
+See also: B<.max_ok>, B<.min_nok>, B<.max_nok>.
+
+=item * max_ok => N
+
+This attribute specifies the maximum number of checks that must succeed in order
+for the clause to be considered a success. By default this is not defined. You
+can use this attribute to require a number of failures in the checks.
+
+Example:
+
+ [str => {cset=>{min_len=>8, match=>qr/\W/}, 'cset.min_ok'=>1, 'cset.max_ok'=>1]
+
+The above schema states that string must either be longer than 8 characters or
+contains a non-word character, I<but not both>. Strings that would validate
+include: C<abcdefgh> or C<$>. Strings that would not validate include:
+C<$abcdefg> (match both clauses, so max_ok is not satisfied).
+
+Another example:
+
+ [str => {'match.vals'=>[RE1, RE2, RE3], 'match.max_ok'=>1}]
+
+The above schema specifies that string must not match more than one of
+RE1/RE2/RE3.
+
+See also: B<.max_ok>, B<.min_nok>, B<.max_nok>.
+
+=item * min_nok => N
+
+This attribute specifies the required minimum number of checks that fail in
+order for the clause to be considered a success. By default this is not defined.
+You can use this attribute to require a certain number of failures.
+
+Example:
+
+ [str => {cset=>{min_len=>8, match=>qr/\W/}, 'cset.min_nok'=>1}]
+
+The above schema requires a string to be shorter than 8 characters or devoid of
+non-word characters. Strings that would validate include: C<abcdefghi> (fails
+the C<match> clause), C<$abcd> (fails C<min_len> clause), or C<a> (fails both
+clauses). Strings that would not validate include: C<$abcdefg>.
+
+Another example:
+
+ [str => {'match.vals'=>[RE1, RE2, RE3], 'match.min_nok'=>1}]
+
+The above schema specifies that string must fail at least one regex match.
+
+See also: B<.max_ok>, B<.min_nok>, B<.max_nok>.
+
+=item * max_nok => N
+
+This attribute specifies the maximum number of checks that fail in order for the
+clause set to be considered a success. By default this is not defined (but when
+none of the {min,max}_{ok,nok} is defined, the default behavior is to require
+all clauses to succeed, in other words, as if C<max_nok> were 0). You can use
+this clause to allow a certain number of failures in the checks.
+
+Example:
+
+ [str => {cset=>{min_len=>8, match=>qr/\W/}, 'cset.max_nok'=>1}]
+
+The above schema states that string must either be longer than 8 characters or
+contains two non-word characters, I<or both>. Strings that would validate
+include: C<abcdefgh>, C<$$>, C<$abcdefgh>. Strings that would not validate
+include: C<abcd> (fails both C<min_len> and C<match> clauses).
+
+Another example:
+
+ [str => {'match.vals'=>[RE1, RE2, RE3], 'match.max_nok'=>1}]
+
+The above schema specifies that string can fail at most one regex match.
+
+See also: B<.max_ok>, B<.min_nok>, B<.max_nok>.
+
 =back
 
 A clause attribute can store a literal value, or an expression. To store an
@@ -354,7 +443,7 @@ This can be used to store attributes that can be used generally by other clauses
 
  [str => {not_match => /(password|abcd)$/,
           min_len => 4,
-          ":err_msg" => "Password not good enough!"}]
+          ".err_msg" => "Password not good enough!"}]
 
 When validation fails for one or more of the clauses, the custom error message
 will be used instead.
@@ -407,10 +496,10 @@ will be done first from left to right.
 The first clause set should not contain any merge prefixes.
 
 Sah uses L<Data::ModeMerge> to do the merging, with merge prefixes changed to
-'[merge:+]', '[merge:!]' and so on. In merging, Data::ModeMerge allows keys on
-the right side hash not only to replace but also add, subtract, remove keys from
-the left side. This is powerful because it allows schema definition to not only
-add clauses (restrict types even more), but also replace clauses (change type
+'[merge+]', '[merge!]' and so on. In merging, Data::ModeMerge allows keys on the
+right side hash not only to replace but also add, subtract, remove keys from the
+left side. This is powerful because it allows schema definition to not only add
+clauses (restrict types even more), but also replace clauses (change type
 restriction) as well as delete clauses (relax type restriction). For more
 information, refer to the Data::ModeMerge documentation.
 
@@ -421,16 +510,26 @@ Examples:
  [int => {div_by=>2} + {'[merge]div_by'=>3}] # will be merged and become:
  [int => {div_by=>3}                       ] # must be divisible by 3 ONLY
 
- [int => {div_by=>2} + {'[merge:!]div_by'=>0}] # will be merged and become:
- [int => {}                                  ] # need not be divisible by any
+ [int => {div_by=>2} + {'[merge!]div_by'=>0}] # will be merged and become:
+ [int => {}                                 ] # need not be divisible by any
 
  [int => {in=>[1,2,3,4,5]} + {  in =>[6]}] # impossible to satisfy
 
- [int => {in=>[1,2,3,4,5]} + {'[merge:+]in'=>[6]}] # will be merged and become:
- [int => {in=>[1,2,3,4,5,6]}            ]
+ [int => {in=>[1,2,3,4,5]} + {'[merge+]in'=>[6]}] # will be merged and become:
+ [int => {in=>[1,2,3,4,5,6]}                    ]
 
  [int => {in=>[1,2,3,4,5]}, {'-in'=>[4]}] # will be merged and become:
  [int => {in=>[1,2,3,  5]}              ]
+
+Note that before performing merging, schemas will be normalized first. To avoid
+confusion, shortcut syntaxes are not allowed to have merge prefixes, e.g.:
+
+ # error, not allowed
+ '[merge]!div_by' => 2,
+
+ # ok using long form
+ '[merge]div_by' => 2,
+ div_by.max_ok => 0,
 
 =head3 Merging and hash keys
 
@@ -442,19 +541,18 @@ all hashes (not just the top-level clause set hash, but also deep down in nested
 hashes) for possible accidental merge prefixes:
 
  [merge]
- [merge:*]
- [merge:+]
- [merge:-]
- [merge:.]
- [merge:!]
- [merge:^]
+ [merge+]
+ [merge-]
+ [merge.]
+ [merge!]
+ [merge^]
 
 because they will also be merged and B<removed> after merging.
 
 Example:
 
  [hash => {       "keys_regex" => { foo=>[int=>{max=>7}],
-                                    "[merge:^]bar"=>"str" }}
+                                    "[merge^]bar"=>"str" }}
        +  {"[merge]keys_regex" => { foo=>[int=>{max=>3}]
                                                           }}]
 
@@ -468,15 +566,15 @@ sometimes it might not be. If the later is the case, you can turn off prefix
 parsing:
 
  [hash => {       "keys_regex" => { foo => [int=>{max=>7}],
-                                   "[merge:^]bar" => "str",
+                                   "[merge^]bar" => "str",
                  ""=>{parse_prefix=>0} }}
-        + {"[merge]keys_regex" => { "[merge:-]foo" => [int=>{max=>4}]}}]
+        + {"[merge]keys_regex" => { "[merge-]foo" => [int=>{max=>4}]}}]
 
 it will become:
 
  [hash => { "keys_regex" => { foo => [int=>{max=>7}],
-                              "[merge:-]foo" => [int=>{max=>4}],
-                              "[merge:^]bar" => "str" } }]
+                              "[merge-]foo" => [int=>{max=>4}],
+                              "[merge^]bar" => "str" } }]
 
 Please also note that the empty string key ("") is also regarded as special by
 L<Data::ModeMerge>, it is called the options key which regulate how merging
@@ -494,8 +592,8 @@ expression in the B<check> clause, e.g.:
 
 Alternatively, expression can also be specified in any clause's attribute:
 
- [int => {'min='       => '2+2'}]
- [int => {'min.value=' => 'floor(4.9)'}]
+ [int => {'min='     => '2+2'}]
+ [int => {'min.val=' => 'floor(4.9)'}]
 
 The above three schemas are equivalent to:
 
@@ -506,8 +604,8 @@ functions, enabling more complex schema to be defined, for example:
 
  ['array*' => {len=>2, elems => [
    ['str*', {match => '^\w+$'}],
-   ['str*', {'match.expr' => '${../../0/clause_sets/0/match}',
-             'min_len.expr' => '2*length(${data:../0})'}]
+   ['str*', {'match=' => '${../../0/clause_sets/0/match}',
+             'min_len=' => '2*length(${data:../0})'}]
  ]}]
 
 The above schema requires data to be a two-element array containing strings,

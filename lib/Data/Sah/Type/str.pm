@@ -1,7 +1,4 @@
 package Data::Sah::Type::str;
-{
-  $Data::Sah::Type::str::VERSION = '0.02';
-}
 
 use Moo::Role;
 use Data::Sah::Util 'has_clause';
@@ -10,18 +7,15 @@ with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::Sortable';
 with 'Data::Sah::Type::HasElems';
 
-my $t_re = 'regex*|{*=>regex*}';
-my $t_res = [array=>{of=>$t_re, required=>1}];
+our $VERSION = '0.03'; # VERSION
 
-has_clause 'not_match', arg => $t_re;
-has_clause 'match_any', arg => $t_res;
-has_clause 'is_regex', arg => 'bool';
-has_clause 'match_none', arg => $t_res;
-has_clause 'match_all', arg => $t_res;
+my $t_re = 'regex*|{*=>regex*}';
+
 has_clause 'match', arg => $t_re;
+has_clause 'is_regex', arg => 'bool';
 
 1;
-# Specification for type 'str'
+# ABSTRACT: Specification for type 'str'
 
 
 
@@ -30,11 +24,11 @@ __END__
 
 =head1 NAME
 
-Data::Sah::Type::str
+Data::Sah::Type::str - Specification for type 'str'
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 DESCRIPTION
 
@@ -65,30 +59,33 @@ entirely, you can specify different regex for each target language, e.g.:
    python => '...',
  }}]
 
-See also: B<match_all>, B<match_any> for matching against multiple regexes.
+Note that to match multiple regexes, you can utilize the clause attributes
+'vals':
 
-=head2 not_match => REGEX|{COMPILER=>REGEX, ...}
+ # string must match a, b, and c
+ [str => {"match.vals"=>[a, b, c]}]
 
-Require that string not match the specified regular expression.
+ # idem, shortcut form
+ [str => {"match&"=>[a, b, c]}]
 
-=head2 match_all => [REGEX, ...]|{COMPILER=>[REGEX...], ...}
+ # string must match either a or b or c
+ [str => {"match.vals"=>[a, b, c], "match.min_ok"=>1}]
 
-Require that the string match all the specified regular expressions.
+ # idem, shortcut form
+ [str => {"match|"=>[a, b, c]}]
 
-See also: B<match_any>, B<match>.
+ # string must NOT match a
+ [str => {match=>a, "match.max_ok"=>0}]
 
-=head2 match_any => [REGEX, ...]|{COMPILER=>[REGEX...], ...}
+ # idem, shortcut form
+ [str => {"!match"=>a}]
 
-Require that the string match any the specified regular expressions.
+ # string must NOT match a nor b nor c (i.e. must match none of those)
+ [str => {"match.vals"=>[a, b, c], "match.max_ok"=>0}]
 
-See also: B<match_any>, B<match_none>.
-
-=head2 match_none => [REGEX, ...]|{COMPILER=>[REGEX...], ...}
-
-The opposite of B<match_all>, require that the string not match any of the
-specified regular expression(s).
-
-See also: B<match_all>, B<match_any>.
+ # string must at least not match a or b or c (i.e. if all match, schema fail;
+ # if at least one does not match, schema succeeds)
+ [str => {"match.vals"=>[a, b, c], "match.max_ok"=>2}]
 
 =head2 is_regex => BOOL
 

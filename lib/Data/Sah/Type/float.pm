@@ -1,29 +1,28 @@
 package Data::Sah::Type::float;
-{
-  $Data::Sah::Type::float::VERSION = '0.02';
-}
-# ABSTRACT: Specification for 'float' type
 
 use Moo::Role;
 with 'Data::Sah::Type::num';
 
+our $VERSION = '0.03'; # VERSION
 
 1;
+# ABSTRACT: Specification for type 'float'
+
 
 __END__
 =pod
 
 =head1 NAME
 
-Data::Sah::Type::float - Specification for 'float' type
+Data::Sah::Type::float - Specification for type 'float'
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 CLAUSES
 
-See L<Data::Sah::Type::Num>.
+See L<Data::Sah::Type::num>.
 
 =head1 AUTHOR
 

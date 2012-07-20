@@ -1,0 +1,69 @@
+{
+   "abstract" : "Schema for data structures",
+   "author" : [
+      "Steven Haryanto <stevenharyanto@gmail.com>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Dist::Zilla version 4.300006, CPAN::Meta::Converter version 2.113640",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Data-Sah",
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "Module::Build" : "0.3601"
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "Module::Build" : "0.3601"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "Algorithm::Dependency" : 0,
+            "Class::Inspector" : 0,
+            "Data::Clone" : 0,
+            "Data::Dump::OneLine" : "0.02",
+            "Data::ModeMerge" : "0.21",
+            "DateTime" : 0,
+            "DateTime::Format::ISO8601" : 0,
+            "Digest::MD5" : 0,
+            "Language::Expr" : "0.13",
+            "List::MoreUtils" : 0,
+            "Log::Any" : "0.09",
+            "Moo" : 0,
+            "Regexp::Grammars" : 0,
+            "SHARYANTO::Role::I18NMany" : 0,
+            "Scalar::Util" : 0,
+            "Sub::Install" : 0,
+            "URI::Escape" : 0,
+            "boolean" : 0,
+            "perl" : "5.010000"
+         }
+      },
+      "test" : {
+         "requires" : {
+            "File::chdir" : 0,
+            "Test::Aggregate" : 0,
+            "Test::Exception" : 0,
+            "Test::More" : "0.96",
+            "YAML::Syck" : 0
+         }
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "homepage" : "http://search.cpan.org/dist/Data-Sah/",
+      "repository" : {
+         "url" : "http://github.com/sharyanto/perl-Data-Sah"
+      }
+   },
+   "version" : "0.03"
+}
+

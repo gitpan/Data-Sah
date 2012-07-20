@@ -1,15 +1,13 @@
 package Data::Sah::Type::int;
-{
-  $Data::Sah::Type::int::VERSION = '0.02';
-}
 
 use Moo::Role;
 use Data::Sah::Util 'has_clause';
 with 'Data::Sah::Type::num';
 
+our $VERSION = '0.03'; # VERSION
+
 has_clause 'mod', arg => [['int*' => {isnt=>0}], 'int*'];
 has_clause 'div_by', arg => ['int*' => {isnt=>0}];
-has_clause 'indiv_by', arg => ['int*' => {isnt=>0}];
 
 1;
 # ABSTRACT: Specification for type 'int'
@@ -26,7 +24,7 @@ Data::Sah::Type::int - Specification for type 'int'
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 CLAUSES
 
@@ -44,16 +42,13 @@ specifies odd numbers.
 
 =head2 div_by => INT
 
-Require that data is divisible by a number.
+Require that data is divisible by a number. This is effectively just a shortcut
+for 'mod => [N, 0]'.
 
 Example:
 
 Given schema [int=>{div_by=>2}], undef, 0, 2, 4, and 6 are valid but 1, 3, 5 are
 not.
-
-=head2 indiv_by => INT
-
-Opposite of B<div_by>.
 
 =head1 AUTHOR
 

@@ -1,23 +1,36 @@
 package Data::Sah::Compiler::perl;
-{
-  $Data::Sah::Compiler::perl::VERSION = '0.02';
-}
 
 use 5.010;
 use Moo;
 use Log::Any qw($log);
 extends 'Data::Sah::Compiler::BaseProg';
 
-use Data::Dump::OneLine qw(dump1);
+our $VERSION = '0.03'; # VERSION
+
+use Data::Dumper;
+
+sub name { "perl" }
+
+sub _dump {
+    my ($self, $val) = @_;
+    my $res = Data::Dumper->new([$val])->Purity(1)->Terse(1)->Deepcopy(1)->Dump;
+    chomp $res;
+    $res;
+}
+
+sub _expr {
+    my ($self, $expr) = @_;
+    "(" . $self->expr_compiler->perl($expr) . ")";
+}
 
 sub compile {
     my ($self, %args) = @_;
 
-    #$self->expr_compiler->hook_var(
-    #    sub {
-    #        '$arg_'.$_[0];
-    #    }
-    #);
+    $self->expr_compiler->hook_var(
+        sub {
+            $_[0];
+        }
+    );
     #$self->expr_compiler->hook_func(
     #    sub {
     #        my ($name, @args) = @_;
@@ -33,6 +46,11 @@ sub compile {
     #);
 
     $self->SUPER::compile(%args);
+}
+
+sub before_input {
+    my ($self, $cd) = @_;
+    $cd->{input}{data_term} //= '$data';
 }
 
 sub BUILD {
@@ -125,7 +143,7 @@ Data::Sah::Compiler::perl - Compile Sah schema to Perl code
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 SYNOPSIS
 

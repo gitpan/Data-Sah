@@ -1,12 +1,11 @@
 package Data::Sah::Type::num;
-{
-  $Data::Sah::Type::num::VERSION = '0.02';
-}
 
 use Moo::Role;
 with 'Data::Sah::Type::BaseType';
 with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::Sortable';
+
+our $VERSION = '0.03'; # VERSION
 
 1;
 # ABSTRACT: Specification for num types
@@ -21,7 +20,7 @@ Data::Sah::Type::num - Specification for num types
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 CLAUSES
 

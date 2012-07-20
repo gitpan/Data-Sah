@@ -1,21 +1,223 @@
 package Data::Sah;
-{
-  $Data::Sah::VERSION = '0.02';
-}
 
 use 5.010;
 use Moo;
 use Log::Any qw($log);
-use vars qw($AUTOLOAD);
+
+our $VERSION = '0.03'; # VERSION
+
+# store Data::Sah::Compiler::* instances
+has compilers    => (is => 'rw', default => sub { {} });
 
 # store Data::ModeMerge instance
-has compilers    => (is => 'rw', default => sub { {} });
 has _merger      => (is => 'rw');
+
+# store Language::Expr::Interpreter::VarEnumber instance
 has _var_enumer  => (is => 'rw');
 
 our $type_re     = qr/\A(?:[A-Za-z_]\w*::)*[A-Za-z_]\w*\z/;
+our $clause_re   = qr/\A[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*\z/;
 our $funcset_re  = qr/\A(?:[A-Za-z_]\w*::)*[A-Za-z_]\w*\z/;
 our $compiler_re = qr/\A[A-Za-z_]\w*\z/;
+our $clause_with_val_re = qr/\A[A-Za-z_]\w*\.val\z/;
+our $clause_attr_on_empty_clause_re = qr/\A(?:\.[A-Za-z_]\w*)+\z/;
+
+sub _dump {
+    require Data::Dump::OneLine;
+
+    my $self = shift;
+    return Data::Dump::OneLine::dump_one_line(@_);
+}
+
+sub normalize_schema {
+    require Scalar::Util;
+
+    my $self;
+    if (Scalar::Util::blessed($_[0])) {
+        $self = shift;
+    } else {
+        $self = __PACKAGE__->new;
+    }
+    my ($s) = @_;
+
+    my $ref = ref($s);
+    if (!defined($s)) {
+
+        die "Schema is missing";
+
+    } elsif (!$ref) {
+
+        my $has_req = $s =~ s/\*\z//;
+        $s =~ $type_re or die "Invalid type syntax $s, please use ".
+            "letter/digit/underscore only";
+        return [$s, $has_req ? {req=>1} : {}];
+
+    } elsif ($ref eq 'ARRAY') {
+
+        my $t = $s->[0];
+        my $has_req = $t && $t =~ s/\*\z//;
+        if (!defined($t)) {
+            die "For array form, at least 1 element is needed for type";
+        } elsif (ref $t) {
+            die "For array form, first element must be a string";
+        }
+        $t =~ $type_re or die "Invalid type syntax $s, please use ".
+            "letter/digit/underscore only";
+
+        my $cset0;
+        my $extras;
+        if (defined($s->[1])) {
+            if (ref($s->[1]) eq 'HASH') {
+                $cset0 = $s->[1];
+                $extras = $s->[2];
+                die "For array form, there should not be more than 3 elements"
+                    if @$s > 3;
+            } else {
+                # flattened clause set [t, c=>1, c2=>2, ...]
+                die "For array in the form of [t, c1=>1, ...], there must be ".
+                    "3 elements (or 5, 7, ...)"
+                        unless @$s % 2;
+                $cset0 = { @{$s}[1..@$s-1] };
+            }
+        } else {
+            $cset0 = {};
+        }
+
+        # check clauses and parse shortcuts (!c, c&, c|)
+        my $cset = {};
+        for my $c (sort keys %$cset0) {
+            my $c0 = $c;
+
+            my $v = $cset0->{$c};
+
+            # ignore merge prefix
+            my $mp = "";
+            $c =~ s/\A(\[merge[!^+.-]?\])// and $mp = $1;
+
+            # ignore expression
+            my $es = "";
+            $c =~ s/=\z// and $es = "=";
+
+            # XXX currently can't disregard merge prefix when checking conflict
+            die "Conflict between '$c=' and '$c'" if exists $cset->{$c};
+
+            # normalize c.val to c
+            if ($c =~ $clause_with_val_re) {
+                my $croot = $c; $croot =~ s/\..+//;
+                # XXX can't disregard merge prefix when checking conflict
+                die "Conflict between $croot and $c" if exists $cset0->{$croot};
+                $cset->{"$mp$croot$es"} = $v;
+                next;
+            }
+
+            my $sc = "";
+            if (!$mp && !$es && $c =~ s/\A!(?=.)//) {
+                $sc = "!";
+            } elsif (!$mp && !$es && $c =~ s/(?<=.)\|\z//) {
+                $sc = "|";
+            } elsif (!$mp && !$es && $c =~ s/(?<=.)\&\z//) {
+                $sc = "&";
+            } elsif ($c !~ $clause_re &&
+                         $c !~ $clause_attr_on_empty_clause_re) {
+                die "Invalid clause name syntax '$c0', please use ".
+                    "letter/digit/underscore only";
+            }
+
+            # XXX can't disregard merge prefix when checking conflict
+            if ($sc eq '!') {
+                die "Conflict between clause shortcuts '!$c' and '$c'"
+                    if exists $cset0->{$c};
+                die "Conflict between clause shortcuts '!$c' and '$c|'"
+                    if exists $cset0->{"$c|"};
+                die "Conflict between clause shortcuts '!$c' and '$c&'"
+                    if exists $cset0->{"$c&"};
+                $cset->{$c} = $v;
+                $cset->{"$c.max_ok"} = 0;
+            } elsif ($sc eq '&') {
+                die "Conflict between clause shortcuts '$c&' and '$c'"
+                    if exists $cset0->{$c};
+                die "Conflict between clause shortcuts '$c&' and '$c|'"
+                    if exists $cset0->{"$c|"};
+                die "Clause 'c&' value must be an array"
+                    unless ref($v) eq 'ARRAY';
+                $cset->{"$c.vals"} = $v;
+            } elsif ($sc eq '|') {
+                die "Conflict between clause shortcuts '$c|' and '$c'"
+                    if exists $cset0->{$c};
+                die "Clause 'c|' value must be an array"
+                    unless ref($v) eq 'ARRAY';
+                $cset->{"$c.vals"} = $v;
+                $cset->{"$c.min_ok"} = 1;
+            } else {
+                $cset->{"$mp$c$es"} = $v;
+            }
+
+        }
+        $cset->{req} = 1 if $has_req;
+
+        if (defined $extras) {
+            die "For array form with 3 elements, extras must be hash"
+                unless ref($extras) eq 'HASH';
+            die "'def' in extras must be a hash"
+                if exists $extras->{def} && ref($extras->{def}) ne 'HASH';
+            return [$t, $cset, $extras];
+        } else {
+            return [$t, $cset];
+        }
+    }
+
+    die "Schema must be a string or arrayref (not $ref)";
+}
+
+sub _merge_clause_sets {
+    require Data::ModeMerge;
+
+    my ($self, @clause_sets) = @_;
+    my @merged;
+
+    my $mm = $self->_merger;
+    if (!$mm) {
+        $mm = Data::ModeMerge->new(config => {
+            recurse_array => 1,
+        });
+        $mm->modes->{NORMAL}  ->prefix   ('[merge]');
+        $mm->modes->{NORMAL}  ->prefix_re(qr/\A\[merge\]/);
+        $mm->modes->{ADD}     ->prefix   ('[merge+]');
+        $mm->modes->{ADD}     ->prefix_re(qr/\A\[merge\+\]/);
+        $mm->modes->{CONCAT}  ->prefix   ('[merge.]');
+        $mm->modes->{CONCAT}  ->prefix_re(qr/\A\[merge\.\]/);
+        $mm->modes->{SUBTRACT}->prefix   ('[merge-]');
+        $mm->modes->{SUBTRACT}->prefix_re(qr/\A\[merge-\]/);
+        $mm->modes->{DELETE}  ->prefix   ('[merge!]');
+        $mm->modes->{DELETE}  ->prefix_re(qr/\A\[merge!\]/);
+        $mm->modes->{KEEP}    ->prefix   ('[merge^]');
+        $mm->modes->{KEEP}    ->prefix_re(qr/\A\[merge\^\]/);
+        $self->_merger($mm);
+    }
+
+    my @c;
+    for (@clause_sets) {
+        push @c, {cs=>$_, has_prefix=>$mm->check_prefix_on_hash($_)};
+    }
+    for (reverse @c) {
+        if ($_->{has_prefix}) { $_->{last_with_prefix} = 1; last }
+    }
+
+    my $i = -1;
+    for my $c (@c) {
+        $i++;
+        if (!$i || !$c->{has_prefix} && !$c[$i-1]{has_prefix}) {
+            push @merged, $c->{cs};
+            next;
+        }
+        $mm->config->readd_prefix(
+            ($c->{last_with_prefix} || $c[$i-1]{last_with_prefix}) ? 0 : 1);
+        my $mres = $mm->merge($merged[-1], $c->{cs});
+        die "Can't merge clause sets: $mres->{error}" unless $mres->{success};
+        $merged[-1] = $mres->{result};
+    }
+    \@merged;
+}
 
 sub get_compiler {
     my ($self, $name) = @_;
@@ -31,7 +233,7 @@ sub get_compiler {
     my $obj = $module->new(main => $self);
     $self->compilers->{$name} = $obj;
 
-    #$log->trace("<- get_compiler($module)");
+    $log->trace("<- get_compiler($module)");
     return $obj;
 }
 
@@ -61,20 +263,6 @@ sub js {
     return $self->compile('js', %args);
 }
 
-sub DESTROY { }
-
-sub AUTOLOAD {
-    my ($pkg, $sub) = $AUTOLOAD =~ /(.+)::(.+)/;
-    die "Undefined subroutine $AUTOLOAD"
-        unless $sub =~ /^(
-                            _dump|
-                            normalize_schema
-                        )$/x;
-    $pkg =~ s!::!/!g;
-    require "$pkg/al_$sub.pm";
-    goto &$AUTOLOAD;
-}
-
 1;
 # ABSTRACT: Schema for data structures
 
@@ -90,7 +278,7 @@ Data::Sah - Schema for data structures
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 SYNOPSIS
 
@@ -121,16 +309,13 @@ Sample schemas:
  ['byte', {div_by=>3}]
 
  # a byte that's divisible by 3 *and* 5
- ['byte', {'div_by+'=>[3, 5]}] # you can read this as: div_by *many*
-
- # same thing
  ['byte', {'div_by&'=>[3, 5]}]
 
  # a byte that's divisible by 3 *or* 5
  ['byte', {'div_by|'=>[3, 5]}]
 
  # a byte that's *in*divisible by 3
- ['byte', {'!div_by'=>3}] # you can read this as: *not* div_by
+ ['byte', {'!div_by'=>3}]
 
  # an address hash (let's assign it to a new type called 'address')
  ['hash' => {
@@ -150,13 +335,13 @@ Sample schemas:
   # a US address, let's base it on 'address' but change 'postcode' to 'zipcode'.
   # also, require country to be set to 'US'
   ['address' => {
-      '[merge:-]keys' => {postcode=>undef},
+      '[merge-]keys' => {postcode=>undef},
       '[merge]keys' => {
           zipcode => ['str*', len=>5, '^\d{5}$'],
           country => ['str*', is=>'US'],
       },
-      '[merge:-]req_keys' => [qw/postcode/],
-      '[merge:+]req_keys' => [qw/zipcode/],
+      '[merge-]req_keys' => [qw/postcode/],
+      '[merge+]req_keys' => [qw/zipcode/],
   }]
 
 Using this module:
@@ -221,10 +406,10 @@ The generated validator code can run without this module.
 =item * Natural language description
 
 Sah schema can also be converted into human text (e.g. C<[int => {between=>[1,
-10]}]> becomes "a number between 1 and 10"). Technically it's just another
-compiler. This can be used to generate specification document, error messages,
-etc directly from the schema. This saves you from having to write for many
-common error messages (but you can supply your own when needed).
+10]}]> becomes "a number between 1 and 10"). Technically this is just another
+compilation. This can be used to generate specification document, error
+messages, etc directly from the schema. This saves you from having to write for
+many common error messages (but you can supply your own when needed).
 
 The human text is translateable and can be output in various forms (as a single
 sentence, single paragraph, or multiple paragraphs) and formats (text, HTML).
@@ -267,7 +452,7 @@ clause (min=>0). As a matter of fact you can also override and B<remove>
 constraints from your base schema, for even more flexibility.
 
  # schema: pos_even_or_odd
- [pos_even => {"[merge:!]div_by"=>2}] # remove the div_by clause
+ [pos_even => {"[merge!]div_by"=>2}] # remove the div_by clause
 
 The above example makes C<pos_even_or_odd> effectively equivalent to positive
 integer.
@@ -316,9 +501,9 @@ Example:
 
 =head2 $sah->normalize_schema($schema) => HASH
 
-Normalize a schema, e.g. change C<int*> into C<[int => {"req:", {value=>1}}]>,
-as well as do some sanity checks on it. Returns the normalized schema if
-succeeds, or an error message string if fails.
+Normalize a schema, e.g. change C<int*> into C<[int => {req=>1}]>, as well as do
+some sanity checks on it. Returns the normalized schema if succeeds, or dies on
+error.
 
 Can also be used as a function.
 
@@ -339,7 +524,7 @@ $min in the above expression will be normalized as C<schema:clauses.min.value>.
 =head2 $sah->compile($compiler_name, %compiler_args) => STR
 
 Basically just a shortcut for get_compiler() and send %compiler_args to the
-particular compiler. Returns string code.
+particular compiler. Returns generated code.
 
 =head2 $sah->perl(%args) => STR
 
@@ -381,7 +566,7 @@ needs that I go pure Perl. Your mileage may vary.
 Sah is an Indonesian word, meaning 'valid' or 'legal'. It's short.
 
 The previous incarnation of this module uses the namespace L<Data::Schema>,
-started in 2009.
+started in 2009 and deprecated in 2011 in favor of Sah.
 
 =head2 Why a new name/module? Difference with Data::Schema?
 
@@ -404,16 +589,16 @@ recommend that you look into L<Data::Sah::Easy>.
 
 =head1 MODULE ORGANIZATION
 
-B<Data::Sah::Type::*> roles specifies a type, e.g. Data::Sah::Type::bool
+B<Data::Sah::Type::*> roles specify Sah types, e.g. Data::Sah::Type::bool
 specifies the bool type.
 
-B<Data::Sah::FuncSet::*> roles specifies bundles of functions, e.g.
+B<Data::Sah::FuncSet::*> roles specify bundles of functions, e.g.
 Data::Sah::FuncSet::Core specifies the core/standard functions.
 
-B<Data::Sah::Compiler::$LANG::> is for compilers. Each compiler (if derived from
-BaseCompiler) might further contain ::TH::* and ::FSH::* to implement
-appropriate functionalities, e.g. Data::Sah::Compiler::perl::TH::bool is the
-'bool' type handler for the Perl compiler and
+B<Data::Sah::Compiler::$LANG::> namespace is for compilers. Each compiler (if
+derived from BaseCompiler) might further contain ::TH::* and ::FSH::* to
+implement appropriate functionalities, e.g. Data::Sah::Compiler::perl::TH::bool
+is the 'bool' type handler for the Perl compiler and
 Data::Sah::Compiler::perl::FSH::Core is the funcset 'Core' handler for Perl
 compiler.
 

@@ -1,13 +1,12 @@
 package Data::Sah::Easy;
-{
-  $Data::Sah::Easy::VERSION = '0.02';
-}
 
 use 5.010;
 use strict;
 use warnings;
 
 use Data::Sah;
+
+our $VERSION = '0.03'; # VERSION
 
 1;
 # ABSTRACT: Simple interface to Data::Sah
@@ -23,7 +22,7 @@ Data::Sah::Easy - Simple interface to Data::Sah
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 SYNOPSIS
 
@@ -53,7 +52,7 @@ version 0.02
  $res = $vdr->(undef); # invalid
  $res = $vdr->("x");   # invalid
 
- # peak the Perl source code generated
+ # peek the Perl source code generated
  my $perl = schema2perl($s);
 
  # generate human text description from schema
@@ -66,7 +65,7 @@ version 0.02
 
 =head1 DESCRIPTION
 
-This module provides more straight-forward functional interface to L<Data::Sah>.
+This module provides more straightforward functional interface to L<Data::Sah>.
 For full power and configurability you'll still need to use Data::Sah compilers
 directly.
 

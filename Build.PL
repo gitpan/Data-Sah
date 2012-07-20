@@ -7,7 +7,12 @@ use Module::Build 0.3601;
 
 my %module_build_args = (
   "build_requires" => {
-    "Module::Build" => "0.3601"
+    "File::chdir" => 0,
+    "Module::Build" => "0.3601",
+    "Test::Aggregate" => 0,
+    "Test::Exception" => 0,
+    "Test::More" => "0.96",
+    "YAML::Syck" => 0
   },
   "configure_requires" => {
     "Module::Build" => "0.3601"
@@ -17,7 +22,7 @@ my %module_build_args = (
     "Steven Haryanto <stevenharyanto\@gmail.com>"
   ],
   "dist_name" => "Data-Sah",
-  "dist_version" => "0.02",
+  "dist_version" => "0.03",
   "license" => "perl",
   "module_name" => "Data::Sah",
   "recommends" => {},
@@ -31,19 +36,15 @@ my %module_build_args = (
     "DateTime" => 0,
     "DateTime::Format::ISO8601" => 0,
     "Digest::MD5" => 0,
-    "File::chdir" => 0,
     "Language::Expr" => "0.13",
     "List::MoreUtils" => 0,
     "Log::Any" => "0.09",
     "Moo" => 0,
     "Regexp::Grammars" => 0,
+    "SHARYANTO::Role::I18NMany" => 0,
     "Scalar::Util" => 0,
     "Sub::Install" => 0,
-    "Test::Aggregate" => 0,
-    "Test::Exception" => 0,
-    "Test::More" => "0.96",
     "URI::Escape" => 0,
-    "YAML::Syck" => 0,
     "boolean" => 0,
     "perl" => "5.010000"
   },

@@ -1,89 +1,59 @@
 package Data::Sah::Type::HasElems;
-{
-  $Data::Sah::Type::HasElems::VERSION = '0.02';
-}
 
 use Moo::Role;
 use Data::Sah::Util 'has_clause';
+
+our $VERSION = '0.03'; # VERSION
 
 requires 'superclause_has_elems';
 
 has_clause 'max_len',
     arg     => ['int*' => {min=>0}],
     code    => sub {
-        my ($self, %args) = @_;
-        $self->superclause_has_elems(%args, -which => 'max_len');
+        my ($self, $cd) = @_;
+        $self->superclause_has_elems('max_len', $cd);
     };
 
 has_clause 'min_len',
     arg     => ['int*' => {min=>0}],
     code    => sub {
-        my ($self, %args) = @_;
-        $self->superclause_has_elems(%args, -which => 'min_len');
+        my ($self, $cd) = @_;
+        $self->superclause_has_elems('min_len', $cd);
     };
 
 has_clause 'len_between',
     arg   => ['array*' => {elements => ['int*', 'int*']}],
     code  => sub {
-        my ($self, %args) = @_;
-        $self->superclause_has_elems(%args, -which => 'len_between');
+        my ($self, $cd) = @_;
+        $self->superclause_has_elems('len_between', $cd);
     };
 
 has_clause 'len',
     arg   => ['int*' => {min=>0}],
     code  => sub {
-        my ($self, %args) = @_;
-        $self->superclause_has_elems(%args, -which => 'len');
-    };
-
-has_clause 'has_all',
-    arg => '(any[])*',
-    code => sub {
-        my ($self, %args) = @_;
-        $self->superclause_has_elems(%args, -which => 'has_all');
-    };
-
-has_clause 'has_any',
-    arg => '(any[])*',
-    code => sub {
-        my ($self, %args) = @_;
-        $self->superclause_has_elems(%args, -which => 'has_any');
-    };
-
-has_clause 'has_none',
-    aliases => [qw/has_none/],
-    arg => '(any[])*',
-    code => sub {
-        my ($self, %args) = @_;
-        $self->superclause_has_elems(%args, -which => 'has_none');
+        my ($self, $cd) = @_;
+        $self->superclause_has_elems('len', $cd);
     };
 
 has_clause 'has',
     arg => 'any',
     code => sub {
-        my ($self, %args) = @_;
-        $self->superclause_has_elems(%args, -which => 'has');
-    };
-
-has_clause 'hasnt',
-    arg => 'any',
-    code => sub {
-        my ($self, %args) = @_;
-        $self->superclause_has_elems(%args, -which => 'hasnt');
+        my ($self, $cd) = @_;
+        $self->superclause_has_elems('has', $cd);
     };
 
 has_clause 'all_elems',
     arg => 'schema*',
     code => sub {
-        my ($self, %args) = @_;
-        $self->superclause_has_elems(%args, -which => 'all_elems');
+        my ($self, $cd) = @_;
+        $self->superclause_has_elems('all_elems', $cd);
     };
 
 has_clause 'elem_deps',
     arg => '([regex, schema*, regex, schema*][])*',
     code => sub {
-        my ($self, %args) = @_;
-        $self->superclause_has_elems(%args, -which => 'elem_deps');
+        my ($self, $cd) = @_;
+        $self->superclause_has_elems('elem_deps', $cd);
     };
 
 1;
@@ -100,7 +70,7 @@ Data::Sah::Type::HasElems - Specification for types that have the notion of elem
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 DESCRIPTION
 
@@ -144,25 +114,20 @@ Example, the two schemas below are equivalent:
 
 Requires that the data have exactly LEN elements.
 
-=head2 has_all => [ELEM, ...]
-
-Requires that the data has all the elements.
-
-=head2 has_any => [ELEM, ...]
-
-Requires that the data contain any of the elements.
-
-=head2 has_none => [ELEM, ...]
-
-Requires that the data contain none of the elements.
-
 =head2 has => ELEM
 
 Requires that the data contain the element.
 
-=head2 hasnt => ELEM
+Examples:
 
-Requires that the data not contain the element.
+ # requires that array has element x
+ [array => {has => x}]
+
+ # requires that array has elements x, y, and z
+ [array => {'has&' => [x, y, z]}]
+
+ # requires that array does not have element x
+ [array => {'!has' => x}]
 
 =head2 all_elems => SCHEMA
 

@@ -2,7 +2,7 @@ NAME
     Data::Sah - Schema for data structures
 
 VERSION
-    version 0.02
+    version 0.03
 
 SYNOPSIS
     Sample schemas:
@@ -32,16 +32,13 @@ SYNOPSIS
      ['byte', {div_by=>3}]
 
      # a byte that's divisible by 3 *and* 5
-     ['byte', {'div_by+'=>[3, 5]}] # you can read this as: div_by *many*
-
-     # same thing
      ['byte', {'div_by&'=>[3, 5]}]
 
      # a byte that's divisible by 3 *or* 5
      ['byte', {'div_by|'=>[3, 5]}]
 
      # a byte that's *in*divisible by 3
-     ['byte', {'!div_by'=>3}] # you can read this as: *not* div_by
+     ['byte', {'!div_by'=>3}]
 
      # an address hash (let's assign it to a new type called 'address')
      ['hash' => {
@@ -61,13 +58,13 @@ SYNOPSIS
       # a US address, let's base it on 'address' but change 'postcode' to 'zipcode'.
       # also, require country to be set to 'US'
       ['address' => {
-          '[merge:-]keys' => {postcode=>undef},
+          '[merge-]keys' => {postcode=>undef},
           '[merge]keys' => {
               zipcode => ['str*', len=>5, '^\d{5}$'],
               country => ['str*', is=>'US'],
           },
-          '[merge:-]req_keys' => [qw/postcode/],
-          '[merge:+]req_keys' => [qw/zipcode/],
+          '[merge-]req_keys' => [qw/postcode/],
+          '[merge+]req_keys' => [qw/zipcode/],
       }]
 
     Using this module:
@@ -131,10 +128,10 @@ DESCRIPTION
 
         Sah schema can also be converted into human text (e.g. "[int ="
         {between=>[1, 10]}]> becomes "a number between 1 and 10").
-        Technically it's just another compiler. This can be used to generate
-        specification document, error messages, etc directly from the
-        schema. This saves you from having to write for many common error
-        messages (but you can supply your own when needed).
+        Technically this is just another compilation. This can be used to
+        generate specification document, error messages, etc directly from
+        the schema. This saves you from having to write for many common
+        error messages (but you can supply your own when needed).
 
         The human text is translateable and can be output in various forms
         (as a single sentence, single paragraph, or multiple paragraphs) and
@@ -179,7 +176,7 @@ DESCRIPTION
         flexibility.
 
          # schema: pos_even_or_odd
-         [pos_even => {"[merge:!]div_by"=>2}] # remove the div_by clause
+         [pos_even => {"[merge!]div_by"=>2}] # remove the div_by clause
 
         The above example makes "pos_even_or_odd" effectively equivalent to
         positive integer.
@@ -225,9 +222,9 @@ METHODS
      my $plc = $sah->get_compiler("perl"); # loads Data::Sah::Compiler::perl
 
   $sah->normalize_schema($schema) => HASH
-    Normalize a schema, e.g. change "int*" into "[int =" {"req:",
-    {value=>1}}]>, as well as do some sanity checks on it. Returns the
-    normalized schema if succeeds, or an error message string if fails.
+    Normalize a schema, e.g. change "int*" into "[int =" {req=>1}]>, as well
+    as do some sanity checks on it. Returns the normalized schema if
+    succeeds, or dies on error.
 
     Can also be used as a function.
 
@@ -248,7 +245,7 @@ METHODS
 
   $sah->compile($compiler_name, %compiler_args) => STR
     Basically just a shortcut for get_compiler() and send %compiler_args to
-    the particular compiler. Returns string code.
+    the particular compiler. Returns generated code.
 
   $sah->perl(%args) => STR
     Shortcut for $sah->compile('perl', %args).
@@ -285,7 +282,7 @@ FAQ
     Sah is an Indonesian word, meaning 'valid' or 'legal'. It's short.
 
     The previous incarnation of this module uses the namespace Data::Schema,
-    started in 2009.
+    started in 2009 and deprecated in 2011 in favor of Sah.
 
   Why a new name/module? Difference with Data::Schema?
     There are enough incompatibilities between the two (some different
@@ -308,15 +305,15 @@ FAQ
     straightforward. I recommend that you look into Data::Sah::Easy.
 
 MODULE ORGANIZATION
-    Data::Sah::Type::* roles specifies a type, e.g. Data::Sah::Type::bool
+    Data::Sah::Type::* roles specify Sah types, e.g. Data::Sah::Type::bool
     specifies the bool type.
 
-    Data::Sah::FuncSet::* roles specifies bundles of functions, e.g.
+    Data::Sah::FuncSet::* roles specify bundles of functions, e.g.
     Data::Sah::FuncSet::Core specifies the core/standard functions.
 
-    Data::Sah::Compiler::$LANG:: is for compilers. Each compiler (if derived
-    from BaseCompiler) might further contain ::TH::* and ::FSH::* to
-    implement appropriate functionalities, e.g.
+    Data::Sah::Compiler::$LANG:: namespace is for compilers. Each compiler
+    (if derived from BaseCompiler) might further contain ::TH::* and
+    ::FSH::* to implement appropriate functionalities, e.g.
     Data::Sah::Compiler::perl::TH::bool is the 'bool' type handler for the
     Perl compiler and Data::Sah::Compiler::perl::FSH::Core is the funcset
     'Core' handler for Perl compiler.
