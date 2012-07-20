@@ -4,7 +4,7 @@ use 5.010;
 use Moo;
 use Log::Any qw($log);
 
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 
 # store Data::Sah::Compiler::* instances
 has compilers    => (is => 'rw', default => sub { {} });
@@ -278,7 +278,7 @@ Data::Sah - Schema for data structures
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 SYNOPSIS
 

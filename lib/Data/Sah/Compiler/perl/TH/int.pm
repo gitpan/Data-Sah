@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::int';
 
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 
 sub clause_default {}
 sub clause_min_ok {}
@@ -104,7 +104,7 @@ Data::Sah::Compiler::perl::TH::int - perl's type handler for type "int"
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 AUTHOR
 

@@ -4,7 +4,7 @@ use Moo::Role;
 use Data::Sah::Util 'has_clause';
 with 'Data::Sah::Type::num';
 
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 
 has_clause 'mod', arg => [['int*' => {isnt=>0}], 'int*'];
 has_clause 'div_by', arg => ['int*' => {isnt=>0}];
@@ -24,7 +24,7 @@ Data::Sah::Type::int - Specification for type 'int'
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 CLAUSES
 

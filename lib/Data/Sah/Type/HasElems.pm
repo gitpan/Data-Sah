@@ -3,7 +3,7 @@ package Data::Sah::Type::HasElems;
 use Moo::Role;
 use Data::Sah::Util 'has_clause';
 
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 
 requires 'superclause_has_elems';
 
@@ -70,7 +70,7 @@ Data::Sah::Type::HasElems - Specification for types that have the notion of elem
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 DESCRIPTION
 

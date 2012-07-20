@@ -7,7 +7,7 @@ with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::Sortable';
 with 'Data::Sah::Type::HasElems';
 
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 
 my $t_re = 'regex*|{*=>regex*}';
 
@@ -28,7 +28,7 @@ Data::Sah::Type::str - Specification for type 'str'
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 DESCRIPTION
 

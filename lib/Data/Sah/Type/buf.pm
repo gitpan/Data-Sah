@@ -3,7 +3,7 @@ package Data::Sah::Type::buf;
 use Moo::Role;
 with 'Data::Sah::Type::str';
 
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 
 1;
 # ABSTRACT: Specification for type 'buf'
@@ -18,7 +18,7 @@ Data::Sah::Type::buf - Specification for type 'buf'
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 DESCRIPTION
 

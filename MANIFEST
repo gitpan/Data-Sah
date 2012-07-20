@@ -7,14 +7,6 @@ META.json
 META.yml
 README
 dist.ini
-lib-disabled/human.pm
-lib-disabled/human/I18N/en.pm
-lib-disabled/human/I18N/id.pm
-lib-disabled/human/TH.pm
-lib-disabled/human/TH/int.pm
-lib-disabled/js.pm
-lib-disabled/js/TH.pm
-lib-disabled/js/TH/int.pm
 lib/Data/Sah.pm
 lib/Data/Sah/Compiler/BaseCompiler.pm
 lib/Data/Sah/Compiler/BaseCompiler/TH.pm

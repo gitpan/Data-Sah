@@ -3,7 +3,7 @@ package Data::Sah::Compiler::perl::TH;
 use Moo;
 extends 'Data::Sah::Compiler::BaseProg::TH';
 
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 
 1;
 # ABSTRACT: Base class for perl type handlers
@@ -18,7 +18,7 @@ Data::Sah::Compiler::perl::TH - Base class for perl type handlers
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 AUTHOR
 

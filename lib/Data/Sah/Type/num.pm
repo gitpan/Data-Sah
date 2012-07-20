@@ -5,7 +5,7 @@ with 'Data::Sah::Type::BaseType';
 with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::Sortable';
 
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 
 1;
 # ABSTRACT: Specification for num types
@@ -20,7 +20,7 @@ Data::Sah::Type::num - Specification for num types
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 CLAUSES
 

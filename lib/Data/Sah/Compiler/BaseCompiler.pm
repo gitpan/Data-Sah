@@ -6,7 +6,7 @@ use Moo;
 use Log::Any qw($log);
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 
 has main => (is => 'rw');
 
@@ -502,7 +502,7 @@ Data::Sah::Compiler::BaseCompiler - Base class for Sah compilers (Data::Sah::Com
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 ATTRIBUTES
 
