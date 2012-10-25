@@ -3,90 +3,215 @@ package Data::Sah::Compiler::BaseProg;
 use 5.010;
 use Moo;
 extends 'Data::Sah::Compiler::BaseCompiler';
+with 'Data::Sah::Compiler::TextResultRole';
 use Log::Any qw($log);
 
-our $VERSION = '0.04'; # VERSION
+our $VERSION = '0.05'; # VERSION
 
 #use Digest::MD5 qw(md5_hex);
 
-# subclass should override this
-sub indent_width { 0 }
+# human compiler, to produce error messages
+has hc => (
+    is => 'rw',
+    lazy => 1,
+    default => sub {
+        Data::Sah::Compiler::human->new;
+    },
+);
 
-# subclass should override this
-sub comment_style { undef }
+# subclass should provide a default, choices: 'shell', 'c', 'ini', 'cpp'
+has comment_style => (is => 'rw');
 
-sub compile {
+has var_sigil => (is => 'rw', default => sub {''});
+
+sub init_cd {
     my ($self, %args) = @_;
 
-    my $ct = $args{code_type} // 'validator';
-    if ($ct ne 'validator') {
-        $self->_die("code_type currently can only be 'validator'");
+    my $cd = $self->SUPER::init_cd(%args);
+    $cd->{vars} = [];
+    if (my $ocd = $cd->{outer_cd}) {
+        $cd->{subs}    = $ocd->{subs};
+        $cd->{modules} = $ocd->{modules};
+    } else {
+        $cd->{subs}    = [];
+        $cd->{modules} = [];
     }
-    my $vf = $args{validator_form}
-        or $self->_die("Please specify validator_form");
-    if ($vf !~ /\A(expr|statements|sub)\z/) {
-        $self->_die("Invalid value for validator_form, ".
-                        "use expr|statements|sub");
-    }
-    my $vrt = $args{validator_return_type}
-        or $self->_die("Please specify validator_return_type");
-    if ($vrt !~ /\A(bool|str|obj)\z/) {
-        $self->_die("Invalid value for validator_return_type, ".
-                        "use bool|str|obj");
-    }
-    $self->SUPER::compile(%args);
+
+    $cd;
 }
 
-#    $vdump =~ s/\n.*//s;
-#    $vdump = substr($vdump, 0, 76) . ' ...' if length($vdump) > 80;
+sub check_compile_args {
+    my ($self, $args) = @_;
 
-sub line {
-    my ($self, $cdata, @args) = @_;
-    push @{ $self->result }, join("", $cdata->{indent}, @args);
-    $self;
+    $self->SUPER::check_compile_args($args);
+
+    $args->{load_modules} //= 1;
+    my $ct = ($args->{code_type} //= 'validator');
+    if ($ct ne 'validator') {
+        $self->_die({}, "code_type currently can only be 'validator'");
+    }
+    my $vrt = ($args->{validator_return_type} //= 'bool');
+    if ($vrt !~ /\A(bool|str|full)\z/) {
+        $self->_die({}, "Invalid value for validator_return_type, ".
+                        "use bool|str|full");
+    }
+    $args->{var_prefix} //= "_sahv_";
+    $args->{sub_prefix} //= "_sahs_";
+    $args->{data_term}  //= $self->var_sigil . $args->{data_name};
+    $args->{data_term_is_lvalue} //= 1;
+    $args->{err_term}   //= $self->var_sigil . "err_$args->{data_name}";
 }
 
 sub comment {
-    my ($self, $cdata, @args) = @_;
+    my ($self, $cd, @args) = @_;
     my $style = $self->comment_style;
 
     if ($style eq 'shell') {
-        $self->line($cdata, "# ", @args);
-    } elsif ($style eq 'c++') {
-        $self->line($cdata, "// ", @args);
+        $self->line($cd, "# ", @args);
+    } elsif ($style eq 'cpp') {
+        $self->line($cd, "// ", @args);
     } elsif ($style eq 'c') {
-        $self->line($cdata, "/* ", @args, '*/');
+        $self->line($cd, "/* ", @args, '*/');
     } elsif ($style eq 'ini') {
-        $self->line($cdata, "; ", @args);
+        $self->line($cd, "; ", @args);
     } else {
-        $self->_die("BUG: Unknown comment style: $style");
+        $self->_die($cd, "BUG: Unknown comment style: $style");
     }
     $self;
 }
 
-# XXX not adjusted yet
-#sub before_all_clauses {
-#    my (%args) = @_;
-#    my $cdata = $args{cdata};
-#
-#    if (ref($th) eq 'HASH') {
-#        # type is defined by schema
-#        $log->tracef("Type %s is defined by schema %s", $tn, $th);
-#        $self->_die("Recursive definition: " .
-#                        join(" -> ", @{$self->state->{met_types}}) .
-#                            " -> $tn")
-#            if grep { $_ eq $tn } @{$self->state->{met_types}};
-#        push @{ $self->state->{met_types} }, $tn;
-#        $self->_compile(
-#            inputs => [schema => {
-#                type => $th->{type},
-#                clause_sets => [@{ $th->{clause_sets} },
-#                                @{ $nschema->{clause_sets} }],
-#                def => $th->{def} }],
-#        );
-#        goto FINISH_INPUT;
-#    }
-#}
+# enclose expression with parentheses, unless it already is
+sub enclose_paren {
+    my ($self, $expr, $force) = @_;
+    !$force && $expr =~ /\A\s*\(.+\)\s*\z/os ? $expr : "($expr)";
+}
+
+sub add_module {
+    my ($self, $cd, $name) = @_;
+
+    return if $name ~~ $cd->{modules};
+    if ($cd->{args}{load_modules}) {
+        $log->debugf("Loading module %s ...", $name);
+        $self->load_module($name);
+    }
+    push @{ $cd->{modules} }, $name;
+}
+
+sub add_var {
+    my ($self, $cd, $name) = @_;
+
+    return if $name ~~ $cd->{vars};
+    push @{ $cd->{vars} }, $name;
+}
+
+sub before_compile {
+    my ($self, $cd) = @_;
+
+    $cd->{ccls} = [];
+    if ($cd->{args}{data_term_is_lvalue}) {
+        $cd->{data_term} = $cd->{args}{data_term};
+    } else {
+        my $v = $cd->{args}{var_prefix} . $cd->{args}{data_name};
+        push @{ $cd->{vars} }, $v; # XXX unless already there
+        $cd->{data_term} = $self->var_sigil . $v;
+        # XXX perl specific!
+        push @{ $cd->{ccls} }, ["(local($cd->{data_term} = $cd->{args}{data_term}), 1)"];
+    }
+}
+
+sub before_clause {
+    my ($self, $cd) = @_;
+    if ($cd->{args}{debug}) {
+        state $json = do {
+            require JSON;
+            JSON->new->allow_nonref;
+        };
+        my $cset = $cd->{cset};
+        my $cl   = $cd->{clause};
+        my $res  = $json->encode({
+            map { $_ => $cset->{$_}}
+                grep {/\A\Q$cl\E(?:\.|\z)/}
+                    keys %$cset });
+        $res =~ s/\n+/ /g;
+        # a one-line dump of the clause, suitable for putting in generated
+        # code's comment
+        $cd->{_debug_ccl_note} = "clause: $res";
+    } else {
+        $cd->{_debug_ccl_note} = "clause: $cd->{clause}";
+    }
+}
+
+# a common routine to handle a regular clause (handle .is_multi, .is_expr,
+# .{min,max}_{ok,nok} attributes, produce default error message)
+sub handle_clause {
+    my ($self, $cd, %args) = @_;
+
+    my @caller = caller(0);
+    $self->_die($cd, "BUG: on_term not supplied by ".$caller[3])
+        unless $args{on_term};
+
+    my $clause = $cd->{clause};
+    my $th     = $cd->{th};
+
+    $self->_die($cd, "Sorry, .is_multi + .is_expr not yet supported ".
+                    "(found in clause $clause)")
+        if $cd->{cl_is_expr} && $cd->{cl_is_multi};
+
+    my $cval = $cd->{cset}{$clause};
+    $self->_die($cd, "'$clause.is_multi' attribute set, ".
+                    "but value of '$clause' clause not an array")
+        if $cd->{cl_is_multi} && ref($cval) ne 'ARRAY';
+    my $cvals = $cd->{cl_is_multi} ? $cval : [$cval];
+    my $occls = $cd->{ccls};
+    $cd->{ccls} = [];
+    my $i;
+    for my $v (@$cvals) {
+        local $cd->{cl_value} = $v;
+        local $cd->{cl_term}  = $self->literal($v);
+        local $cd->{_debug_ccl_note} = "" if $i++;
+        $args{on_term}->($self, $cd);
+    }
+    delete $cd->{ucset}{"$clause.err_msg"};
+    if (@{ $cd->{ccls} }) {
+        push @$occls, {
+            ccl => $self->join_ccls(
+                $cd,
+                $cd->{ccls},
+                {
+                    min_ok  => $cd->{cset}{"$clause.min_ok"},
+                    max_ok  => $cd->{cset}{"$clause.max_ok"},
+                    min_nok => $cd->{cset}{"$clause.min_nok"},
+                    max_nok => $cd->{cset}{"$clause.max_nok"},
+                },
+            ),
+            err_level => $cd->{cset}{"$clause.err_level"} // "error",
+        };
+    }
+    $cd->{ccls} = $occls;
+
+    delete $cd->{ucset}{$clause};
+    delete $cd->{ucset}{"$clause.err_level"};
+    delete $cd->{ucset}{"$clause.min_ok"};
+    delete $cd->{ucset}{"$clause.max_ok"};
+    delete $cd->{ucset}{"$clause.min_nok"};
+    delete $cd->{ucset}{"$clause.max_nok"};
+}
+
+sub after_clause {
+    my ($self, $cd) = @_;
+
+    if ($cd->{args}{debug}) {
+        delete $cd->{_debug_ccl_note};
+    }
+}
+
+sub after_all_clauses {
+    my ($self, $cd) = @_;
+
+    # simply join them together with &&
+
+    $cd->{result} = $self->join_ccls($cd, $cd->{ccls}, {err_msg => ''});
+}
 
 1;
 # ABSTRACT: Base class for programming language compilers
@@ -101,16 +226,18 @@ Data::Sah::Compiler::BaseProg - Base class for programming language compilers
 
 =head1 VERSION
 
-version 0.04
+version 0.05
 
 =head1 SYNOPSIS
 
 =head1 DESCRIPTION
 
-This class is used as base class for compilers which compile schemas into
-validators in programming language targets, like L<Data::Sah::Compiler::perl>
-and L<Data::Sah::Compiler::js>. The generated code by the compiler will be able
-to validate data according to the source schema.
+This class is derived from L<Data::Sah::Compiler::BaseCompiler>. It is used as
+base class for compilers which compile schemas into code (usually a validator)
+in programming language targets, like L<Data::Sah::Compiler::perl> and
+L<Data::Sah::Compiler::js>. The generated validator code by the compiler will be
+able to validate data according to the source schema, usually without requiring
+Data::Sah anymore.
 
 Aside from Perl and JavaScript, this base class is also suitable for generating
 validators in other procedural languages, like PHP, Python, and Ruby. See CPAN
@@ -121,20 +248,15 @@ produce:
 
 =over 4
 
-=item * configurable validator form
-
-Simple schema can be compiled into validator in the form of a single expression
-(e.g. '$data >= 1 && $data <= 10') for the least amount of overhead. More
-complex schema can be compiled into full subroutines.
-
 =item * configurable validator return type
 
-Can generate validator that returns a simple bool result, str, or full obj.
+Can generate validator that returns a simple bool result, str, or full data
+structure.
 
 =item * configurable data term
 
 For flexibility in combining the validator code with other code, e.g. in sub
-wrapper (one such application is in L<Sub::Spec::Wrapper>).
+wrapper (one such application is in L<Perinci::Sub::Wrapper>).
 
 =back
 
@@ -148,126 +270,141 @@ Perhaps data compliance measurer, data transformer, or whatever.
 
 =back
 
-This class is derived from L<Data::Sah::Compiler::BaseCompiler>.
+=head1 ATTRIBUTES
 
-=head1 (CLASS INSTANCE) ATTRIBUTES
-
-=head2 sub_prefix => STR
-
-Prefix to use for generated subroutines. Default to 'sah_'.
-
-=head1 CLASS ATTRIBUTES
-
-=head2 indent_width => INT
-
-Specify how many spaces indents in the target language are. Each programming
-language subclass will set this, for example the perl compiler sets this to 4
-while js sets this to 2.
+These usually need not be set/changed by users.
 
 =head2 comment_style => STR
 
-Specify how comments are written in the target language. Either 'c++' (C<//
+Specify how comments are written in the target language. Either 'cpp' (C<//
 comment>), 'shell' (C<# comment>), 'c' (C</* comment */>), or 'ini' (C<;
 comment>). Each programming language subclass will set this, for example, the
-perl compiler sets this to 'shell' while js sets this to 'c++'.
+perl compiler sets this to 'shell' while js sets this to 'cpp'.
 
 =head1 METHODS
 
 =head2 new() => OBJ
 
-=head2 $c->compile(%args) => HASH
+=head2 $c->compile(%args) => RESULT
 
 Aside from BaseCompiler's arguments, this class supports these arguments (suffix
 C<*> denotes required argument):
 
 =over 4
 
-=item * code_type => STR
+=item * data_term => STR
+
+A variable name or an expression in the target language that contains the data,
+defaults to I<var_sigil> + C<name> if not specified.
+
+=item * data_term_is_lvalue => BOOL (default: 1)
+
+Whether C<data_term> can be assigned to.
+
+=item * err_term => STR
+
+A variable name or lvalue expression to store error message(s), defaults to
+I<var_sigil> + C<err_NAME> (e.g. C<$err_data> in the Perl compiler).
+
+=item * var_prefix => STR (default: _sahv_)
+
+Prefix for variables declared by generated code.
+
+=item * sub_prefix => STR (default: _sahs_)
+
+Prefix for subroutines declared by generated code.
+
+=item * code_type => STR (default: validator)
 
 The kind of code to generate. For now the only valid (and default) value is
 'validator'. Compiler can perhaps generate other kinds of code in the future.
 
-=item * validator_form* => STR
-
-Specify in what form the generated validator should take. Either 'expr',
-'statements', or 'sub' is accepted.
-
-'expr' means an expression should be generated. For example, perl compiler will
-compile the schema ['str*', min_len=>8] into something like:
-
- # When C<validator_return_type> is 'bool'
- (!ref($data) && defined($data) && length($data))
-
-or:
-
- # When C<validator_return_type> is 'str'
- (ref($data) ? "Data not a string" :
-     !defined($data) ? "Data required" :
-         length($data) < 8 ? "Length of data minimum 8")
-
-'statements' means one or more statements should be generated. For example, the
-same schema will be compiled into something like:
-
- # When C<validator_return_type> is 'bool'
- return 0 if ref($data);
- return 0 unless defined($data);
- return 0 unless length($data) >= 8;
- return 1;
-
-'sub' means a subroutine should be generated. For example, the same schema will
-be compiled into something like:
-
- # When C<validator_return_type> is 'bool'
- sub sah_str1 {
-     my ($data) = @_;
-     return 0 if ref($data);
-     return 0 unless defined($data);
-     return 0 unless length($data) >= 8;
-     return 1;
- }
-
-Different C<validator_form> can be useful in different situation. For very
-simple schemas, outputting an expression will produce the most compact and
-low-overhead code which can also be combined in more ways with other external
-code. However, not all schemas can be output as simple expression, especially
-more complex ones.
-
-If validator_form request cannot be fulfilled, code will be output in another
-form as the compiler sees fit. You should check the B<validator_form> key in the
-compiler return to know what form the result is. There's also B<requires> and
-B<subs>.
-
-=item * validator_return_type* => STR
+=item * validator_return_type => STR (default: bool)
 
 Specify what kind of return value the generated code should produce. Either
-'bool', 'str', or 'obj'.
+C<bool>, C<str>, or C<full>.
 
-'bool' means generated validator code should just return 1/0 depending on
-whether validation succeeds/fails.
+C<bool> means generated validator code should just return true/false depending
+on whether validation succeeds/fails.
 
-'str' means validation should return an error message string (the first one
+C<str> means validation should return an error message string (the first one
 encountered) if validation fails and an empty string/undef if validation
 succeeds.
 
-'obj' means validation should return a full result object (see
-L<Data::Sah::Result>). From this object you can check whether validation
-succeeds, retrieve all the collected errors/warnings, etc.
+C<full> means validation should return a full data structure. From this
+structure you can check whether validation succeeds, retrieve all the collected
+errors/warnings, etc.
 
-Limitation: If C<validator_form> is 'expr', C<validator_return_type> usually can
-only be 'bool' or 'str'.
+=item * load_modules => BOOL (default: 1)
+
+Whether to load modules required by validator code. If set to 0, you have to
+make sure that the required modules are loaded prior to running the code (see
+B<Return> below).
+
+=item * debug => BOOL (default: 0)
+
+This is a general debugging option which should turn on all debugging-related
+options, e.g. produce more comments in the generated code, etc. Each compiler
+might have more specific debugging options.
+
+=item * debug_log => BOOL (default: 0)
+
+Whether to add logging to generated code.
 
 =back
 
-B<Return>. Aside from B<result> key which is the final code string, there are
-also B<modules> (an arrayref) which is a list of module names that are required
-by the code (e.g. C<["Scalar::Utils", "List::Util"]>), B<subs> (an arrayref)
-which contains subroutine name and definition code string, if any (e.g.
-C<[sah_zero => 'sub sah_zero { $_[0] != 0 }', sah_nonzero => 'sub sah_nonzero {
-$_[0] != 0 }']>. For flexibility, you'll need to do this bit of arranging
-yourself to get the final usable code you can compile in your chosen programming
-language. But there are usually shortcuts provided
+=head3 Compilation data
 
-=head1 SUBCLASSING
+This subclass adds the following compilation data (C<$cd>).
+
+Keys which contain compilation state:
+
+=over 4
+
+=item * B<data_term> => ARRAY
+
+Input data term. Set to C<< $cd->{args}{data_term} >> or a temporary variable
+(if C<< $cd->{args}{data_term_is_lvalue} >> is false). Hooks should use this
+instead of C<< $cd->{args}{data_term} >> directly, because aside from the
+aforementioned temporary variable, data term can also change, for example if
+C<default.temp> or C<prefilters.temp> attribute is set, where generated code
+will operate on another temporary variable to avoid modifying the original data.
+Or when C<.input> attribute is set, where generated code will operate on
+variable other than data.
+
+=back
+
+Keys which contain compilation result:
+
+=over 4
+
+=item * B<modules> => ARRAY
+
+List of module names that are required by the code, e.g. C<["Scalar::Utils",
+"List::Util"]>).
+
+=item * B<subs> => ARRAY
+
+Contains pairs of subroutine names and definition code string, e.g. C<< [
+[_sahs_zero => 'sub _sahs_zero { $_[0] == 0 }'], [_sahs_nonzero => 'sub
+_sah_s_nonzero { $_[0] != 0 }'] ] >>. For flexibility, you'll need to do this
+bit of arranging yourself to get the final usable code you can compile in your
+chosen programming language.
+
+=item * B<vars> => ARRAY ?
+
+=back
+
+=head2 $c->comment($cd, @arg)
+
+Append a comment line to C<< $cd->{result} >>. Used by compiler; users normally
+do not need this. Example:
+
+ $c->comment($cd, 'this is a comment', ', ', 'and this one too');
+
+When C<comment_style> is C<shell> this line will be added:
+
+ # this is a comment, and this one too
 
 =head1 AUTHOR
 

@@ -3,11 +3,21 @@ package Data::Sah::Compiler::perl::TH;
 use Moo;
 extends 'Data::Sah::Compiler::BaseProg::TH';
 
-our $VERSION = '0.04'; # VERSION
+our $VERSION = '0.05'; # VERSION
+
+# handled in compiler's before_all_clauses()
+
+sub clause_default {}
+sub clause_ok {}
+sub clause_req {}
+sub clause_forbidden {}
+sub clause_prefilters {}
+
+# handled in compiler's after_all_clauses()
+#sub clause_postfilters {}
 
 1;
 # ABSTRACT: Base class for perl type handlers
-
 
 __END__
 =pod
@@ -18,7 +28,7 @@ Data::Sah::Compiler::perl::TH - Base class for perl type handlers
 
 =head1 VERSION
 
-version 0.04
+version 0.05
 
 =head1 AUTHOR
 

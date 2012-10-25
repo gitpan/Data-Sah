@@ -3,13 +3,18 @@ package Data::Sah::Compiler::BaseProg::TH;
 use Moo;
 extends 'Data::Sah::Compiler::BaseCompiler::TH';
 
-our $VERSION = '0.04'; # VERSION
+our $VERSION = '0.05'; # VERSION
 
 sub clause_name {}
 sub clause_summary {}
 sub clause_description {}
 sub clause_comment {}
 sub clause_tags {}
+
+# handled in a common routine
+sub clause_default {}
+sub clause_req {}
+sub clause_forbidden {}
 
 1;
 # ABSTRACT: Base class for programming-language emiting compiler's type handlers
@@ -24,7 +29,7 @@ Data::Sah::Compiler::BaseProg::TH - Base class for programming-language emiting 
 
 =head1 VERSION
 
-version 0.04
+version 0.05
 
 =head1 AUTHOR
 

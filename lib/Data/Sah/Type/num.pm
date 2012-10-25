@@ -5,10 +5,10 @@ with 'Data::Sah::Type::BaseType';
 with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::Sortable';
 
-our $VERSION = '0.04'; # VERSION
+our $VERSION = '0.05'; # VERSION
 
 1;
-# ABSTRACT: Specification for num types
+# ABSTRACT: num type
 
 
 __END__
@@ -16,21 +16,11 @@ __END__
 
 =head1 NAME
 
-Data::Sah::Type::num - Specification for num types
+Data::Sah::Type::num - num type
 
 =head1 VERSION
 
-version 0.04
-
-=head1 CLAUSES
-
-Unless specified otherwise, all clauses have a priority of 50 (normal).
-
-'num' assumes the roles L<Data::Sah::Type::BaseType>,
-L<Data::Sah::Type::Comparable>, and L<Data::Sah::Type::Sortable>. Consult the
-documentation of those role(s) to see what clauses are available.
-
-Currently, num does not define additional clauses.
+version 0.05
 
 =head1 AUTHOR
 

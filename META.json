@@ -1,5 +1,5 @@
 {
-   "abstract" : "Schema for data structures",
+   "abstract" : "Schema for data structures (Perl implementation)",
    "author" : [
       "Steven Haryanto <stevenharyanto@gmail.com>"
    ],
@@ -26,33 +26,28 @@
       },
       "runtime" : {
          "requires" : {
-            "Algorithm::Dependency" : 0,
-            "Class::Inspector" : 0,
-            "Data::Clone" : 0,
-            "Data::Dump::OneLine" : "0.02",
+            "Algorithm::Dependency::Ordered" : 0,
+            "Algorithm::Dependency::Source::HoA" : 0,
             "Data::ModeMerge" : "0.21",
-            "DateTime" : 0,
-            "DateTime::Format::ISO8601" : 0,
-            "Digest::MD5" : 0,
+            "JSON" : 0,
             "Language::Expr" : "0.13",
-            "List::MoreUtils" : 0,
+            "Language::Expr::Interpreter::VarEnumer" : "0.13",
+            "Locale::Maketext::Lexicon" : 0,
+            "Locale::Maketext::Lexicon::Gettext" : 0,
             "Log::Any" : "0.09",
             "Moo" : 0,
-            "Regexp::Grammars" : 0,
-            "SHARYANTO::Role::I18NMany" : 0,
-            "Scalar::Util" : 0,
+            "Moo::Role" : 0,
+            "SHARYANTO::String::Util" : 0,
             "Sub::Install" : 0,
-            "URI::Escape" : 0,
-            "boolean" : 0,
-            "perl" : "5.010000"
+            "perl" : "5.010001"
          }
       },
       "test" : {
          "requires" : {
+            "File::ShareDir::Tarball" : 0,
             "File::chdir" : 0,
-            "Test::Aggregate" : 0,
-            "Test::Exception" : 0,
-            "Test::More" : "0.96",
+            "Sah" : "v0.9.15",
+            "Test::More" : "0.98",
             "YAML::Syck" : 0
          }
       }
@@ -64,6 +59,6 @@
          "url" : "http://github.com/sharyanto/perl-Data-Sah"
       }
    },
-   "version" : "0.04"
+   "version" : "0.05"
 }
 

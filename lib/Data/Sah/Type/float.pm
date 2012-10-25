@@ -1,12 +1,41 @@
 package Data::Sah::Type::float;
 
 use Moo::Role;
+use Data::Sah::Util 'has_clause';
 with 'Data::Sah::Type::num';
 
-our $VERSION = '0.04'; # VERSION
+our $VERSION = '0.05'; # VERSION
+
+has_clause 'is_nan',
+    tags        => ['constraint'],
+    arg         => ['bool'],
+    allow_expr  => 1,
+    allow_multi => 0,
+    ;
+
+has_clause 'is_inf',
+    tags        => ['constraint'],
+    arg         => ['bool'],
+    allow_expr  => 1,
+    allow_multi => 1,
+    ;
+
+has_clause 'is_pos_inf',
+    tags        => ['constraint'],
+    arg         => ['bool'],
+    allow_expr  => 1,
+    allow_multi => 1,
+    ;
+
+has_clause 'is_neg_inf',
+    tags        => ['constraint'],
+    arg         => ['bool'],
+    allow_expr  => 1,
+    allow_multi => 1,
+    ;
 
 1;
-# ABSTRACT: Specification for type 'float'
+# ABSTRACT: float type
 
 
 __END__
@@ -14,15 +43,11 @@ __END__
 
 =head1 NAME
 
-Data::Sah::Type::float - Specification for type 'float'
+Data::Sah::Type::float - float type
 
 =head1 VERSION
 
-version 0.04
-
-=head1 CLAUSES
-
-See L<Data::Sah::Type::num>.
+version 0.05
 
 =head1 AUTHOR
 

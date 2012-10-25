@@ -1,25 +1,22 @@
-package Data::Sah::Compiler::BaseCompiler::TH;
+package Data::Sah::Compiler::human::I18N::id;
+use parent qw(Data::Sah::Compiler::human::I18N);
 
-use Moo;
+use Locale::Maketext::Lexicon::Gettext;
+our %Lexicon = %{ Locale::Maketext::Lexicon::Gettext->parse(<DATA>) };
 
 our $VERSION = '0.05'; # VERSION
 
-# reference to compiler object
-has compiler => (is => 'rw');
-
-sub clause_v {}
-sub clause_default_lang {}
+#use Data::Dump; dd \%Lexicon;
 
 1;
-# ABSTRACT: Base class for type handlers
+# ABSTRACT: Indonesian translation
 
 
-__END__
 =pod
 
 =head1 NAME
 
-Data::Sah::Compiler::BaseCompiler::TH - Base class for type handlers
+Data::Sah::Compiler::human::I18N::id - Indonesian translation
 
 =head1 VERSION
 
@@ -38,3 +35,7 @@ the same terms as the Perl 5 programming language system itself.
 
 =cut
 
+
+__DATA__
+msgid  ""
+msgstr ""

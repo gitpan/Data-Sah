@@ -1,25 +1,25 @@
-package Data::Sah::Compiler::BaseCompiler::TH;
+package Data::Sah::Type::array;
 
-use Moo;
+use Moo::Role;
+use Data::Sah::Util 'has_clause', 'clause_alias';
+with 'Data::Sah::Type::BaseType';
+with 'Data::Sah::Type::Comparable';
+with 'Data::Sah::Type::HasElems';
 
 our $VERSION = '0.05'; # VERSION
 
-# reference to compiler object
-has compiler => (is => 'rw');
-
-sub clause_v {}
-sub clause_default_lang {}
+#has_clause 'elems', arg => ['array*' => {of=>'schema*'}];
+clause_alias each_elem => 'of';
 
 1;
-# ABSTRACT: Base class for type handlers
-
+# ABSTRACT: array type
 
 __END__
 =pod
 
 =head1 NAME
 
-Data::Sah::Compiler::BaseCompiler::TH - Base class for type handlers
+Data::Sah::Type::array - array type
 
 =head1 VERSION
 

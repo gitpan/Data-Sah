@@ -1,6 +1,6 @@
 package Data::Sah::Manual::Translation; # just to make PodWeaver happy
 
-our $VERSION = '0.04'; # VERSION
+our $VERSION = '0.05'; # VERSION
 
 1;
 # ABSTRACT: Translating Sah messages
@@ -15,7 +15,7 @@ Data::Sah::Manual::Translation - Translating Sah messages
 
 =head1 VERSION
 
-version 0.04
+version 0.05
 
 =head1 DESCRIPTION
 
