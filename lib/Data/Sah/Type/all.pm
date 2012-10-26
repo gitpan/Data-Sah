@@ -1,19 +1,27 @@
-package Data::Sah::Compiler::human::I18N;
+package Data::Sah::Type::all;
 
-use base 'Locale::Maketext';
-use Locale::Maketext::Lexicon;
+use Moo::Role;
+use Data::Sah::Util 'has_clause';
+with 'Data::Sah::Type::BaseType';
 
 our $VERSION = '0.06'; # VERSION
 
+has_clause 'of',
+    tags       => ['constraint'],
+    arg        => ['array*' => {min_len=>1, each_elem => 'schema*'}],
+    allow_expr => 0,
+    ;
+
 1;
-# ABSTRACT: Project class for Data::Sah::Compiler::human
+# ABSTRACT: all type
+
 
 __END__
 =pod
 
 =head1 NAME
 
-Data::Sah::Compiler::human::I18N - Project class for Data::Sah::Compiler::human
+Data::Sah::Type::all - all type
 
 =head1 VERSION
 

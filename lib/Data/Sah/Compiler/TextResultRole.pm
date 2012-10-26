@@ -3,7 +3,7 @@ package Data::Sah::Compiler::TextResultRole;
 use 5.010;
 use Moo::Role;
 
-our $VERSION = '0.05'; # VERSION
+our $VERSION = '0.06'; # VERSION
 
 # can be changed to tab, for example
 has indent_character => (is => 'rw', default => sub {''});
@@ -28,6 +28,11 @@ sub dec_indent {
     $cd->{indent_level}--;
 }
 
+sub indent_str {
+    my ($self, $cd) = @_;
+    $self->indent_character x $cd->{indent_level};
+}
+
 1;
 # ABSTRACT: Role for compilers that produce text result (array of lines)
 
@@ -41,7 +46,7 @@ Data::Sah::Compiler::TextResultRole - Role for compilers that produce text resul
 
 =head1 VERSION
 
-version 0.05
+version 0.06
 
 =head1 METHODS
 
@@ -66,6 +71,10 @@ Increase indent level. This is done by increasing C<< $cd->{indent_level} >> by
 
 Decrease indent level. This is done by decreasing C<< $cd->{indent_level} >> by
 1.
+
+=head2 $c->indent_str($cd)
+
+Shortcut for C<< $c->indent_character x $cd->{indent_level} >>.
 
 =head1 AUTHOR
 

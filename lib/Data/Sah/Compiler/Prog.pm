@@ -1,12 +1,11 @@
-package Data::Sah::Compiler::BaseProg;
+package Data::Sah::Compiler::Prog;
 
 use 5.010;
 use Moo;
-extends 'Data::Sah::Compiler::BaseCompiler';
-with 'Data::Sah::Compiler::TextResultRole';
+extends 'Data::Sah::Compiler';
 use Log::Any qw($log);
 
-our $VERSION = '0.05'; # VERSION
+our $VERSION = '0.06'; # VERSION
 
 #use Digest::MD5 qw(md5_hex);
 
@@ -45,7 +44,6 @@ sub check_compile_args {
 
     $self->SUPER::check_compile_args($args);
 
-    $args->{load_modules} //= 1;
     my $ct = ($args->{code_type} //= 'validator');
     if ($ct ne 'validator') {
         $self->_die({}, "code_type currently can only be 'validator'");
@@ -83,17 +81,19 @@ sub comment {
 # enclose expression with parentheses, unless it already is
 sub enclose_paren {
     my ($self, $expr, $force) = @_;
-    !$force && $expr =~ /\A\s*\(.+\)\s*\z/os ? $expr : "($expr)";
+    if ($expr =~ /\A(\s*)(\(.+\)\s*)\z/os) {
+        return $expr if !$force;
+        return "$1($2)";
+    } else {
+        $expr =~ /\A(\s*)(.*)/os;
+        return "$1($2)";
+    }
 }
 
 sub add_module {
     my ($self, $cd, $name) = @_;
 
     return if $name ~~ $cd->{modules};
-    if ($cd->{args}{load_modules}) {
-        $log->debugf("Loading module %s ...", $name);
-        $self->load_module($name);
-    }
     push @{ $cd->{modules} }, $name;
 }
 
@@ -222,19 +222,19 @@ __END__
 
 =head1 NAME
 
-Data::Sah::Compiler::BaseProg - Base class for programming language compilers
+Data::Sah::Compiler::Prog - Base class for programming language compilers
 
 =head1 VERSION
 
-version 0.05
+version 0.06
 
 =head1 SYNOPSIS
 
 =head1 DESCRIPTION
 
-This class is derived from L<Data::Sah::Compiler::BaseCompiler>. It is used as
-base class for compilers which compile schemas into code (usually a validator)
-in programming language targets, like L<Data::Sah::Compiler::perl> and
+This class is derived from L<Data::Sah::Compiler>. It is used as base class for
+compilers which compile schemas into code (usually a validator) in programming
+language targets, like L<Data::Sah::Compiler::perl> and
 L<Data::Sah::Compiler::js>. The generated validator code by the compiler will be
 able to validate data according to the source schema, usually without requiring
 Data::Sah anymore.
@@ -334,12 +334,6 @@ succeeds.
 C<full> means validation should return a full data structure. From this
 structure you can check whether validation succeeds, retrieve all the collected
 errors/warnings, etc.
-
-=item * load_modules => BOOL (default: 1)
-
-Whether to load modules required by validator code. If set to 0, you have to
-make sure that the required modules are loaded prior to running the code (see
-B<Return> below).
 
 =item * debug => BOOL (default: 0)
 

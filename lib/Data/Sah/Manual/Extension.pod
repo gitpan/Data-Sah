@@ -1,6 +1,6 @@
 package Data::Sah::Manual::Extension; # just to make PodWeaver happy
 
-our $VERSION = '0.05'; # VERSION
+our $VERSION = '0.06'; # VERSION
 
 1;
 # ABSTRACT: Extending Sah
@@ -15,7 +15,7 @@ Data::Sah::Manual::Extension - Extending Sah
 
 =head1 VERSION
 
-version 0.05
+version 0.06
 
 =head1 DESCRIPTION
 

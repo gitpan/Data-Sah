@@ -3,9 +3,9 @@ package Data::Sah::Compiler::js;
 use 5.010;
 use Moo;
 use Log::Any qw($log);
-extends 'Data::Sah::Compiler::BaseProg';
+extends 'Data::Sah::Compiler::Prog';
 
-our $VERSION = '0.05'; # VERSION
+our $VERSION = '0.06'; # VERSION
 
 sub BUILD {
     my ($self, $args) = @_;
@@ -202,7 +202,7 @@ Data::Sah::Compiler::js - Compile Sah schema to JavaScript code
 
 =head1 VERSION
 
-version 0.05
+version 0.06
 
 =head1 SYNOPSIS
 

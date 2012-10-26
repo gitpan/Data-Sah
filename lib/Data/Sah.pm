@@ -4,7 +4,7 @@ use 5.010;
 use Moo;
 use Log::Any qw($log);
 
-our $VERSION = '0.05'; # VERSION
+our $VERSION = '0.06'; # VERSION
 
 # store Data::Sah::Compiler::* instances
 has compilers    => (is => 'rw', default => sub { {} });
@@ -73,7 +73,7 @@ sub normalize_schema {
         my $has_req = $s =~ s/\*\z//;
         $s =~ $type_re or die "Invalid type syntax $s, please use ".
             "letter/digit/underscore only";
-        return [$s, $has_req ? {req=>1} : {}];
+        return [$s, $has_req ? {req=>1} : {}, {}];
 
     } elsif ($ref eq 'ARRAY') {
 
@@ -185,7 +185,7 @@ sub normalize_schema {
                 if exists $extras->{def} && ref($extras->{def}) ne 'HASH';
             return [$t, $cset, { %{$extras} }];
         } else {
-            return [$t, $cset];
+            return [$t, $cset, {}];
         }
     }
 
@@ -280,7 +280,7 @@ Data::Sah - Schema for data structures (Perl implementation)
 
 =head1 VERSION
 
-version 0.05
+version 0.06
 
 =head1 SYNOPSIS
 

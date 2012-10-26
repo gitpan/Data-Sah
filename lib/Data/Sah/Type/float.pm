@@ -4,7 +4,7 @@ use Moo::Role;
 use Data::Sah::Util 'has_clause';
 with 'Data::Sah::Type::num';
 
-our $VERSION = '0.05'; # VERSION
+our $VERSION = '0.06'; # VERSION
 
 has_clause 'is_nan',
     tags        => ['constraint'],
@@ -47,7 +47,7 @@ Data::Sah::Type::float - float type
 
 =head1 VERSION
 
-version 0.05
+version 0.06
 
 =head1 AUTHOR
 

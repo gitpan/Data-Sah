@@ -1,17 +1,12 @@
-package Data::Sah::Compiler::BaseCompiler::TH;
+package Data::Sah::Type::code;
 
-use Moo;
+use Moo::Role;
+with 'Data::Sah::Type::BaseType';
 
-our $VERSION = '0.05'; # VERSION
-
-# reference to compiler object
-has compiler => (is => 'rw');
-
-sub clause_v {}
-sub clause_default_lang {}
+our $VERSION = '0.06'; # VERSION
 
 1;
-# ABSTRACT: Base class for type handlers
+# ABSTRACT: code type
 
 
 __END__
@@ -19,11 +14,11 @@ __END__
 
 =head1 NAME
 
-Data::Sah::Compiler::BaseCompiler::TH - Base class for type handlers
+Data::Sah::Type::code - code type
 
 =head1 VERSION
 
-version 0.05
+version 0.06
 
 =head1 AUTHOR
 

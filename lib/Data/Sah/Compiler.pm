@@ -1,13 +1,15 @@
-package Data::Sah::Compiler::BaseCompiler;
+package Data::Sah::Compiler;
 
 use 5.010;
 #use Carp;
 use Moo;
 use Log::Any qw($log);
 
+with 'Data::Sah::Compiler::TextResultRole';
+
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.05'; # VERSION
+our $VERSION = '0.06'; # VERSION
 
 has main => (is => 'rw');
 
@@ -288,7 +290,7 @@ sub check_compile_args {
     my ($self, $args) = @_;
 
     $args->{data_name} //= 'data';
-    $args->{data_name} =~ /\A[A-Za-z]\w*\z/ or $self->_die(
+    $args->{data_name} =~ /\A[A-Za-z_]\w*\z/ or $self->_die(
         {}, "Invalid syntax in data_name, ".
             "please use letters/nums only");
     $args->{allow_expr} //= 1;
@@ -526,11 +528,11 @@ __END__
 
 =head1 NAME
 
-Data::Sah::Compiler::BaseCompiler - Base class for Sah compilers (Data::Sah::Compiler::*)
+Data::Sah::Compiler - Base class for Sah compilers (Data::Sah::Compiler::*)
 
 =head1 VERSION
 
-version 0.05
+version 0.06
 
 =head1 ATTRIBUTES
 
@@ -542,11 +544,6 @@ Reference to the main Data::Sah object.
 
 Reference to expression compiler object. In the perl compiler, for example, this
 will be an instance of L<Language::Expr::Compiler::Perl> object.
-
-=head2 indent_character => STR (default: ' ')
-
-Specify indent character used. Can be changed to a tab character, for example,
-but most compilers usually work with spaces.
 
 =head1 METHODS
 

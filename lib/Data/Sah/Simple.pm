@@ -76,7 +76,7 @@ sub gen_validator {
     $res;
 }
 
-our $VERSION = '0.05'; # VERSION
+our $VERSION = '0.06'; # VERSION
 
 1;
 # ABSTRACT: Simple interface to Data::Sah
@@ -91,7 +91,7 @@ Data::Sah::Simple - Simple interface to Data::Sah
 
 =head1 VERSION
 
-version 0.05
+version 0.06
 
 =head1 SYNOPSIS
 

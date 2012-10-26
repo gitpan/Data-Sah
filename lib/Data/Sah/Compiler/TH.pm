@@ -1,19 +1,25 @@
-package Data::Sah::Compiler::human::I18N;
+package Data::Sah::Compiler::TH;
 
-use base 'Locale::Maketext';
-use Locale::Maketext::Lexicon;
+use Moo;
 
 our $VERSION = '0.06'; # VERSION
 
+# reference to compiler object
+has compiler => (is => 'rw');
+
+sub clause_v {}
+sub clause_default_lang {}
+
 1;
-# ABSTRACT: Project class for Data::Sah::Compiler::human
+# ABSTRACT: Base class for type handlers
+
 
 __END__
 =pod
 
 =head1 NAME
 
-Data::Sah::Compiler::human::I18N - Project class for Data::Sah::Compiler::human
+Data::Sah::Compiler::TH - Base class for type handlers
 
 =head1 VERSION
 

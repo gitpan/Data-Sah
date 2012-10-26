@@ -3,11 +3,11 @@ package Data::Sah::Compiler::perl;
 use 5.010;
 use Moo;
 use Log::Any qw($log);
-extends 'Data::Sah::Compiler::BaseProg';
+extends 'Data::Sah::Compiler::Prog';
 
 use SHARYANTO::String::Util;
 
-our $VERSION = '0.05'; # VERSION
+our $VERSION = '0.06'; # VERSION
 
 sub BUILD {
     my ($self, $args) = @_;
@@ -35,12 +35,6 @@ sub literal {
 sub expr {
     my ($self, $expr) = @_;
     $self->expr_compiler->perl($expr);
-}
-
-sub load_module {
-    my ($self, $name) = @_;
-    my $namep = $name; $namep =~ s!::!/!g; $namep .= ".pm";
-    require $namep;
 }
 
 sub compile {
@@ -210,8 +204,9 @@ sub join_ccls {
             } elsif ($vrt eq 'bool' || !$ccl->{has_err}) {
                 $res .= $self->enclose_paren($e);
             } else {
-                $res .= "(" . $self->enclose_paren($e) .
-                    " ? 1 : (($ec),$ret))";
+                $res .= $self->enclose_paren(
+                    $self->enclose_paren($e) . " ? 1 : (($ec),$ret)",
+                    "force");
             }
         }
         $res;
@@ -414,13 +409,15 @@ Data::Sah::Compiler::perl - Compile Sah schema to Perl code
 
 =head1 VERSION
 
-version 0.05
+version 0.06
 
 =head1 SYNOPSIS
 
  # see Data::Sah
 
 =head1 DESCRIPTION
+
+Derived from L<Data::Sah::Compiler::Prog>.
 
 =for Pod::Coverage BUILD
 
@@ -430,7 +427,7 @@ version 0.05
 
 =head2 $c->compile(%args) => RESULT
 
-Aside from BaseProg's arguments, this class supports these arguments:
+Aside from Prog's arguments, this class supports these arguments:
 
 =over 4
 

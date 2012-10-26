@@ -2,7 +2,7 @@ NAME
     Data::Sah - Schema for data structures (Perl implementation)
 
 VERSION
-    version 0.05
+    version 0.06
 
 SYNOPSIS
     First, familiarize with the schema syntax. Refer to Sah and

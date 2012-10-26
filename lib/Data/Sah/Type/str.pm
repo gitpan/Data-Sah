@@ -7,12 +7,20 @@ with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::Sortable';
 with 'Data::Sah::Type::HasElems';
 
-our $VERSION = '0.05'; # VERSION
+our $VERSION = '0.06'; # VERSION
 
 my $t_re = 'regex*|{*=>regex*}';
 
-has_clause 'match', arg => $t_re;
-has_clause 'is_re', arg => 'bool';
+has_clause 'match',
+    tags       => ['constraint'],
+    arg        => $t_re,
+    allow_expr => 1,
+    ;
+has_clause 'is_re',
+    tags       => ['constraint'],
+    arg        => 'bool',
+    allow_expr => 1,
+    ;
 
 1;
 # ABSTRACT: str type
@@ -27,7 +35,7 @@ Data::Sah::Type::str - str type
 
 =head1 VERSION
 
-version 0.05
+version 0.06
 
 =head1 AUTHOR
 

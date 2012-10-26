@@ -1,19 +1,29 @@
-package Data::Sah::Compiler::human::I18N;
+package Data::Sah::Type::bool;
 
-use base 'Locale::Maketext';
-use Locale::Maketext::Lexicon;
+use Moo::Role;
+use Data::Sah::Util 'has_clause';
+with 'Data::Sah::Type::BaseType';
+with 'Data::Sah::Type::Comparable';
+with 'Data::Sah::Type::Sortable';
 
 our $VERSION = '0.06'; # VERSION
 
+has_clause 'is_true',
+    tags       => ['constraint'],
+    arg        => 'bool',
+    allow_expr => 1,
+    ;
+
 1;
-# ABSTRACT: Project class for Data::Sah::Compiler::human
+# ABSTRACT: bool type
+
 
 __END__
 =pod
 
 =head1 NAME
 
-Data::Sah::Compiler::human::I18N - Project class for Data::Sah::Compiler::human
+Data::Sah::Type::bool - bool type
 
 =head1 VERSION
 
