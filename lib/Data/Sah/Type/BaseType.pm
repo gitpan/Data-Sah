@@ -8,7 +8,7 @@ use Moo::Role;
 #use Data::Sah::Schemas::Schema;
 use Data::Sah::Util 'has_clause';
 
-our $VERSION = '0.06'; # VERSION
+our $VERSION = '0.07'; # VERSION
 
 requires 'handle_type_check';
 
@@ -93,7 +93,7 @@ Data::Sah::Type::BaseType - Base type
 
 =head1 VERSION
 
-version 0.06
+version 0.07
 
 =head1 AUTHOR
 

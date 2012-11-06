@@ -1,43 +1,34 @@
-package Data::Sah::Compiler::perl::TH::any;
+package Data::Sah::Compiler::perl::TH::re;
 
 use 5.010;
 use Log::Any '$log';
 use Moo;
 extends 'Data::Sah::Compiler::perl::TH';
-with 'Data::Sah::Type::any';
+with 'Data::Sah::Type::re';
 
 our $VERSION = '0.07'; # VERSION
+
+# XXX prefilter to convert string to regex object
 
 sub handle_type_check {
     my ($self, $cd) = @_;
     my $c = $self->compiler;
 
     my $dt = $cd->{data_term};
-    $cd->{_ccl_check_type} = "1";
-}
-
-sub clause_of {
-    my ($self_th, $cd) = @_;
-    my $c = $self_th->compiler;
-
-    $c->handle_clause(
-        $cd,
-        on_term => sub {
-            my ($self, $cd) = @_;
-            $self_th->gen_any_or_all_of("any", $cd);
-        },
-    );
+    $cd->{_ccl_check_type} = "ref($dt) eq 'Regexp' || !ref($dt) && ".
+        "eval { my \$tmp = $dt; qr/\$tmp/; 1 }";
 }
 
 1;
-# ABSTRACT: perl's type handler for type "any"
+# ABSTRACT: perl's type handler for type "re"
+
 
 __END__
 =pod
 
 =head1 NAME
 
-Data::Sah::Compiler::perl::TH::any - perl's type handler for type "any"
+Data::Sah::Compiler::perl::TH::re - perl's type handler for type "re"
 
 =head1 VERSION
 

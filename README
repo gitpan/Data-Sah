@@ -2,37 +2,45 @@ NAME
     Data::Sah - Schema for data structures (Perl implementation)
 
 VERSION
-    version 0.06
+    version 0.07
 
 SYNOPSIS
-    First, familiarize with the schema syntax. Refer to Sah and
-    Sah::Examples. Some example schemas:
+    Non-OO interface:
 
-     'int'                       # an optional integer
-     'int*'                      # a required integer
-     [int => {min=>1, max=>10}]  # an integer with some constraints
+     use Data::Sah qw(
+         normalize_schema
+         gen_validator
+     );
 
-    To use this module:
+     # normalize a schema
+     my $nschema = normalize_schema("int*"); # => ["int", {req=>1}, {}]
+
+     # generate a validator for schema
+     my $v = gen_validator(["int*", min=>1, max=>10]);
+
+     # validate your data using the generated validator
+     say "valid" if $v->(5);     # valid
+     say "valid" if $->(11);     # invalid
+     say "valid" if $v->(undef); # invalid
+     say "valid" if $v->("x");   # invalid
+
+     # generate validator which reports error message string, in Indonesian
+     my $v = gen_validator(["int*", min=>1, max=>10],
+                           {return_type=>'str', lang=>'id'});
+     say $v->(5);  # ''
+     say $v->(12); # 'Data tidak boleh lebih besar dari 10'
+                   # (in English: 'Data must not be larger than 10')
+
+    OO interface (more advanced usage):
 
      use Data::Sah;
      my $sah = Data::Sah->new;
 
-     # get compiler, e.g. 'perl'. 'js' and 'human' are also available.
-     my $plc = $sah->get_compiler('perl');
+     # get perl compiler
+     my $pl = $sah->get_compiler("perl");
 
-     # use the compiler to generate code
-     my $res = $plc->compile(
-         data_name             => 'data',
-         data_term             => '\%data',
-         data_term_is_lvalue   => 0, # default: 1
-         err_term              => '$err', # must be an lvalue term
-         schema                => [hash => {req=>1, len_between => [1, 10]}],
-         schema_is_normalized  => 1, # don't normalize schema because already so
-
-         validator_return_type => 'str',
-     );
-
-    See also Data::Sah::Simple.
+     # compile schema into Perl code
+     my $cd = $pl->compile($schema, \%opts);
 
 DESCRIPTION
     This module, Data::Sah, implements compilers for producing Perl and
@@ -45,6 +53,20 @@ DESCRIPTION
 STATUS
     Early implementation, only Perl compiler implemented. Only a handful of
     types and attributes supported.
+
+EXPORTS
+    None exported by default.
+
+  normalize_schema($schema) => ARRAY
+    Normalize $schema.
+
+    Can also be used as a method.
+
+  gen_validator($schema, \%opts) => CODE
+    Generate validator code for $schema. %opts are passed to the Perl schema
+    compiler.
+
+    Can also be used as a method.
 
 ATTRIBUTES
   compilers => HASH
@@ -65,7 +87,7 @@ METHODS
      my $plc = $sah->get_compiler("perl"); # loads Data::Sah::Compiler::perl
 
   $sah->normalize_schema($schema) => HASH
-    Normalize a schema, e.g. change "int*" into "[int =" {req=>1}]>, as well
+    Normalize a schema, e.g. change "int*" into "[int => {req=>1}]", as well
     as do some sanity checks on it. Returns the normalized schema if
     succeeds, or dies on error.
 
@@ -83,18 +105,11 @@ METHODS
 
     $min in the above expression will be normalized as "schema:clauses.min".
 
-  $sah->compile($compiler_name, %compiler_args) => STR
-    Basically just a shortcut for get_compiler() and send %compiler_args to
-    the particular compiler. Returns generated code.
+  $sah->gen_validator($schema, \%opts) => CODE
+    Use the Perl compiler to generate validator code. %opts will be passed
+    to the Perl compiler.
 
-  $sah->perl(%args) => STR
-    Shortcut for $sah->compile('perl', %args).
-
-  $sah->human(%args) => STR
-    Shortcut for $sah->compile('human', %args).
-
-  $sah->js(%args) => STR
-    Shortcut for $sah->compile('js', %args).
+    Can also be used as a function.
 
 MODULE ORGANIZATION
     Data::Sah::Type::* roles specify Sah types, e.g. Data::Sah::Type::bool
@@ -154,7 +169,7 @@ FAQ
     If you use Data::Schema, I recommend you migrate to Data::Sah as I will
     not be developing Data::Schema anymore. Sorry, there's currently no tool
     to convert your Data::Schema schemas to Sah, but it should be relatively
-    straightforward. I recommend that you look into Data::Sah::Simple.
+    straightforward.
 
   Comparison to {JSON::Schema, Data::Rx, Data::FormValidator, ...}?
     See Sah::FAQ.

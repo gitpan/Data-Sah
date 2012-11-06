@@ -3,7 +3,7 @@ package Data::Sah::Compiler::perl::TH;
 use Moo;
 extends 'Data::Sah::Compiler::Prog::TH';
 
-our $VERSION = '0.06'; # VERSION
+our $VERSION = '0.07'; # VERSION
 
 # handled in compiler's before_all_clauses()
 
@@ -48,7 +48,7 @@ sub gen_any_or_all_of {
     my $jccl;
     {
         local $cd->{ccls} = [];
-        local $cd->{args}{validator_return_type} = 'bool';
+        local $cd->{args}{return_type} = 'bool';
         for my $i (0..@$cv-1) {
             my $sch = $cv->[$i];
             my $icd = $c->compile(
@@ -82,7 +82,7 @@ Data::Sah::Compiler::perl::TH - Base class for perl type handlers
 
 =head1 VERSION
 
-version 0.06
+version 0.07
 
 =head1 AUTHOR
 

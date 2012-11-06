@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::code';
 
-our $VERSION = '0.06'; # VERSION
+our $VERSION = '0.07'; # VERSION
 
 sub handle_type_check {
     my ($self, $cd) = @_;
@@ -28,7 +28,7 @@ Data::Sah::Compiler::perl::TH::code - perl's type handler for type "code"
 
 =head1 VERSION
 
-version 0.06
+version 0.07
 
 =head1 AUTHOR
 

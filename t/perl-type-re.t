@@ -9,9 +9,12 @@ use Test::More 0.96;
 
 # just testing that bool in perl can accept numbers and strings
 my @tests = (
-    {schema=>["bool*", is_true=>0], input=>"", valid=>1},
-    {schema=>["bool*", is_true=>1], input=>"a", valid=>1},
-    {schema=>["bool*", is_true=>1], input=>0.1, valid=>1},
+    {schema=>["re*"], input=>""  , valid=>1},
+    {schema=>["re*"], input=>"x" , valid=>1},
+    {schema=>["re*"], input=>qr//, valid=>1},
+    {schema=>["re*"], input=>"(" , valid=>0},
+    {schema=>["re*"], input=>[]  , valid=>0},
+    {schema=>["re*"], input=>{}  , valid=>0},
 );
 
 for my $test (@tests) {

@@ -5,7 +5,7 @@ use Moo;
 extends 'Data::Sah::Compiler';
 use Log::Any qw($log);
 
-our $VERSION = '0.06'; # VERSION
+our $VERSION = '0.07'; # VERSION
 
 #use Digest::MD5 qw(md5_hex);
 
@@ -48,9 +48,9 @@ sub check_compile_args {
     if ($ct ne 'validator') {
         $self->_die({}, "code_type currently can only be 'validator'");
     }
-    my $vrt = ($args->{validator_return_type} //= 'bool');
-    if ($vrt !~ /\A(bool|str|full)\z/) {
-        $self->_die({}, "Invalid value for validator_return_type, ".
+    my $rt = ($args->{return_type} //= 'bool');
+    if ($rt !~ /\A(bool|str|full)\z/) {
+        $self->_die({}, "Invalid value for return_type, ".
                         "use bool|str|full");
     }
     $args->{var_prefix} //= "_sahv_";
@@ -226,7 +226,7 @@ Data::Sah::Compiler::Prog - Base class for programming language compilers
 
 =head1 VERSION
 
-version 0.06
+version 0.07
 
 =head1 SYNOPSIS
 
@@ -319,7 +319,7 @@ Prefix for subroutines declared by generated code.
 The kind of code to generate. For now the only valid (and default) value is
 'validator'. Compiler can perhaps generate other kinds of code in the future.
 
-=item * validator_return_type => STR (default: bool)
+=item * return_type => STR (default: bool)
 
 Specify what kind of return value the generated code should produce. Either
 C<bool>, C<str>, or C<full>.

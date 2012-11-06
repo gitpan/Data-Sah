@@ -1,19 +1,21 @@
-package Data::Sah::Type::undef;
+package Data::Sah::Type::re;
 
 use Moo::Role;
 use Data::Sah::Util 'has_clause';
+with 'Data::Sah::Type::BaseType';
 
 our $VERSION = '0.07'; # VERSION
 
 1;
-# ABSTRACT: undef type
+# ABSTRACT: re type
+
 
 __END__
 =pod
 
 =head1 NAME
 
-Data::Sah::Type::undef - undef type
+Data::Sah::Type::re - re type
 
 =head1 VERSION
 

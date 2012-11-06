@@ -2,7 +2,7 @@ package Data::Sah::Compiler::TH;
 
 use Moo;
 
-our $VERSION = '0.06'; # VERSION
+our $VERSION = '0.07'; # VERSION
 
 # reference to compiler object
 has compiler => (is => 'rw');
@@ -23,7 +23,7 @@ Data::Sah::Compiler::TH - Base class for type handlers
 
 =head1 VERSION
 
-version 0.06
+version 0.07
 
 =head1 AUTHOR
 
