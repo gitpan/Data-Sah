@@ -9,7 +9,7 @@ with 'Data::Sah::Compiler::TextResultRole';
 
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.07'; # VERSION
+our $VERSION = '0.08'; # VERSION
 
 has main => (is => 'rw');
 
@@ -372,8 +372,8 @@ sub compile {
 
     my $clauses = $self->_sort_csets($cd, $csets);
 
-    $log->tracef("=> th->handle_type_check()");
-    $th->handle_type_check($cd);
+    $log->tracef("=> th->handle_type()");
+    $th->handle_type($cd);
 
     if ($self->can("before_all_clauses")) {
         $log->tracef("=> comp->before_all_clauses()");
@@ -468,7 +468,7 @@ sub compile {
     for my $ucset (@{ $cd->{ucsets} }) {
         if (keys %$ucset) {
             given ($args{on_unhandled_attr}) {
-                my $msg = "Unhandled attribute(s): ".
+                my $msg = "Unhandled attribute(s) for type $tn: ".
                     join(", ", keys %$ucset);
                 0 when 'ignore';
                 warn $msg when 'warn';
@@ -493,10 +493,12 @@ sub compile {
     }
 
   SKIP_COMPILE:
-    if ($log->is_trace) {
-        # give line num?
-        $log->tracef("<- compile(), result:\n%s", $cd->{result});
+    if ($Data::Sah::Log_Validator_Code && $log->is_trace) {
+        require SHARYANTO::String::Util;
+        $log->tracef("Schema compilation result:\n%s",
+                     SHARYANTO::String::Util::linenum($cd->{result}));
     }
+    $log->tracef("<- compile()");
     return $cd;
 }
 
@@ -532,7 +534,7 @@ Data::Sah::Compiler - Base class for Sah compilers (Data::Sah::Compiler::*)
 
 =head1 VERSION
 
-version 0.07
+version 0.08
 
 =head1 ATTRIBUTES
 

@@ -4,7 +4,7 @@ use Moo::Role;
 use Data::Sah::Util 'has_clause';
 with 'Data::Sah::Type::BaseType';
 
-our $VERSION = '0.07'; # VERSION
+our $VERSION = '0.08'; # VERSION
 
 1;
 # ABSTRACT: re type
@@ -19,7 +19,7 @@ Data::Sah::Type::re - re type
 
 =head1 VERSION
 
-version 0.07
+version 0.08
 
 =head1 AUTHOR
 

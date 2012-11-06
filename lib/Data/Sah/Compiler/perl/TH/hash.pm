@@ -6,9 +6,9 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::hash';
 
-our $VERSION = '0.07'; # VERSION
+our $VERSION = '0.08'; # VERSION
 
-sub handle_type_check {
+sub handle_type {
     my ($self, $cd) = @_;
     my $c = $self->compiler;
 
@@ -84,7 +84,11 @@ sub superclause_has_elems {
     );
 }
 
-sub clause_keys {}
+sub clause_keys {
+    my $self = shift;
+    $self->_warn_unimplemented(@_);
+}
+
 sub clause_re_keys {}
 sub clause_req_keys {}
 sub clause_allowed_keys {}
@@ -103,7 +107,7 @@ Data::Sah::Compiler::perl::TH::hash - perl's type handler for type "hash"
 
 =head1 VERSION
 
-version 0.07
+version 0.08
 
 =head1 AUTHOR
 

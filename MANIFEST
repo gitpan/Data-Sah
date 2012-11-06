@@ -27,6 +27,7 @@ lib/Data/Sah/Compiler/perl/TH/float.pm
 lib/Data/Sah/Compiler/perl/TH/hash.pm
 lib/Data/Sah/Compiler/perl/TH/int.pm
 lib/Data/Sah/Compiler/perl/TH/num.pm
+lib/Data/Sah/Compiler/perl/TH/obj.pm
 lib/Data/Sah/Compiler/perl/TH/re.pm
 lib/Data/Sah/Compiler/perl/TH/str.pm
 lib/Data/Sah/Manual/Extension.pod
@@ -47,6 +48,7 @@ lib/Data/Sah/Type/float.pm
 lib/Data/Sah/Type/hash.pm
 lib/Data/Sah/Type/int.pm
 lib/Data/Sah/Type/num.pm
+lib/Data/Sah/Type/obj.pm
 lib/Data/Sah/Type/re.pm
 lib/Data/Sah/Type/str.pm
 lib/Data/Sah/Type/undef.pm
@@ -55,7 +57,9 @@ t/00-compile.t
 t/perl-type-bool.t
 t/perl-type-code.t
 t/perl-type-float.t
+t/perl-type-obj.t
 t/perl-type-re.t
+t/perl-type-str.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
 t/release-rinci.t

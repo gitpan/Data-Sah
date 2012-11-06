@@ -8,9 +8,9 @@ use Moo::Role;
 #use Data::Sah::Schemas::Schema;
 use Data::Sah::Util 'has_clause';
 
-our $VERSION = '0.07'; # VERSION
+our $VERSION = '0.08'; # VERSION
 
-requires 'handle_type_check';
+requires 'handle_type';
 
 # XXX define 'cset' schema
 
@@ -93,7 +93,7 @@ Data::Sah::Type::BaseType - Base type
 
 =head1 VERSION
 
-version 0.07
+version 0.08
 
 =head1 AUTHOR
 

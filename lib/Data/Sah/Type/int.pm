@@ -4,7 +4,7 @@ use Moo::Role;
 use Data::Sah::Util 'has_clause';
 with 'Data::Sah::Type::num';
 
-our $VERSION = '0.07'; # VERSION
+our $VERSION = '0.08'; # VERSION
 
 has_clause 'mod',
     tags       => ['constraint'],
@@ -30,7 +30,7 @@ Data::Sah::Type::int - int type
 
 =head1 VERSION
 
-version 0.07
+version 0.08
 
 =head1 AUTHOR
 

@@ -1,12 +1,24 @@
-package Data::Sah::Type::code;
+package Data::Sah::Type::obj;
 
 use Moo::Role;
+use Data::Sah::Util 'has_clause';
 with 'Data::Sah::Type::BaseType';
 
 our $VERSION = '0.08'; # VERSION
 
+has_clause 'can',
+    tags       => ['constraint'],
+    arg        => 'str*', # XXX perl_method_name
+    allow_expr => 1,
+    ;
+has_clause 'isa',
+    tags       => ['constraint'],
+    arg        => 'str*', # XXX perl_class_name
+    allow_expr => 1,
+    ;
+
 1;
-# ABSTRACT: code type
+# ABSTRACT: obj type
 
 
 __END__
@@ -14,7 +26,7 @@ __END__
 
 =head1 NAME
 
-Data::Sah::Type::code - code type
+Data::Sah::Type::obj - obj type
 
 =head1 VERSION
 

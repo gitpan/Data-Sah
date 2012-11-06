@@ -7,7 +7,7 @@ extends 'Data::Sah::Compiler::Prog';
 
 use SHARYANTO::String::Util;
 
-our $VERSION = '0.07'; # VERSION
+our $VERSION = '0.08'; # VERSION
 
 sub BUILD {
     my ($self, $args) = @_;
@@ -166,7 +166,7 @@ sub join_ccls {
                 $res .= "$indent(\$log->tracef('%s ...', ".
                     $self->literal($ccl->{_debug_ccl_note})."), 1) && \n";
             } else {
-                $res .= "$indent# $ccl->{_debug_ccl_note}\n";
+                $res .= $indent . $self->comment($cd, $ccl->{_debug_ccl_note});
             }
         }
 
@@ -360,7 +360,7 @@ sub before_all_clauses {
     }
 
 
-    $self->_die("BUG: type handler did not produce _ccl_check_type")
+    $self->_die($cd, "BUG: type handler did not produce _ccl_check_type")
         unless defined($cd->{_ccl_check_type});
     local $cd->{_debug_ccl_note} = "check type '$cd->{type}'";
     $self->add_ccl(
@@ -409,7 +409,7 @@ Data::Sah::Compiler::perl - Compile Sah schema to Perl code
 
 =head1 VERSION
 
-version 0.07
+version 0.08
 
 =head1 SYNOPSIS
 

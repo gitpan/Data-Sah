@@ -3,7 +3,7 @@ package Data::Sah::Compiler::Prog::TH;
 use Moo;
 extends 'Data::Sah::Compiler::TH';
 
-our $VERSION = '0.07'; # VERSION
+our $VERSION = '0.08'; # VERSION
 
 sub clause_name {}
 sub clause_summary {}
@@ -29,7 +29,7 @@ Data::Sah::Compiler::Prog::TH - Base class for programming-language emiting comp
 
 =head1 VERSION
 
-version 0.07
+version 0.08
 
 =head1 AUTHOR
 

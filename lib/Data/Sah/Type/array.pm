@@ -6,7 +6,7 @@ with 'Data::Sah::Type::BaseType';
 with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::HasElems';
 
-our $VERSION = '0.07'; # VERSION
+our $VERSION = '0.08'; # VERSION
 
 #has_clause 'elems', arg => ['array*' => {of=>'schema*'}];
 clause_alias each_elem => 'of';
@@ -23,7 +23,7 @@ Data::Sah::Type::array - array type
 
 =head1 VERSION
 
-version 0.07
+version 0.08
 
 =head1 AUTHOR
 

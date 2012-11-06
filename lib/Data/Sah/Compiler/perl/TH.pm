@@ -3,7 +3,7 @@ package Data::Sah::Compiler::perl::TH;
 use Moo;
 extends 'Data::Sah::Compiler::Prog::TH';
 
-our $VERSION = '0.07'; # VERSION
+our $VERSION = '0.08'; # VERSION
 
 # handled in compiler's before_all_clauses()
 
@@ -70,6 +70,25 @@ sub gen_any_or_all_of {
     $c->add_ccl($cd, $jccl);
 }
 
+# tmp
+sub _warn_unimplemented {
+    my ($self, $cd) = @_;
+    my $c = $self->compiler;
+
+    $c->handle_clause(
+        $cd,
+        on_term => sub {
+            my ($self, $cd) = @_;
+            my $cv = $cd->{cl_value};
+            my $ct = $cd->{cl_term};
+            my $dt = $cd->{data_term};
+
+            warn "NOTICE: clause '$cd->{clause}' for type '$cd->{type}' ".
+                "is currently unimplemented\n";
+        },
+    );
+}
+
 1;
 # ABSTRACT: Base class for perl type handlers
 
@@ -82,7 +101,7 @@ Data::Sah::Compiler::perl::TH - Base class for perl type handlers
 
 =head1 VERSION
 
-version 0.07
+version 0.08
 
 =head1 AUTHOR
 
