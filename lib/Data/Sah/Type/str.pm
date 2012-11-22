@@ -1,13 +1,13 @@
 package Data::Sah::Type::str;
 
 use Moo::Role;
-use Data::Sah::Util 'has_clause';
+use Data::Sah::Util::Role 'has_clause';
 with 'Data::Sah::Type::BaseType';
 with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::Sortable';
 with 'Data::Sah::Type::HasElems';
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 
 my $t_re = 'regex*|{*=>regex*}';
 
@@ -35,7 +35,9 @@ Data::Sah::Type::str - str type
 
 =head1 VERSION
 
-version 0.08
+version 0.09
+
+=for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 
 =head1 AUTHOR
 

@@ -6,13 +6,15 @@ build_requires:
   File::ShareDir::Tarball: 0
   File::chdir: 0
   Module::Build: 0.3601
-  Sah: v0.9.15
+  Sah: v0.9.19
+  Test::Exception: 0
   Test::More: 0.98
+  Test::Warn: 0
   YAML::Syck: 0
 configure_requires:
   Module::Build: 0.3601
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 4.300015, CPAN::Meta::Converter version 2.120921'
+generated_by: 'Dist::Zilla version 4.300006, CPAN::Meta::Converter version 2.113640'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -25,8 +27,6 @@ requires:
   JSON: 0
   Language::Expr: 0.13
   Language::Expr::Interpreter::VarEnumer: 0.13
-  Locale::Maketext::Lexicon: 0
-  Locale::Maketext::Lexicon::Gettext: 0
   Log::Any: 0.09
   Moo: 0
   Moo::Role: 0
@@ -36,4 +36,4 @@ requires:
 resources:
   homepage: http://search.cpan.org/dist/Data-Sah/
   repository: http://github.com/sharyanto/perl-Data-Sah
-version: 0.08
+version: 0.09

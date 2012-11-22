@@ -2,13 +2,20 @@ package Data::Sah::Compiler::TH;
 
 use Moo;
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 
 # reference to compiler object
 has compiler => (is => 'rw');
 
-sub clause_v {}
-sub clause_default_lang {}
+sub clause_v {
+    my ($self, $cd) = @_;
+    $self->compiler->_ignore_clause($cd);
+}
+
+sub clause_default_lang {
+    my ($self, $cd) = @_;
+    $self->compiler->_ignore_clause($cd);
+}
 
 1;
 # ABSTRACT: Base class for type handlers
@@ -23,7 +30,9 @@ Data::Sah::Compiler::TH - Base class for type handlers
 
 =head1 VERSION
 
-version 0.08
+version 0.09
+
+=for Pod::Coverage ^(compiler|clause_.+)$
 
 =head1 AUTHOR
 

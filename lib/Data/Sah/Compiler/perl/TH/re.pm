@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::re';
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 
 # XXX prefilter to convert string to regex object
 
@@ -32,7 +32,9 @@ Data::Sah::Compiler::perl::TH::re - perl's type handler for type "re"
 
 =head1 VERSION
 
-version 0.08
+version 0.09
+
+=for Pod::Coverage ^(clause_.+|superclause_.+)$
 
 =head1 AUTHOR
 

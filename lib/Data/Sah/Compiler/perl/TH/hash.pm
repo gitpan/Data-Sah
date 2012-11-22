@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::hash';
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -85,8 +85,63 @@ sub superclause_has_elems {
 }
 
 sub clause_keys {
-    my $self = shift;
-    $self->_warn_unimplemented(@_);
+    my ($self_th, $cd) = @_;
+    my $c = $self_th->compiler;
+
+    $c->handle_clause(
+        $cd,
+        on_term => sub {
+            my ($self, $cd) = @_;
+            my $cv = $cd->{cl_value};
+            my $dt = $cd->{data_term};
+
+            my $jccl;
+            {
+                local $cd->{ccls} = [];
+                local $cd->{args}{return_type} = 'bool';
+
+                if ($cd->{cset}{"keys.restrict"} // 1) {
+                    local $cd->{_debug_ccl_note} = "keys.restrict";
+                    $c->add_module($cd, "List::Util");
+                    $c->add_ccl(
+                        $cd,
+                        "!defined(List::Util::first {!(\$_ ~~ ".
+                            $c->literal([keys %$cv]).")} keys %{$dt})",
+                        {
+                            err_msg => "TMPERRMSG: keys.restrict",
+                        },
+                    );
+                }
+                delete $cd->{ucset}{"keys.restrict"};
+
+                my $cdef = $cd->{cset}{"keys.create_default"} // 1;
+                delete $cd->{ucset}{"keys.create_default"};
+
+                for my $k (keys %$cv) {
+                    my $sch = $c->main->normalize_schema($cv->{$k});
+                    my $kdn = $k; $kdn =~ s/\W+/_/g;
+                    my $kdt = "$dt\->{".$c->literal($k)."}";
+                    my $icd = $c->compile(
+                        data_name    => $kdn,
+                        data_term    => $kdt,
+                        schema       => $sch,
+                        indent_level => $cd->{indent_level}+1,
+                        schema_is_normalized => 1,
+                        (map { $_=>$cd->{args}{$_} } qw(debug debug_log)),
+                    );
+                    local $cd->{_debug_ccl_note} = "key: ".$c->literal($k);
+                    if ($cdef && defined($sch->[1]{default})) {
+                        $c->add_ccl($cd, $icd->{result});
+                    } else {
+                        $c->add_ccl($cd, "!exists($kdt) || ($icd->{result})");
+                    }
+                }
+                $jccl = $c->join_ccls(
+                    $cd, $cd->{ccls}, {err_msg => ''});
+            }
+            $c->add_ccl($cd, $jccl);
+        },
+    );
 }
 
 sub clause_re_keys {}
@@ -107,7 +162,9 @@ Data::Sah::Compiler::perl::TH::hash - perl's type handler for type "hash"
 
 =head1 VERSION
 
-version 0.08
+version 0.09
+
+=for Pod::Coverage ^(clause_.+|superclause_.+)$
 
 =head1 AUTHOR
 

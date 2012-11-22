@@ -1,18 +1,29 @@
 package Data::Sah::Type::array;
 
 use Moo::Role;
-use Data::Sah::Util 'has_clause', 'clause_alias';
+use Data::Sah::Util::Role 'has_clause', 'clause_alias';
 with 'Data::Sah::Type::BaseType';
 with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::HasElems';
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 
-#has_clause 'elems', arg => ['array*' => {of=>'schema*'}];
+has_clause 'elems',
+    tags       => ['constraint'],
+    arg        => ['array*' => {of=>'schema*'}],
+    allow_expr => 0,
+    attrs      => {
+        create_default => {
+            arg        => [bool => default=>1],
+            allow_expr => 0, # TODO
+        },
+    },
+    ;
 clause_alias each_elem => 'of';
 
 1;
 # ABSTRACT: array type
+
 
 __END__
 =pod
@@ -23,7 +34,9 @@ Data::Sah::Type::array - array type
 
 =head1 VERSION
 
-version 0.08
+version 0.09
+
+=for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 
 =head1 AUTHOR
 

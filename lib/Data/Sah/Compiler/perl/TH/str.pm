@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::str';
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -135,7 +135,7 @@ sub clause_match {
                 $c->add_ccl($cd, join(
                     "",
                     "ref($ct) eq 'Regexp' ? $dt =~ $ct : ",
-                    "do { my \$re = $ct; eval { \$re = qr/\$re/; 1 } && ",
+                    "do { my \$re = $ct; eval { \$re = /\$re/; 1 } && ",
                     "$dt =~ \$re }",
                 ));
             } else {
@@ -152,7 +152,7 @@ sub clause_match {
                 $re = "$re";
                 $re =~ s!/!\\/!g;
 
-                $c->add_ccl($cd, "$dt =~ qr/$re/");
+                $c->add_ccl($cd, "$dt =~ /$re/");
             }
         },
     );
@@ -202,7 +202,9 @@ Data::Sah::Compiler::perl::TH::str - perl's type handler for type "str"
 
 =head1 VERSION
 
-version 0.08
+version 0.09
+
+=for Pod::Coverage ^(clause_.+|superclause_.+)$
 
 =head1 AUTHOR
 

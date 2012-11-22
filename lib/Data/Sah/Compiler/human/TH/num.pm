@@ -1,9 +1,9 @@
-package Data::Sah::Compiler::perl::TH::num;
+package Data::Sah::Compiler::human::TH::num;
 
 use 5.010;
 use Log::Any '$log';
 use Moo;
-extends 'Data::Sah::Compiler::perl::TH';
+extends 'Data::Sah::Compiler::human::TH';
 with 'Data::Sah::Type::num';
 
 our $VERSION = '0.09'; # VERSION
@@ -12,9 +12,7 @@ sub handle_type {
     my ($self, $cd) = @_;
     my $c = $self->compiler;
 
-    my $dt = $cd->{data_term};
-    $c->add_module($cd, 'Scalar::Util');
-    $cd->{_ccl_check_type} = "Scalar::Util::looks_like_number($dt)";
+    $c->add_ccl($cd, {noun => "number"});
 }
 
 sub superclause_comparable {
@@ -25,14 +23,15 @@ sub superclause_comparable {
         $cd,
         on_term => sub {
             my ($self, $cd) = @_;
-            my $ct = $cd->{cl_term};
-            my $dt = $cd->{data_term};
+            my $ch = $cd->{cl_human};
 
+            my $cl;
             if ($which eq 'is') {
-                $c->add_ccl($cd, "$dt == $ct");
+                $cl = "be %s";
             } elsif ($which eq 'in') {
-                $c->add_ccl($cd, "$dt ~~ $ct");
+                $cl = "one of %s";
             }
+            $c->add_ccl($cd, {clause=>$cl, params=>[$ch]});
         },
     );
 }
@@ -85,7 +84,7 @@ __END__
 
 =head1 NAME
 
-Data::Sah::Compiler::perl::TH::num - perl's type handler for type "num"
+Data::Sah::Compiler::human::TH::num - perl's type handler for type "num"
 
 =head1 VERSION
 

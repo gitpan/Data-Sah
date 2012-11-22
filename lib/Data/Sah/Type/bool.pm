@@ -1,12 +1,12 @@
 package Data::Sah::Type::bool;
 
 use Moo::Role;
-use Data::Sah::Util 'has_clause';
+use Data::Sah::Util::Role 'has_clause';
 with 'Data::Sah::Type::BaseType';
 with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::Sortable';
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 
 has_clause 'is_true',
     tags       => ['constraint'],
@@ -27,7 +27,9 @@ Data::Sah::Type::bool - bool type
 
 =head1 VERSION
 
-version 0.08
+version 0.09
+
+=for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 
 =head1 AUTHOR
 

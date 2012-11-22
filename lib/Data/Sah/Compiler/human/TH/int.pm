@@ -1,9 +1,9 @@
-package Data::Sah::Compiler::perl::TH::int;
+package Data::Sah::Compiler::human::TH::int;
 
 use 5.010;
 use Log::Any '$log';
 use Moo;
-extends 'Data::Sah::Compiler::perl::TH::num';
+extends 'Data::Sah::Compiler::human::TH::num';
 with 'Data::Sah::Type::int';
 
 our $VERSION = '0.09'; # VERSION
@@ -12,26 +12,20 @@ sub handle_type {
     my ($self, $cd) = @_;
     my $c = $self->compiler;
 
-    my $dt = $cd->{data_term};
-    $c->add_module($cd, 'Scalar::Util');
-    $cd->{_ccl_check_type} =
-        "Scalar::Util::looks_like_number($dt) =~ " . '/^(?:1|2|9|10|4352)$/';
+    $c->add_ccl($cd, {
+        type  => 'noun',
+        fmt   => ["integer", "integers"],
+    });
 }
 
 sub clause_div_by {
     my ($self, $cd) = @_;
     my $c = $self->compiler;
 
-    $c->handle_clause(
-        $cd,
-        on_term => sub {
-            my ($self, $cd) = @_;
-            my $ct = $cd->{cl_term};
-            my $dt = $cd->{data_term};
-
-            $c->add_ccl($cd, "$dt % $ct == 0");
-        },
-    );
+    $c->add_ccl($cd, {
+        type => 'clause',
+        fmt  => 'be divisible by %s',
+    });
 }
 
 sub clause_mod {
@@ -59,7 +53,7 @@ __END__
 
 =head1 NAME
 
-Data::Sah::Compiler::perl::TH::int - perl's type handler for type "int"
+Data::Sah::Compiler::human::TH::int - perl's type handler for type "int"
 
 =head1 VERSION
 

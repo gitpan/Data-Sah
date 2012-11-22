@@ -1,9 +1,9 @@
 package Data::Sah::Type::Comparable;
 
 use Moo::Role;
-use Data::Sah::Util 'has_clause';
+use Data::Sah::Util::Role 'has_clause';
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 
 requires 'superclause_comparable';
 
@@ -35,13 +35,15 @@ Data::Sah::Type::Comparable - Comparable type role
 
 =head1 VERSION
 
-version 0.08
+version 0.09
 
 =head1 DESCRIPTION
 
 Role consumer must provide method C<superclause_comparable> which will be given
 normal C<%args> given to clause methods, but with extra key C<-which> (either
 C<in>, C<is>).
+
+=for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 
 =head1 AUTHOR
 

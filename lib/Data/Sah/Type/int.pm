@@ -1,10 +1,10 @@
 package Data::Sah::Type::int;
 
 use Moo::Role;
-use Data::Sah::Util 'has_clause';
+use Data::Sah::Util::Role 'has_clause';
 with 'Data::Sah::Type::num';
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 
 has_clause 'mod',
     tags       => ['constraint'],
@@ -30,7 +30,9 @@ Data::Sah::Type::int - int type
 
 =head1 VERSION
 
-version 0.08
+version 0.09
+
+=for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 
 =head1 AUTHOR
 

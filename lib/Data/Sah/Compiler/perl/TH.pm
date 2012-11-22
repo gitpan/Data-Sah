@@ -3,7 +3,7 @@ package Data::Sah::Compiler::perl::TH;
 use Moo;
 extends 'Data::Sah::Compiler::Prog::TH';
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 
 # handled in compiler's before_all_clauses()
 
@@ -92,6 +92,7 @@ sub _warn_unimplemented {
 1;
 # ABSTRACT: Base class for perl type handlers
 
+
 __END__
 =pod
 
@@ -101,7 +102,9 @@ Data::Sah::Compiler::perl::TH - Base class for perl type handlers
 
 =head1 VERSION
 
-version 0.08
+version 0.09
+
+=for Pod::Coverage ^(compiler|clause_.+|gen_.+)$
 
 =head1 AUTHOR
 

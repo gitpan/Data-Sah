@@ -5,7 +5,7 @@ use Moo;
 extends 'Data::Sah::Compiler';
 use Log::Any qw($log);
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 
 #use Digest::MD5 qw(md5_hex);
 
@@ -111,7 +111,6 @@ sub add_var {
 sub before_compile {
     my ($self, $cd) = @_;
 
-    $cd->{ccls} = [];
     if ($cd->{args}{data_term_is_lvalue}) {
         $cd->{data_term} = $cd->{args}{data_term};
     } else {
@@ -199,6 +198,9 @@ sub handle_clause {
     delete $cd->{ucset}{"$clause.max_ok"};
     delete $cd->{ucset}{"$clause.min_nok"};
     delete $cd->{ucset}{"$clause.max_nok"};
+
+    delete $cd->{ucset}{$_} for
+        grep /\A\Q$clause\E\.human(\..+)?\z/, keys(%{$cd->{ucset}});
 }
 
 sub after_clause {
@@ -230,7 +232,7 @@ Data::Sah::Compiler::Prog - Base class for programming language compilers
 
 =head1 VERSION
 
-version 0.08
+version 0.09
 
 =head1 SYNOPSIS
 
@@ -274,6 +276,8 @@ Perhaps data compliance measurer, data transformer, or whatever.
 
 =back
 
+=for Pod::Coverage ^(handle_clause|after_.+|before_.+|add_module|add_var|check_compile_args|enclose_paren|init_cd)$
+
 =head1 ATTRIBUTES
 
 These usually need not be set/changed by users.
@@ -285,13 +289,17 @@ comment>), 'shell' (C<# comment>), 'c' (C</* comment */>), or 'ini' (C<;
 comment>). Each programming language subclass will set this, for example, the
 perl compiler sets this to 'shell' while js sets this to 'cpp'.
 
+=head2 var_sigil => STR
+
+To be moved to Perlish.
+
 =head1 METHODS
 
 =head2 new() => OBJ
 
 =head2 $c->compile(%args) => RESULT
 
-Aside from BaseCompiler's arguments, this class supports these arguments (suffix
+Aside from base class' arguments, this class supports these arguments (suffix
 C<*> denotes required argument):
 
 =over 4

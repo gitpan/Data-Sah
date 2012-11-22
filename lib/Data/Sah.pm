@@ -4,7 +4,7 @@ use 5.010;
 use Moo;
 use Log::Any qw($log);
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 
 our $Log_Validator_Code = $ENV{LOG_SAH_VALIDATOR_CODE} // 0;
 
@@ -51,6 +51,7 @@ has _var_enumer  => (
 our $type_re        = qr/\A(?:[A-Za-z_]\w*::)*[A-Za-z_]\w*\z/;
 our $clause_name_re = qr/\A[A-Za-z_]\w*\z/;
 our $clause_re      = qr/\A[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*\z/;
+our $attr_re        = $clause_re;
 our $funcset_re     = qr/\A(?:[A-Za-z_]\w*::)*[A-Za-z_]\w*\z/;
 our $compiler_re    = qr/\A[A-Za-z_]\w*\z/;
 our $clause_attr_on_empty_clause_re = qr/\A(?:\.[A-Za-z_]\w*)+\z/;
@@ -130,6 +131,7 @@ sub normalize_schema {
             }
 
             my $sc = "";
+            my $cn;
             {
                 my $errp = "Invalid clause name syntax '$c0'"; # error prefix
                 if (!$expr && $c =~ s/\A!(?=.)//) {
@@ -144,6 +146,13 @@ sub normalize_schema {
                     die "$errp, syntax should be CLAUSE&"
                         unless $c =~ $clause_name_re;
                     $sc = "&";
+                } elsif (!$expr && $c =~ /\A([^.]+)(?:\.(.+))?\((\w+)\)\z/) {
+                    my ($c2, $a, $lang) = ($1, $2, $3);
+                    die "$errp, syntax should be CLAUSE(LANG) or C.ATTR(LANG)"
+                        unless $c2 =~ $clause_name_re &&
+                            (!defined($a) || $a =~ $attr_re);
+                    $sc = "(LANG)";
+                    $cn = $c2 . (defined($a) ? ".$a" : "") . ".alt.lang.$lang";
                 } elsif ($c !~ $clause_re &&
                              $c !~ $clause_attr_on_empty_clause_re) {
                     die "$errp, please use letter/digit/underscore only";
@@ -177,6 +186,10 @@ sub normalize_schema {
                 $cset->{$c} = $v;
                 $cset->{"$c.is_multi"} = 1;
                 $cset->{"$c.min_ok"} = 1;
+            } elsif ($sc eq '(LANG)') {
+                die "Conflict between clause '$c' and '$cn'"
+                    if exists $cset0->{$cn};
+                $cset->{$cn} = $v;
             } else {
                 $cset->{$c} = $v;
             }
@@ -210,15 +223,25 @@ sub gen_validator {
     }
 
     my ($schema, $opts0) = @_;
-    $opts0 //= {};
-    my %copts = %$opts0;
-    $copts{schema}       //= $schema;
-    $copts{indent_level} //= 1;
-    $copts{data_name}    //= 'data';
-    $copts{return_type}  //= 'bool';
+    my %copts = %{$opts0 // {}};
+    my $opt_source = delete $copts{source};
+    my $aref       = delete $copts{accept_ref};
+    $copts{schema}       = $schema;
+    $copts{indent_level} = 1;
+    $copts{data_name}    = 'data';
+
+    my $vt;
+    if ($aref) {
+        $vt = '$ref_data';
+        $copts{data_term} = '$$ref_data';
+    } else {
+        $vt = '$data';
+        $copts{data_term} = '$data';
+    }
 
     my $do_log = $copts{debug_log} || $copts{debug};
-    my $vrt    = $copts{return_type};
+    my $vrt    = $copts{return_type} // 'bool';
+    my $dt     = $copts{data_term};
 
     my $pl = $self->get_compiler("perl");
     my $cd;
@@ -234,9 +257,9 @@ sub gen_validator {
     }
     push @code, "require $_;\n" for @{ $cd->{modules} };
     push @code, "sub {\n";
-    push @code, "    my (\$data) = \@_;\n";
+    push @code, "    my ($vt) = \@_;\n";
     if ($do_log) {
-        push @code, "    \$log->tracef('-> (validator)(%s) ...', \$data);\n";
+        push @code, "    \$log->tracef('-> (validator)(%s) ...', $dt);\n";
         # str/full also need this, to avoid "useless ... in void context" warn
     }
     if ($vrt ne 'bool') {
@@ -259,6 +282,7 @@ sub gen_validator {
     push @code, ";\n}\n";
 
     my $code = join "", @code;
+    return $code if $opt_source;
     if ($Log_Validator_Code && $log->is_trace) {
         $log->tracef("validator code:\n%s",
                      SHARYANTO::String::Util::linenum($code));
@@ -336,7 +360,7 @@ Data::Sah - Schema for data structures (Perl implementation)
 
 =head1 VERSION
 
-version 0.08
+version 0.09
 
 =head1 SYNOPSIS
 
@@ -388,8 +412,50 @@ The generated validator code can run without this module.
 
 =head1 STATUS
 
-Early implementation, only Perl compiler implemented. Only a handful of types
-and attributes supported.
+Early implementation, some features are not implemented yet. Below is a list of
+things that are not yet implemented:
+
+=over
+
+=item * human compiler
+
+not yet implemented.
+
+=item * js compiler
+
+not yet implemented.
+
+=item * perl compiler
+
+=over
+
+=item * def/subschema
+
+=item * expression
+
+=item * buf type
+
+=item * date/datetime type
+
+=item * obj: methods, attrs properties
+
+=item * .prio, .err_msg, .ok_err_msg attributes
+
+=item * .result_var attribute
+
+=item * BaseType: ok, cset, if, prefilters, postfilters, check, prop, check_prop
+
+=item * HasElems: each_elem, each_index, check_each_elem, check_each_index, exists
+
+=item * HasElems: len, elems, indices properties
+
+=item * hash: re_keys, each_key, each_value, check_each_key, check_each_value, allowed_keys, allowed_keys_re
+
+=item * array: has, uniq
+
+=back
+
+=back
 
 =head1 EXPORTS
 
@@ -401,12 +467,42 @@ Normalize C<$schema>.
 
 Can also be used as a method.
 
-=head2 gen_validator($schema, \%opts) => CODE
+=head2 gen_validator($schema, \%opts) => CODE (or STR)
 
-Generate validator code for C<$schema>. C<%opts> are passed to the Perl schema
-compiler.
+Generate validator code for C<$schema>. Can also be used as a method. Known
+options (unknown options will be passed to Perl schema compiler):
 
-Can also be used as a method.
+=over
+
+=item * accept_ref => BOOL (default: 0)
+
+Normally the generated validator accepts data, as in:
+
+ $res = $vdr->($data);
+ $res = $vdr->(42);
+
+If this option is set to true, validator accepts reference to data instead, as
+in:
+
+ $res = $vdr->(\$data);
+
+This allows $data to be modified by the validator (mainly, to set default value
+specified in schema). For example:
+
+ my $data;
+ my $vdr = gen_validator([int => {min=>0, max=>10, default=>5}],
+                         {accept_ref=>1});
+ my $res = $vdr->(\$data);
+ say $res;  # => 1 (success)
+ say $data; # => 5
+
+=item * source => BOOL (default: 0)
+
+If set to 1, return source code string instead of compiled subroutine. Usually
+only needed for debugging (but see also C<$Log_Validator_Code> and
+C<LOG_SAH_VALIDATOR_CODE> if you want to log validator source code).
+
+=back
 
 =head1 ATTRIBUTES
 
@@ -459,47 +555,38 @@ $min in the above expression will be normalized as C<schema:clauses.min>.
 
 =head2 $sah->gen_validator($schema, \%opts) => CODE
 
-Use the Perl compiler to generate validator code. C<%opts> will be passed to the
-Perl compiler.
-
-Can also be used as a function.
+Use the Perl compiler to generate validator code. Can also be used as a
+function. See the documentation as a function for list of known options.
 
 =head1 MODULE ORGANIZATION
 
-B<Data::Sah::Type::*> roles specify Sah types, e.g. Data::Sah::Type::bool
-specifies the bool type.
+B<Data::Sah::Type::*> roles specify Sah types, e.g. C<Data::Sah::Type::bool>
+specifies the bool type. It can also be used to name distributions that
+introduce new types, e.g. C<Data-Sah-Type-complex> which introduces complex
+number type.
 
 B<Data::Sah::FuncSet::*> roles specify bundles of functions, e.g.
-Data::Sah::FuncSet::Core specifies the core/standard functions.
+<Data::Sah::FuncSet::Core> specifies the core/standard functions.
 
-B<Data::Sah::Compiler::$LANG::> namespace is for compilers. Each compiler (if
-derived from BaseCompiler) might further contain ::TH::* and ::FSH::* to
-implement appropriate functionalities, e.g. Data::Sah::Compiler::perl::TH::bool
-is the 'bool' type handler for the Perl compiler and
-Data::Sah::Compiler::perl::FSH::Core is the funcset 'Core' handler for Perl
-compiler.
-
-B<Data::Sah::Lang::$LANGCODE::*> namespace is reserved for modules that contain
-translations. Language submodules follows the organization of other modules,
-e.g. Data::Sah::Lang::en_US::Type::int, Data::Sah::Lang::id_ID::FuncSet::Core,
-etc.
-
-B<Data::Sah::Schema::> namespace is reserved for modules that contain bundles of
-schemas. For example, L<Data::Sah::Schema::CPANMeta> contains the schema to
-validate CPAN META.yml. L<Data::Sah::Schema::Sah> contains the schema for Sah
-schema itself.
+B<Data::Sah::Compiler::$LANG::> namespace is for compilers. Each compiler might
+further contain <::TH::*> and <::FSH::*> subnamespaces to implement appropriate
+functionalities, e.g. C<Data::Sah::Compiler::perl::TH::bool> is the bool type
+handler for the Perl compiler and C<Data::Sah::Compiler::perl::FSH::Core> is the
+Core funcset handler for Perl compiler.
 
 B<Data::Sah::TypeX::$TYPENAME::$CLAUSENAME> namespace can be used to name
 distributions that extend an existing Sah type by introducing a new clause for
-it. It must also contain, at the minimum: perl, js, and human compiler
-implementations for it, as well as English translations. For example,
-Data::Sah::TypeX::int::is_prime is a distribution that adds C<is_prime> clause
-to the C<int> type. It will contain the following packages inside:
-Data::Sah::Type::int, Data::Sah::Compiler::{perl,human,js}::TH::int. Other
-compilers' implementation can be packaged under
-B<Data::Sah::Compiler::$COMPILERNAME::TypeX::$TYPENAME::$CLAUSENAME>, e.g.
-Data::Sah::Compiler::python::TypeX::int::is_prime distribution. Language can be
-put in B<Data::Sah::Lang::$LANGCODE::TypeX::int::is_prime>.
+it. See L<Data::Sah::Manual::Extending> for an example.
+
+B<Data::Sah::Lang::$LANGCODE> namespaces are for modules that contain
+translations. They are further organized according to the organization of other
+Data::Sah modules, e.g. L<Data::Sah::Lang::en_US::Type::int> or
+C<Data::Sah::Lang::en_US::TypeX::str::is_palindrome>.
+
+B<Data::Sah::Schema::> namespace is reserved for modules that contain bundles of
+schemas. For example, C<Data::Sah::Schema::CPANMeta> contains the schema to
+validate CPAN META.yml. L<Data::Sah::Schema::Sah> contains the schema for Sah
+schema itself.
 
 =head1 FAQ
 

@@ -1,9 +1,9 @@
 package Data::Sah::Type::HasElems;
 
 use Moo::Role;
-use Data::Sah::Util 'has_clause';
+use Data::Sah::Util::Role 'has_clause';
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 
 requires 'superclause_has_elems';
 
@@ -114,7 +114,9 @@ Data::Sah::Type::HasElems - HasElems role
 
 =head1 VERSION
 
-version 0.08
+version 0.09
+
+=for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 
 =head1 AUTHOR
 

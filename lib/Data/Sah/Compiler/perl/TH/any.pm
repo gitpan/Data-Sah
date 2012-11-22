@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::any';
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -32,6 +32,7 @@ sub clause_of {
 1;
 # ABSTRACT: perl's type handler for type "any"
 
+
 __END__
 =pod
 
@@ -41,7 +42,9 @@ Data::Sah::Compiler::perl::TH::any - perl's type handler for type "any"
 
 =head1 VERSION
 
-version 0.08
+version 0.09
+
+=for Pod::Coverage ^(clause_.+|superclause_.+)$
 
 =head1 AUTHOR
 

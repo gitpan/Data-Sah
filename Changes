@@ -1,5 +1,24 @@
 Revision history for Data-Sah
 
+0.09     2012-11-22 (SHARYANTO)
+
+         0.08 was broken, sorry.
+
+         [ENHANCEMENTS]
+
+         - Add gen_validator() options: accept_ref and source. Unknown options
+           are still passed to Perl schema compiler.
+
+         - Add compile() option: skip_clause.
+
+         - perl: Implement hash's keys, keys.restrict, keys.create_default.
+           Implement array's elems, elems.create_default.
+
+         [REFACTORING]
+
+         - Split Data::Sah::Util{::Role,::TypeX} so each can stay slim.
+
+
 0.08     2012-11-06 (SHARYANTO)
 
          [ENHANCEMENTS]
@@ -59,6 +78,8 @@ Revision history for Data-Sah
            "array" types are supported; more will be coming soon).
 
          - Add module Data::Sah::Simple.
+
+         - Add compile() option: on_unhandled_{clause,attr}.
 
 
 0.04     2012-07-20 (SHARYANTO)

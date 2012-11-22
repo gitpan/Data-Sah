@@ -3,7 +3,7 @@ package Data::Sah::Type::code;
 use Moo::Role;
 with 'Data::Sah::Type::BaseType';
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 
 1;
 # ABSTRACT: code type
@@ -18,7 +18,9 @@ Data::Sah::Type::code - code type
 
 =head1 VERSION
 
-version 0.08
+version 0.09
+
+=for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 
 =head1 AUTHOR
 

@@ -7,7 +7,7 @@ extends 'Data::Sah::Compiler::Prog';
 
 use SHARYANTO::String::Util;
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 
 sub BUILD {
     my ($self, $args) = @_;
@@ -27,6 +27,7 @@ sub literal {
     local $Data::Dumper::Terse    = 1;
     local $Data::Dumper::Indent   = 0;
     #local $Data::Dumper::Deepcopy = 1;
+    local $Data::Dumper::Useqq    = 1;
     my $res = Data::Dumper::Dumper($val);
     chomp $res;
     $res;
@@ -40,11 +41,12 @@ sub expr {
 sub compile {
     my ($self, %args) = @_;
 
-    $self->expr_compiler->compiler->hook_var(
-        sub {
-            $_[0];
-        }
-    );
+    #$self->expr_compiler->compiler->hook_var(
+    #    sub {
+    #        $_[0];
+    #    }
+    #);
+
     #$self->expr_compiler->compiler->hook_func(
     #    sub {
     #        my ($name, @args) = @_;
@@ -123,7 +125,7 @@ sub add_ccl {
 }
 
 # join ccls to handle {min,max}_{ok,nok} and insert error messages. opts =
-# {min,max}_{ok,nok}, err_term (default from $cd->{args}{err_term})
+# {min,max}_{ok,nok}
 sub join_ccls {
     my ($self, $cd, $ccls, $opts) = @_;
     $opts //= {};
@@ -409,7 +411,7 @@ Data::Sah::Compiler::perl - Compile Sah schema to Perl code
 
 =head1 VERSION
 
-version 0.08
+version 0.09
 
 =head1 SYNOPSIS
 
@@ -419,7 +421,7 @@ version 0.08
 
 Derived from L<Data::Sah::Compiler::Prog>.
 
-=for Pod::Coverage BUILD
+=for Pod::Coverage BUILD ^(after_.+|before_.+|name|expr|literal|add_ccl|join_ccls)$
 
 =head1 METHODS
 

@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::code';
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -19,6 +19,7 @@ sub handle_type {
 1;
 # ABSTRACT: perl's type handler for type "code"
 
+
 __END__
 =pod
 
@@ -28,7 +29,9 @@ Data::Sah::Compiler::perl::TH::code - perl's type handler for type "code"
 
 =head1 VERSION
 
-version 0.08
+version 0.09
+
+=for Pod::Coverage ^(clause_.+|superclause_.+)$
 
 =head1 AUTHOR
 

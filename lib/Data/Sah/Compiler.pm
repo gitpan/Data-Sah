@@ -9,7 +9,7 @@ with 'Data::Sah::Compiler::TextResultRole';
 
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 
 has main => (is => 'rw');
 
@@ -282,6 +282,7 @@ sub init_cd {
         $cd->{default_lang} = $ENV{LANG} // "en_US";
         $cd->{default_lang} =~ s/\..+//; # en_US.UTF-8 -> en_US
     }
+    $cd->{ccls} = [];
 
     $cd;
 }
@@ -291,11 +292,12 @@ sub check_compile_args {
 
     $args->{data_name} //= 'data';
     $args->{data_name} =~ /\A[A-Za-z_]\w*\z/ or $self->_die(
-        {}, "Invalid syntax in data_name, ".
+        {}, "Invalid syntax in data_name '$args->{data_name}', ".
             "please use letters/nums only");
     $args->{allow_expr} //= 1;
     $args->{on_unhandled_attr}   //= 'die';
     $args->{on_unhandled_clause} //= 'die';
+    $args->{skip_clause}         //= [];
 }
 
 sub compile {
@@ -356,6 +358,7 @@ sub compile {
 
     my $cname = $self->name;
     $cd->{ucsets} = [];
+    $cd->{_cset_dlangs} = []; # default lang for each cset
     for my $cset (@$csets) {
         for (keys %$cset) {
             if (!$args{allow_expr} && /\.is_expr\z/ && $cset->{$_}) {
@@ -368,9 +371,17 @@ sub compile {
                     !/\A_|\._/ && (!/\Ac\./ || /\Ac\.\Q$cname\E\./)
                 } keys %$cset
         };
+        my $dl = $cset->{default_lang} // $cd->{outer_cd}{cset_dlang} //
+            "en_US";
+        push @{ $cd->{_cset_dlangs} }, $dl;
     }
 
     my $clauses = $self->_sort_csets($cd, $csets);
+
+    if ($self->can("before_handle_type")) {
+        $log->tracef("=> comp->before_handle_type()");
+        $self->before_handle_type($cd);
+    }
 
     $log->tracef("=> th->handle_type()");
     $th->handle_type($cd);
@@ -390,12 +401,16 @@ sub compile {
     for my $clause0 (@$clauses) {
         my ($cset_num, $clause) = @$clause0;
         my $cset = $csets->[$cset_num];
-        local $cd->{cset}     = $cset;
-        local $cd->{cset_num} = $cset_num;
-        local $cd->{ucset}    = $cd->{ucsets}[$cset_num];
+        local $cd->{cset}       = $cset;
+        local $cd->{cset_num}   = $cset_num;
+        local $cd->{ucset}      = $cd->{ucsets}[$cset_num];
+        local $cd->{cset_dlang} = $cd->{_cset_dlangs}[$cset_num];
         #$log->tracef("Processing clause %s: %s", $clause);
 
+        delete $cd->{ucset}{$clause};
         delete $cd->{ucset}{"$clause.prio"};
+
+        next CLAUSE if $clause ~~ $args{skip_clause};
 
         my $meth  = "clause_$clause";
         my $mmeth = "clausemeta_$clause";
@@ -521,6 +536,19 @@ sub def {
     $cd->{th_map}{$name} = $nschema;
 }
 
+sub _ignore_clause {
+    my ($self, $cd) = @_;
+    my $cl = $cd->{clause};
+    delete $cd->{ucset}{$cl};
+}
+
+sub _ignore_clause_and_attrs {
+    my ($self, $cd) = @_;
+    my $cl = $cd->{clause};
+    delete $cd->{ucset}{$cl};
+    delete $cd->{ucset}{$_} for grep /\A\Q$cl\E\./, keys %{$cd->{ucset}};
+}
+
 1;
 # ABSTRACT: Base class for Sah compilers (Data::Sah::Compiler::*)
 
@@ -534,7 +562,9 @@ Data::Sah::Compiler - Base class for Sah compilers (Data::Sah::Compiler::*)
 
 =head1 VERSION
 
-version 0.08
+version 0.09
+
+=for Pod::Coverage ^(check_compile_args|def|expr|init_cd|literal|name)$
 
 =head1 ATTRIBUTES
 
@@ -592,11 +622,25 @@ What to do when a clause can't be handled by compiler (either it is an invalid
 clause, or the compiler has not implemented it yet). Valid values include:
 C<die>, C<warn>, C<ignore>.
 
-=item * indent_level => INTT (default: 0)
+=item * indent_level => INT (default: 0)
 
 Start at a specified indent level. Useful when generated code will be inserted
 into another code (e.g. inside C<sub {}> where it is nice to be able to indent
 the inside code).
+
+=item * skip_clause => ARRAY (default: [])
+
+List of clauses to skip (to assume as if it did not exist). Example when
+compiling with the human compiler:
+
+ # schema
+ [int => {default=>1, between=>[1, 10]}]
+
+ # generated human description in English
+ integer, between 1 and 10, default 1
+
+ # generated human description, with skip_clause => ['default']
+ integer, between 1 and 10
 
 =back
 
@@ -667,6 +711,12 @@ processing base type's clause set.
 
 Current clause set being processed. Note that clauses are evaluated not strictly
 in cset order, but instead based on expression dependencies and priority.
+
+=item * B<cset_dlang> => HASH
+
+Default language of the current clause set. This value is taken from C<<
+$cd->{cset}{default_lang} >> or C<< $cd->{outer_cd}{default_lang} >> or the
+default C<en_US>.
 
 =item * B<cset_num> => INT
 
@@ -778,6 +828,10 @@ Called once at the beginning of compilation.
 
 If hook sets $cd->{SKIP_COMPILE} to true then the whole compilation
 process will end (after_compile() will not even be called).
+
+=item * $c->before_handle_type($cd)
+
+=item * $th->handle_type($cd)
 
 =item * $c->before_all_clauses($cd)
 

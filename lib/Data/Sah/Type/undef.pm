@@ -1,12 +1,13 @@
 package Data::Sah::Type::undef;
 
 use Moo::Role;
-use Data::Sah::Util 'has_clause';
+use Data::Sah::Util::Role 'has_clause';
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 
 1;
 # ABSTRACT: undef type
+
 
 __END__
 =pod
@@ -17,7 +18,9 @@ Data::Sah::Type::undef - undef type
 
 =head1 VERSION
 
-version 0.08
+version 0.09
+
+=for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 
 =head1 AUTHOR
 

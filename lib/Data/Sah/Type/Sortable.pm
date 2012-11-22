@@ -1,9 +1,9 @@
 package Data::Sah::Type::Sortable;
 
 use Moo::Role;
-use Data::Sah::Util 'has_clause';
+use Data::Sah::Util::Role 'has_clause';
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 
 requires 'superclause_sortable';
 
@@ -62,13 +62,15 @@ Data::Sah::Type::Sortable - Role for sortable types
 
 =head1 VERSION
 
-version 0.08
+version 0.09
 
 =head1 DESCRIPTION
 
 Role consumer must provide method C<superclause_sortable> which will receive the
 same C<%args> as clause methods, but with additional key: C<-which> (either
 C<min>, C<max>, C<xmin>, C<xmax>, C<between>, C<xbetween>).
+
+=for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 
 =head1 AUTHOR
 
