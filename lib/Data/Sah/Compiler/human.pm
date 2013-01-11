@@ -6,28 +6,50 @@ extends 'Data::Sah::Compiler';
 use Log::Any qw($log);
 
 use POSIX qw(locale_h);
+use Text::sprintfn;
 
-our $VERSION = '0.09'; # VERSION
+our $VERSION = '0.10'; # VERSION
 
 # every type extension is registered here
 our %typex; # key = type, val = [clause, ...]
 
 sub name { "human" }
 
+sub _add_msg_catalog {
+    my ($self, $cd, $msg) = @_;
+    return unless $cd->{args}{format} eq 'msg_catalog';
+
+    my $spath = join("/", @{ $cd->{spath} });
+    $cd->{_msg_catalog}{$spath} = $msg;
+}
+
 sub check_compile_args {
     my ($self, $args) = @_;
 
     $self->SUPER::check_compile_args($args);
 
-    $args->{mark_fallback} //= 1;
-    for ($args->{lang}) {
-        $_ //= $ENV{LANG} // $ENV{LANGUAGE} // "en_US";
-        s/\W.*//; # LANG=en_US.UTF-8, LANGUAGE=en_US:en
+    my @fmts = ('inline_text', 'inline_err_text', 'markdown', 'msg_catalog');
+    $args->{format} //= $fmts[0];
+    unless ($args->{format} ~~ @fmts) {
+        $self->_die({}, "Unsupported format, use one of: ".join(", ", @fmts));
     }
+}
+
+sub init_cd {
+    my ($self, %args) = @_;
+
+    my $cd = $self->SUPER::init_cd(%args);
+    if ($cd->{args}{format} eq 'msg_catalog') {
+        $cd->{_msg_catalog} //= $cd->{outer_cd}{_msg_catalog};
+        $cd->{_msg_catalog} //= {};
+    }
+    $cd;
 }
 
 sub literal {
     my ($self, $cd, $val) = @_;
+
+    return $val unless ref($val);
 
     # for now we use JSON. btw, JSON does obey locale setting, e.g. [1.2]
     # encoded to "[1,2]" in id_ID.
@@ -36,9 +58,16 @@ sub literal {
         JSON->new->allow_nonref;
     };
 
-    # XXX for nicer output, perhaps say "empty list" instead of "[]", "empty
-    # structure" instead of "{}", etc.
-    $json->encode($val);
+    # we also need cleaning if we use json, since json can't handle qr//, for
+    # one.
+    state $cleanser = do {
+        require Data::Clean::JSON;
+        Data::Clean::JSON->new;
+    };
+
+    # XXX for nicer output, perhaps say "empty array" instead of "[]", "empty
+    # hash" instead of "{}", etc.
+    $json->encode($cleanser->clone_and_clean($val));
 }
 
 sub expr {
@@ -52,10 +81,13 @@ sub expr {
     $expr;
 }
 
-sub _translate {
+# translate
+sub _xlt {
     my ($self, $cd, $text) = @_;
 
     my $lang = $cd->{args}{lang};
+
+    #$log->tracef("translating text '%s' to '%s'", $text, $lang);
 
     return $text if $lang eq 'en_US';
     my $translations;
@@ -64,94 +96,284 @@ sub _translate {
         $translations = \%{"Data::Sah::Lang::$lang\::translations"};
     }
     return $translations->{$text} if defined($translations->{$text});
-    if ($cd->{args}{mark_fallback}) {
-        return "(en_US:$text)";
+    if ($cd->{args}{mark_missing_translation}) {
+        return "(no $lang text:$text)";
     } else {
         return $text;
     }
 }
 
+# ($cd, 3, "element") -> "3rd element"
+sub _ordinate {
+    my ($self, $cd, $n, $noun) = @_;
+
+    my $lang = $cd->{args}{lang};
+    if ($lang eq 'en_US') {
+        require Lingua::EN::Numbers::Ordinate;
+        return Lingua::EN::Numbers::Ordinate::ordinate($n) . " $noun";
+    }
+
+    {
+        no strict 'refs';
+        return "Data::Sah::Lang::$lang\::ordinate"->($n, $noun);
+    }
+}
+
 # add a compiled clause (ccl), which will be combined at the end of compilation
-# to be the final result. args is a hashref with these keys (*=required):
+# to be the final result. args is a hashref with these keys:
 #
-# * type* - str. either 'noun', 'clause', 'list' (bulleted list, a clause
-#   followed by a list of items, each of them is also a ccl)
+# * type* - str (default 'clause'). either 'noun', 'clause', 'list' (bulleted
+#   list, a clause followed by a list of items, each of them is also a ccl)
 #
 # * fmt* - str/2-element array. human text which can be used as the first
 #   argument to sprintf. string. if type=noun, can be a two-element arrayref to
 #   contain singular and plural version of noun.
 #
-# * is_constraint - bool (default 0). if true, state that the clause is a
-#   constraint and can be prefixed with 'must be %s', 'should be %s', 'must not
-#   be %s', 'should not be %s'.
+# * expr - bool. fmt can handle .is_expr=1. for example, 'len=' => '1+1' can be
+#   compiled into 'length must be 1+1'. other clauses cannot handle expression,
+#   e.g. 'between=' => '[2, 2*2]'. this clause will be using the generic message
+#   'between must [2, 2*2]'
 #
 # * vals - arrayref (default [clause value]). values to fill fmt with.
 #
-# * items - arrayref. required if type=list. a list of ccls.
+# * items - arrayref. required if type=list. a single ccl or a list of ccls.
+#
+# * xlt - bool (default 1). set to 0 if fmt has been translated, and should not
+#   be translated again.
 #
 # add_ccl() is called by clause handlers and handles using .human, translating
 # fmt, sprintf(fmt, vals) into 'text', .err_level (adding 'must be %s', 'should
-# not be %s'), .is_expr, .is_multi & {min,max}_{ok,nok}.
+# not be %s'), .is_expr, .op.
 sub add_ccl {
     my ($self, $cd, $ccl) = @_;
+    #$log->errorf("TMP: add_ccl %s", $ccl);
+
+    $ccl->{xlt} //= 1;
 
     my $clause = $cd->{clause} // "";
-    my $lang   = $cd->{args}{lang};
-    my $dlang  = $cd->{cset_dlang} // "en_US"; # undef if not in clause handler
+    $ccl->{type} //= "clause";
+
+    my $do_xlt = 1;
+
+    my $hvals = {
+        modal_verb     => $self->_xlt($cd, "must"),,
+        modal_verb_neg => $self->_xlt($cd, "must not"),
+    };
+    my $mod="";
 
     # is .human for desired language specified? if yes, use that instead
 
-    delete $cd->{ucset}{$_} for
-        grep /\A\Q$clause.human\E(\.|\z)/, keys %{$cd->{ucset}};
-    my $suff = $lang eq $dlang ? "" : ".alt.lang.$lang";
-    if (defined $cd->{cset}{"$clause.human$suff"}) {
-        $ccl = {
-            type          => 'clause',
-            fmt           => $cd->{cset}{"$clause.human$suff"},
-            is_constraint => 0,
-            vals          => $ccl->{vals},
-        };
-        goto TRANSLATE;
+    {
+        my $lang   = $cd->{args}{lang};
+        my $dlang  = $cd->{clset_dlang} // "en_US"; # undef if not in clause
+        my $suffix = $lang eq $dlang ? "" : ".alt.lang.$lang";
+        if ($clause) {
+            delete $cd->{uclset}{$_} for
+                grep /\A\Q$clause.human\E(\.|\z)/, keys %{$cd->{uclset}};
+            if (defined $cd->{clset}{"$clause.human$suffix"}) {
+                $ccl->{type} = 'clause';
+                $ccl->{fmt}  = $cd->{clset}{"$clause.human$suffix"};
+                goto FILL_FORMAT;
+            }
+        } else {
+            delete $cd->{uclset}{$_} for
+                grep /\A\.name(\.|\z)/, keys %{$cd->{uclset}};
+            if (defined $cd->{clset}{".name$suffix"}) {
+                $ccl->{type} = 'noun';
+                $ccl->{fmt}  = $cd->{clset}{".name$suffix"};
+                $ccl->{vals} = undef;
+                goto FILL_FORMAT;
+            }
+        }
     }
 
     goto TRANSLATE unless $clause;
 
-    # handle .is_multi, .{min,max}_{ok,nok}, .is_expr
+    my $ie   = $cd->{cl_is_expr};
+    my $op   = $cd->{cl_op} // "";
+    my $cv   = $cd->{clset}{$clause};
+    my $vals = $ccl->{vals} // [$cv];
 
-    my $cv = $cd->{cl_value};
-    $self->_die($cd, "'$clause.is_multi' attribute set, ".
-                    "but value of '$clause' clause not an array")
-        if $cd->{cl_is_multi} && ref($cv) ne 'ARRAY';
+    # handle .is_expr
 
-    # XXX
+    if ($ie) {
+        if (!$ccl->{expr}) {
+            $ccl->{fmt} = "($clause -> %s" . ($op ? " op=$op" : "") . ")";
+            $do_xlt = 0;
+            $vals = [$self->expr($cd, $vals)];
+        }
+        goto ERR_LEVEL;
+    }
+
+    # handle .op
+
+    my $im   = $op =~ /^(and|or|none)$/;
+    if ($op eq 'not') {
+        ($hvals->{modal_verb}, $hvals->{modal_verbneg}) =
+            ($hvals->{modal_verb_neg}, $hvals->{modal_verb});
+    } elsif ($op eq 'and') {
+        if (@$cv == 2) {
+            $vals = [sprintf($self->_xlt($cd, "%s and %s"),
+                             $self->literal($cd, $cv->[0]),
+                             $self->literal($cd, $cv->[1]))];
+        } else {
+            $vals = [sprintf($self->_xlt($cd, "all of %s"),
+                             $self->literal($cd, $cv))];
+        }
+    } elsif ($op eq 'or') {
+        if (@$cv == 2) {
+            $vals = [sprintf($self->_xlt($cd, "%s or %s"),
+                             $self->literal($cd, $cv->[0]),
+                             $self->literal($cd, $cv->[1]))];
+        } else {
+            $vals = [sprintf($self->_xlt($cd, "one of %s"),
+                             $self->literal($cd, $cv))];
+        }
+    } elsif ($op eq 'none') {
+        ($hvals->{modal_verb}, $hvals->{modal_verbneg}) =
+            ($hvals->{modal_verb_neg}, $hvals->{modal_verb});
+        if (@$cv == 2) {
+            $vals = [sprintf($self->_xlt($cd, "%s nor %s"),
+                             $self->literal($cd, $cv->[0]),
+                             $self->literal($cd, $cv->[1]))];
+        } else {
+            $vals = [sprintf($self->_xlt($cd, "any of %s"),
+                             $self->literal($cd, $cv))];
+        }
+    } else {
+        $vals = [map {$self->literal($cd, $_)} @$vals];
+    }
+
+  ERR_LEVEL:
 
     # handle .err_level
-
-    delete $cd->{ucset}{$clause};
-    delete $cd->{ucset}{"$clause.err_level"};
-    delete $cd->{ucset}{"$clause.min_ok"};
-    delete $cd->{ucset}{"$clause.max_ok"};
-    delete $cd->{ucset}{"$clause.min_nok"};
-    delete $cd->{ucset}{"$clause.max_nok"};
+    if ($ccl->{type} eq 'clause' && 'constraint' ~~ $cd->{cl_meta}{tags}) {
+        if (($cd->{clset}{"$clause.err_level"}//'error') eq 'warn') {
+            if ($op eq 'not') {
+                $hvals->{modal_verb}     = $self->_xlt($cd, "should not");
+                $hvals->{modal_verb_neg} = $self->_xlt($cd, "should");
+            } else {
+                $hvals->{modal_verb}     = $self->_xlt($cd, "should");
+                $hvals->{modal_verb_neg} = $self->_xlt($cd, "should not");
+            }
+        }
+    }
+    delete $cd->{uclset}{"$clause.err_level"};
 
   TRANSLATE:
 
-    my $vals = $ccl->{vals} // [$cv];
+    if ($ccl->{xlt}) {
+        if (ref($ccl->{fmt}) eq 'ARRAY') {
+            $ccl->{fmt}  = [map {$self->_xlt($cd, $_)} @{$ccl->{fmt}}];
+        } elsif (!ref($ccl->{fmt})) {
+            $ccl->{fmt}  = $self->_xlt($cd, $ccl->{fmt});
+        }
+    }
+
+  FILL_FORMAT:
+
     if (ref($ccl->{fmt}) eq 'ARRAY') {
-        $ccl->{fmt}  = [map {$self->_translate($cd, $_)} @{$ccl->{fmt}}];
-        $ccl->{text} = [map {sprintf($_, @$vals)} @{$ccl->{fmt}}];
+        $ccl->{text} = [map {sprintfn($_, $hvals, @$vals)} @{$ccl->{fmt}}];
     } elsif (!ref($ccl->{fmt})) {
-        $ccl->{fmt}  = $self->_translate($cd, $ccl->{fmt});
-        $ccl->{text} = sprintf($ccl->{fmt}, @$vals);
+        $ccl->{text} = sprintfn($ccl->{fmt}, $hvals, @$vals);
     }
     delete $ccl->{fmt} unless $cd->{args}{debug};
 
     push @{$cd->{ccls}}, $ccl;
+
+    $self->_add_msg_catalog($cd, $ccl);
 }
 
-# join ccls to form final result.
-sub join_ccls {
-    "";
+# format ccls to form final result. at the end of compilation, we have a tree of
+# ccls. this method accept a single ccl (of type either noun/clause) or an array
+# of ccls (which it will join together).
+sub format_ccls {
+    my ($self, $cd, $ccls) = @_;
+
+    # used internally to determine if the result is a single noun, in which case
+    # when format is inline_err_text, we add 'Input is not of type '. XXX:
+    # currently this is the wrong way to count? we shouldn't count children?
+    # perhaps count from msg_catalog instead?
+    local $cd->{_fmt_noun_count} = 0;
+    local $cd->{_fmt_etc_count} = 0;
+
+    my $f = $cd->{args}{format};
+    my $res;
+    if ($f eq 'inline_text' || $f eq 'inline_err_text' || $f eq 'msg_catalog') {
+        $res = $self->_format_ccls_itext($cd, $ccls);
+        if ($f eq 'inline_err_text') {
+            #$log->errorf("TMP: noun=%d, etc=%d", $cd->{_fmt_noun_count}, $cd->{_fmt_etc_count});
+            if ($cd->{_fmt_noun_count} == 1 && $cd->{_fmt_etc_count} == 0) {
+                # a single noun (type name), we should add some preamble
+                $res = sprintf(
+                    $self->_xlt($cd, "Input is not of type %s"),
+                    $res
+                );
+            } elsif (!$cd->{_fmt_noun_count}) {
+                # a clause (e.g. "must be >= 10"), already looks like errmsg
+            } else {
+                # a noun + clauses (e.g. "integer, must be even"). add preamble
+                $res = sprintf(
+                    $self->_xlt(
+                        $cd, "Input does not satisfy the following schema: %s"),
+                    $res
+                );
+            }
+        }
+    } else {
+        $res = $self->_format_ccls_markdown($cd, $ccls);
+    }
+    $res;
+}
+
+sub _format_ccls_itext {
+    my ($self, $cd, $ccls) = @_;
+
+    local $cd->{args}{mark_missing_translation} = 0;
+    my $c_comma = $self->_xlt($cd, ", ");
+
+    if (ref($ccls) eq 'HASH' && $ccls->{type} =~ /^(noun|clause)$/) {
+        if ($ccls->{type} eq 'noun') {
+            $cd->{_fmt_noun_count}++;
+        } else {
+            $cd->{_fmt_etc_count}++;
+        }
+        # handle a single noun/clause ccl
+        my $ccl = $ccls;
+        return ref($ccl->{text}) eq 'ARRAY' ? $ccl->{text}[0] : $ccl->{text};
+    } elsif (ref($ccls) eq 'HASH' && $ccls->{type} eq 'list') {
+        # handle a single list ccl
+        my $c_openpar  = $self->_xlt($cd, "(");
+        my $c_closepar = $self->_xlt($cd, ")");
+        my $c_colon    = $self->_xlt($cd, ": ");
+        my $ccl = $ccls;
+
+        my $txt = $ccl->{text}; $txt =~ s/\s+$//;
+        my @t = ($txt, $c_colon);
+        my $i = 0;
+        for (@{ $ccl->{items} }) {
+            push @t, $c_comma if $i;
+            my $it = $self->_format_ccls_itext($cd, $_);
+            if ($it =~ /\Q$c_comma/) {
+                push @t, $c_openpar, $it, $c_closepar;
+            } else {
+                push @t, $it;
+            }
+            $i++;
+        }
+        return join("", @t);
+    } elsif (ref($ccls) eq 'ARRAY') {
+        # handle an array of ccls
+        return join($c_comma, map {$self->_format_ccls_itext($cd, $_)} @$ccls);
+    } else {
+        $self->_die($cd, "Can't format $ccls");
+    }
+}
+
+sub _format_ccls_markdown {
+    my ($self, $cd, $ccls) = @_;
+
+    $self->_die($cd, "Sorry, markdown not yet implemented");
 }
 
 sub _load_lang_modules {
@@ -191,8 +413,9 @@ sub before_compile {
     $cd->{_orig_locale} = setlocale(LC_ALL);
 
     # XXX do we need to set everything? LC_ADDRESS, LC_TELEPHONE, LC_PAPER, ...
-    my $res = setlocale(LC_ALL, $cd->{args}{lang});
-    warn "Unsupported locale $cd->{args}{lang}" unless defined($res);
+    my $res = setlocale(LC_ALL, $cd->{args}{locale} // $cd->{args}{lang});
+    warn "Unsupported locale $cd->{args}{lang}"
+        if $cd->{args}{debug} && !defined($res);
 }
 
 sub before_handle_type {
@@ -201,37 +424,60 @@ sub before_handle_type {
     $self->_load_lang_modules($cd);
 }
 
-sub before_all_clauses {
-    my ($self, $cd) = @_;
-}
-
 sub before_clause {
     my ($self, $cd) = @_;
 
-    # XXX a more human-friendly representation
-    $cd->{cl_human} = $cd->{cl_is_expr} ? $cd->{cl_term} : $cd->{cl_value};
+    # by default, human clause handler can handle multiple values (e.g.
+    # "div_by&"=>[2, 3] becomes "must be divisible by 2 and 3" instead of having
+    # to be ["must be divisible by 2", "must be divisible by 3"]. some clauses
+    # that don't can override this value to 0.
+    $cd->{CLAUSE_DO_MULTI} = 1;
 }
 
 sub after_clause {
     my ($self, $cd) = @_;
 
-    undef $cd->{cl_human};
+    # reset what we set in before_clause()
+    delete $cd->{CLAUSE_DO_MULTI};
 }
 
 sub after_all_clauses {
     my ($self, $cd) = @_;
 
-    # join ccls into sentence/paragraph/whatever
+    # quantify NOUN (e.g. integer) into 'required integer', 'optional integer',
+    # or 'forbidden integer'.
 
-    # stick default value
+    # my $q;
+    # if (!$cd->{clset}{'required.is_expr'} &&
+    #         !('required' ~~ $cd->{args}{skip_clause})) {
+    #     if ($cd->{clset}{required}) {
+    #         $q = 'required %s';
+    #     } else {
+    #         $q = 'optional %s';
+    #     }
+    # } elsif ($cd->{clset}{forbidden} && !$cd->{clset}{'forbidden.is_expr'} &&
+    #              !('forbidden' ~~ $cd->{args}{skip_clause})) {
+    #     $q = 'forbidden %s';
+    # }
+    # if ($q && @{$cd->{ccls}} && $cd->{ccls}[0]{type} eq 'noun') {
+    #     $q = $self->_xlt($cd, $q);
+    #     for (ref($cd->{ccls}[0]{text}) eq 'ARRAY' ?
+    #              @{ $cd->{ccls}[0]{text} } : $cd->{ccls}[0]{text}) {
+    #         $_ = sprintf($q, $_);
+    #     }
+    # }
 
-    #$cd->{result} = $self->join_ccls($cd, $cd->{ccls}, {err_msg => ''});
+    $cd->{result} = $self->format_ccls($cd, $cd->{ccls});
 }
 
 sub after_compile {
     my ($self, $cd) = @_;
 
     setlocale(LC_ALL, $cd->{_orig_locale});
+
+    if ($cd->{args}{format} eq 'msg_catalog') {
+        $cd->{result} = $cd->{_msg_catalog};
+    }
 }
 
 1;
@@ -247,7 +493,7 @@ Data::Sah::Compiler::human - Compile Sah schema to human language
 
 =head1 VERSION
 
-version 0.09
+version 0.10
 
 =head1 SYNOPSIS
 
@@ -256,7 +502,7 @@ version 0.09
 This class is derived from L<Data::Sah::Compiler>. It generates human language
 text.
 
-=for Pod::Coverage ^(name|literal|expr|add_ccl|join_ccls|check_compile_args|handle_.+|before_.+|after_.+)$
+=for Pod::Coverage ^(name|literal|expr|add_ccl|format_ccls|check_compile_args|handle_.+|before_.+|after_.+)$
 
 =head1 ATTRIBUTES
 
@@ -271,19 +517,26 @@ C<*> denotes required argument):
 
 =over 4
 
-=item * lang => STR (default: from LANG/LANGUAGE or C<en_US>)
+=item * format => STR (default: C<inline_text>)
 
-Desired output language. Defaults (and falls back to) C<en_US> since that's the
-language the text in the human strings are written in.
+Format of text to generate. Either C<inline_text>, C<inline_err_text>, or
+C<markdown>. Note that you can easily convert Markdown to HTML, there are
+libraries in Perl, JavaScript, etc to do that.
 
-=item * mark_fallback => BOOL (default: 1)
+Sample C<inline_text> output:
 
-If a piece of text is not found in desired language, C<en_US> version of the
-text will be used but using this format:
+ integer, must satisfy all of the following: (divisible by 3, at least 10)
 
- (en_US:the text to be translated)
+C<inline_err_text> is just like C<inline_text>, except geared towards producing
+an error message. Currently, instead of producing "integer" from schema "int",
+it produces "Input is not of type integer". The rest is identical.
 
-If you do not want this marker, set the C<mark_fallback> option to 0.
+Sample C<markdown> output:
+
+ integer, must satisfy all of the following:
+
+ * divisible by 3
+ * at least 10
 
 =back
 
@@ -309,7 +562,7 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Steven Haryanto.
+This software is copyright (c) 2013 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

@@ -4,7 +4,7 @@ use 5.010;
 use Moo;
 use Log::Any qw($log);
 
-our $VERSION = '0.09'; # VERSION
+our $VERSION = '0.10'; # VERSION
 
 our $Log_Validator_Code = $ENV{LOG_SAH_VALIDATOR_CODE} // 0;
 
@@ -94,11 +94,11 @@ sub normalize_schema {
         $t =~ $type_re or die "Invalid type syntax $s, please use ".
             "letter/digit/underscore only";
 
-        my $cset0;
+        my $clset0;
         my $extras;
         if (defined($s->[1])) {
             if (ref($s->[1]) eq 'HASH') {
-                $cset0 = $s->[1];
+                $clset0 = $s->[1];
                 $extras = $s->[2];
                 die "For array form, there should not be more than 3 elements"
                     if @$s > 3;
@@ -107,18 +107,18 @@ sub normalize_schema {
                 die "For array in the form of [t, c1=>1, ...], there must be ".
                     "3 elements (or 5, 7, ...)"
                         unless @$s % 2;
-                $cset0 = { @{$s}[1..@$s-1] };
+                $clset0 = { @{$s}[1..@$s-1] };
             }
         } else {
-            $cset0 = {};
+            $clset0 = {};
         }
 
         # check clauses and parse shortcuts (!c, c&, c|, c=)
-        my $cset = {};
-        for my $c (sort keys %$cset0) {
+        my $clset = {};
+        for my $c (sort keys %$clset0) {
             my $c0 = $c;
 
-            my $v = $cset0->{$c};
+            my $v = $clset0->{$c};
 
             # ignore expression
             my $expr;
@@ -126,8 +126,8 @@ sub normalize_schema {
                 $expr++;
                 # XXX currently can't disregard merge prefix when checking
                 # conflict
-                die "Conflict between '$c=' and '$c'" if exists $cset0->{$c};
-                $cset->{"$c.is_expr"} = 1;
+                die "Conflict between '$c=' and '$c'" if exists $clset0->{$c};
+                $clset->{"$c.is_expr"} = 1;
             }
 
             my $sc = "";
@@ -162,49 +162,48 @@ sub normalize_schema {
             # XXX can't disregard merge prefix when checking conflict
             if ($sc eq '!') {
                 die "Conflict between clause shortcuts '!$c' and '$c'"
-                    if exists $cset0->{$c};
+                    if exists $clset0->{$c};
                 die "Conflict between clause shortcuts '!$c' and '$c|'"
-                    if exists $cset0->{"$c|"};
+                    if exists $clset0->{"$c|"};
                 die "Conflict between clause shortcuts '!$c' and '$c&'"
-                    if exists $cset0->{"$c&"};
-                $cset->{$c} = $v;
-                $cset->{"$c.max_ok"} = 0;
+                    if exists $clset0->{"$c&"};
+                $clset->{$c} = $v;
+                $clset->{"$c.op"} = "not";
             } elsif ($sc eq '&') {
                 die "Conflict between clause shortcuts '$c&' and '$c'"
-                    if exists $cset0->{$c};
+                    if exists $clset0->{$c};
                 die "Conflict between clause shortcuts '$c&' and '$c|'"
-                    if exists $cset0->{"$c|"};
+                    if exists $clset0->{"$c|"};
                 die "Clause 'c&' value must be an array"
                     unless ref($v) eq 'ARRAY';
-                $cset->{$c} = $v;
-                $cset->{"$c.is_multi"} = 1;
+                $clset->{$c} = $v;
+                $clset->{"$c.op"} = "and";
             } elsif ($sc eq '|') {
                 die "Conflict between clause shortcuts '$c|' and '$c'"
-                    if exists $cset0->{$c};
+                    if exists $clset0->{$c};
                 die "Clause 'c|' value must be an array"
                     unless ref($v) eq 'ARRAY';
-                $cset->{$c} = $v;
-                $cset->{"$c.is_multi"} = 1;
-                $cset->{"$c.min_ok"} = 1;
+                $clset->{$c} = $v;
+                $clset->{"$c.op"} = "or";
             } elsif ($sc eq '(LANG)') {
                 die "Conflict between clause '$c' and '$cn'"
-                    if exists $cset0->{$cn};
-                $cset->{$cn} = $v;
+                    if exists $clset0->{$cn};
+                $clset->{$cn} = $v;
             } else {
-                $cset->{$c} = $v;
+                $clset->{$c} = $v;
             }
 
         }
-        $cset->{req} = 1 if $has_req;
+        $clset->{req} = 1 if $has_req;
 
         if (defined $extras) {
             die "For array form with 3 elements, extras must be hash"
                 unless ref($extras) eq 'HASH';
             die "'def' in extras must be a hash"
                 if exists $extras->{def} && ref($extras->{def}) ne 'HASH';
-            return [$t, $cset, { %{$extras} }];
+            return [$t, $clset, { %{$extras} }];
         } else {
-            return [$t, $cset, {}];
+            return [$t, $clset, {}];
         }
     }
 
@@ -258,12 +257,14 @@ sub gen_validator {
     push @code, "require $_;\n" for @{ $cd->{modules} };
     push @code, "sub {\n";
     push @code, "    my ($vt) = \@_;\n";
+    push @code, "    my \$$_ = ".$pl->literal($cd->{vars}{$_}).";\n"
+        for sort keys %{ $cd->{vars} };
     if ($do_log) {
         push @code, "    \$log->tracef('-> (validator)(%s) ...', $dt);\n";
         # str/full also need this, to avoid "useless ... in void context" warn
     }
     if ($vrt ne 'bool') {
-        push @code, '    my $err_data = '.($vrt eq 'str' ? "''" : "{}").";\n";
+        push @code, '    my $err_data = '.($vrt eq 'str' ? "undef":"{}").";\n";
     }
     push @code, "    my \$res = \n";
     push @code, $cd->{result};
@@ -273,6 +274,9 @@ sub gen_validator {
         }
         push @code, ";\n    return \$res";
     } else {
+        if ($vrt eq 'str') {
+            push @code, ";\n    \$err_data //= ''";
+        }
         if ($do_log) {
             push @code, ";\n    \$log->tracef('<- validator() = %s', ".
                 "\$err_data)";
@@ -285,7 +289,9 @@ sub gen_validator {
     return $code if $opt_source;
     if ($Log_Validator_Code && $log->is_trace) {
         $log->tracef("validator code:\n%s",
-                     SHARYANTO::String::Util::linenum($code));
+                     ($ENV{LINENUM} // 1) ?
+                         SHARYANTO::String::Util::linenum($code) :
+                               $code);
     }
 
     my $res = eval $code;
@@ -325,7 +331,6 @@ sub _merge_clause_sets {
 
 sub get_compiler {
     my ($self, $name) = @_;
-    $log->trace("-> get_compiler($name)");
     return $self->compilers->{$name} if $self->compilers->{$name};
 
     die "Invalid compiler name `$name`" unless $name =~ $compiler_re;
@@ -337,7 +342,6 @@ sub get_compiler {
     my $obj = $module->new(main => $self);
     $self->compilers->{$name} = $obj;
 
-    $log->trace("<- get_compiler($module)");
     return $obj;
 }
 
@@ -347,7 +351,7 @@ sub normalize_var {
 }
 
 1;
-# ABSTRACT: Schema for data structures (Perl implementation)
+# ABSTRACT: Fast and featureful data structure validation
 
 
 
@@ -356,11 +360,11 @@ __END__
 
 =head1 NAME
 
-Data::Sah - Schema for data structures (Perl implementation)
+Data::Sah - Fast and featureful data structure validation
 
 =head1 VERSION
 
-version 0.09
+version 0.10
 
 =head1 SYNOPSIS
 
@@ -370,9 +374,6 @@ Non-OO interface:
      normalize_schema
      gen_validator
  );
-
- # normalize a schema
- my $nschema = normalize_schema("int*"); # => ["int", {req=>1}, {}]
 
  # generate a validator for schema
  my $v = gen_validator(["int*", min=>1, max=>10]);
@@ -385,10 +386,13 @@ Non-OO interface:
 
  # generate validator which reports error message string, in Indonesian
  my $v = gen_validator(["int*", min=>1, max=>10],
-                       {return_type=>'str', lang=>'id'});
+                       {return_type=>'str', lang=>'id_ID'});
  say $v->(5);  # ''
  say $v->(12); # 'Data tidak boleh lebih besar dari 10'
                # (in English: 'Data must not be larger than 10')
+
+ # normalize a schema
+ my $nschema = normalize_schema("int*"); # => ["int", {req=>1}, {}]
 
 OO interface (more advanced usage):
 
@@ -399,14 +403,14 @@ OO interface (more advanced usage):
  my $pl = $sah->get_compiler("perl");
 
  # compile schema into Perl code
- my $cd = $pl->compile($schema, \%opts);
+ my $cd = $pl->compile(schema => $schema, ...);
 
 =head1 DESCRIPTION
 
 This module, L<Data::Sah>, implements compilers for producing Perl and
-JavaScript validators, as well as human description text (English and Indonesian
-included) from L<Sah> schemas. Compiler approach is used instead of interpreter
-for faster speed.
+JavaScript validators, as well as translatable human description text from
+L<Sah> schemas. Compiler approach is used instead of interpreter for faster
+speed.
 
 The generated validator code can run without this module.
 
@@ -419,7 +423,11 @@ things that are not yet implemented:
 
 =item * human compiler
 
-not yet implemented.
+=over
+
+=item * markdown output
+
+=back
 
 =item * js compiler
 
@@ -443,7 +451,7 @@ not yet implemented.
 
 =item * .result_var attribute
 
-=item * BaseType: ok, cset, if, prefilters, postfilters, check, prop, check_prop
+=item * BaseType: ok, clset, if, prefilters, postfilters, check, prop, check_prop
 
 =item * HasElems: each_elem, each_index, check_each_elem, check_each_index, exists
 
@@ -613,6 +621,13 @@ your Data::Schema schemas to Sah, but it should be relatively straightforward.
 
 See L<Sah::FAQ>.
 
+=head2 Why is it so slow?
+
+You probably do not reuse the compiled schema, e.g. you continually destroy and
+recreate Data::Sah object, or repeatedly recompile the same schema. To gain the
+benefit of compilation, you need to keep the compiled result and use the
+generated Perl code repeatedly.
+
 =head2 Can I generate another schema dynamically from within the schema?
 
 For example:
@@ -665,7 +680,7 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Steven Haryanto.
+This software is copyright (c) 2013 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

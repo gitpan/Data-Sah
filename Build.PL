@@ -10,7 +10,7 @@ my %module_build_args = (
     "File::ShareDir::Tarball" => 0,
     "File::chdir" => 0,
     "Module::Build" => "0.3601",
-    "Sah" => "v0.9.19",
+    "Sah" => "v0.9.23",
     "Test::Exception" => 0,
     "Test::More" => "0.98",
     "Test::Warn" => 0,
@@ -19,12 +19,12 @@ my %module_build_args = (
   "configure_requires" => {
     "Module::Build" => "0.3601"
   },
-  "dist_abstract" => "Schema for data structures (Perl implementation)",
+  "dist_abstract" => "Fast and featureful data structure validation",
   "dist_author" => [
     "Steven Haryanto <stevenharyanto\@gmail.com>"
   ],
   "dist_name" => "Data-Sah",
-  "dist_version" => "0.09",
+  "dist_version" => "0.10",
   "license" => "perl",
   "module_name" => "Data::Sah",
   "recommends" => {},
@@ -32,15 +32,19 @@ my %module_build_args = (
   "requires" => {
     "Algorithm::Dependency::Ordered" => 0,
     "Algorithm::Dependency::Source::HoA" => 0,
+    "Data::Clean::JSON" => 0,
     "Data::ModeMerge" => "0.21",
     "JSON" => 0,
     "Language::Expr" => "0.13",
     "Language::Expr::Interpreter::VarEnumer" => "0.13",
+    "Lingua::EN::Numbers::Ordinate" => "1.02",
     "Log::Any" => "0.09",
     "Moo" => 0,
     "Moo::Role" => 0,
     "SHARYANTO::String::Util" => 0,
     "Sub::Install" => 0,
+    "Text::sprintfn" => 0,
+    "Tie::IxHash" => 0,
     "perl" => "5.010001"
   },
   "script_files" => []

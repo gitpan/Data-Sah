@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH::num';
 with 'Data::Sah::Type::int';
 
-our $VERSION = '0.09'; # VERSION
+our $VERSION = '0.10'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -20,34 +20,20 @@ sub handle_type {
 
 sub clause_div_by {
     my ($self, $cd) = @_;
-    my $c = $self->compiler;
+    my $c  = $self->compiler;
+    my $ct = $cd->{cl_term};
+    my $dt = $cd->{data_term};
 
-    $c->handle_clause(
-        $cd,
-        on_term => sub {
-            my ($self, $cd) = @_;
-            my $ct = $cd->{cl_term};
-            my $dt = $cd->{data_term};
-
-            $c->add_ccl($cd, "$dt % $ct == 0");
-        },
-    );
+    $c->add_ccl($cd, "$dt % $ct == 0");
 }
 
 sub clause_mod {
     my ($self, $cd) = @_;
-    my $c = $self->compiler;
+    my $c  = $self->compiler;
+    my $ct = $cd->{cl_term};
+    my $dt = $cd->{data_term};
 
-    $c->handle_clause(
-        $cd,
-        on_term => sub {
-            my ($self, $cd) = @_;
-            my $ct = $cd->{cl_term};
-            my $dt = $cd->{data_term};
-
-            $c->add_ccl($cd, "$dt % $ct\->[0] == $ct\->[1]");
-        },
-    );
+    $c->add_ccl($cd, "$dt % $ct\->[0] == $ct\->[1]");
 }
 
 1;
@@ -63,7 +49,7 @@ Data::Sah::Compiler::perl::TH::int - perl's type handler for type "int"
 
 =head1 VERSION
 
-version 0.09
+version 0.10
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 
@@ -73,7 +59,7 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Steven Haryanto.
+This software is copyright (c) 2013 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

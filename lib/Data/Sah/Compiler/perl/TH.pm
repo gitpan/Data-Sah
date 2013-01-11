@@ -3,7 +3,7 @@ package Data::Sah::Compiler::perl::TH;
 use Moo;
 extends 'Data::Sah::Compiler::Prog::TH';
 
-our $VERSION = '0.09'; # VERSION
+our $VERSION = '0.10'; # VERSION
 
 # handled in compiler's before_all_clauses()
 
@@ -22,21 +22,27 @@ sub gen_each {
     my $cv = $cd->{cl_value};
     my $dt = $cd->{data_term};
 
+    my $use_dpath = $cd->{args}{return_type} ne 'bool';
+
     $c->add_module($cd, 'List::Util');
-    my $icd = $c->compile(
-        data_name    => '_',
-        schema       => $cv,
-        indent_level => $cd->{indent_level}+1,
-        (map { $_=>$cd->{args}{$_} } qw(debug debug_log)),
-    );
+    my %iargs = %{$cd->{args}};
+    $iargs{outer_cd}             = $cd;
+    $iargs{data_name}            = '_';
+    $iargs{data_term}            = '$_';
+    $iargs{schema}               = $cv;
+    $iargs{schema_is_normalized} = 0;
+    $iargs{indent_level}++;
+    my $icd = $c->compile(%iargs);
     my @code = (
         $c->indent_str($cd), "!defined(List::Util::first {!(\n",
+        ($c->indent_str($cd), "(\$_dpath->[-1] = defined(\$_dpath->[-1]) ? ".
+             "\$_dpath->[-1]+1 : 0),\n") x !!$use_dpath,
         $icd->{result}, "\n",
         $c->indent_str($icd), ")} ",
         $which eq 'each_index' ? $indices_expr : $elems_expr,
         ")",
     );
-    $c->add_ccl($cd, join("", @code));
+    $c->add_ccl($cd, join("", @code), {subdata=>1});
 }
 
 sub gen_any_or_all_of {
@@ -48,23 +54,26 @@ sub gen_any_or_all_of {
     my $jccl;
     {
         local $cd->{ccls} = [];
-        local $cd->{args}{return_type} = 'bool';
         for my $i (0..@$cv-1) {
-            my $sch = $cv->[$i];
-            my $icd = $c->compile(
-                data_name    => $cd->{args}{data_name},
-                schema       => $sch,
-                indent_level => $cd->{indent_level}+1,
-                (map { $_=>$cd->{args}{$_} } qw(debug debug_log)),
+            local $cd->{spath} = [@{ $cd->{spath} }, $i];
+            my $sch  = $cv->[$i];
+            my %iargs = %{$cd->{args}};
+            $iargs{outer_cd}             = $cd;
+            $iargs{schema}               = $sch;
+            $iargs{schema_is_normalized} = 0;
+            $iargs{indent_level}++;
+            my $icd  = $c->compile(%iargs);
+            my @code = (
+                $icd->{result},
             );
-            $c->add_ccl($cd, $icd->{result});
+            $c->add_ccl($cd, join("", @code));
         }
         if ($which eq 'all') {
             $jccl = $c->join_ccls(
-                $cd, $cd->{ccls}, {err_msg => ''});
+                $cd, $cd->{ccls}, {err_msg=>''});
         } else {
             $jccl = $c->join_ccls(
-                $cd, $cd->{ccls}, {err_msg => '', min_ok => 1});
+                $cd, $cd->{ccls}, {err_msg=>'', op=>'or'});
         }
     }
     $c->add_ccl($cd, $jccl);
@@ -75,18 +84,8 @@ sub _warn_unimplemented {
     my ($self, $cd) = @_;
     my $c = $self->compiler;
 
-    $c->handle_clause(
-        $cd,
-        on_term => sub {
-            my ($self, $cd) = @_;
-            my $cv = $cd->{cl_value};
-            my $ct = $cd->{cl_term};
-            my $dt = $cd->{data_term};
-
-            warn "NOTICE: clause '$cd->{clause}' for type '$cd->{type}' ".
-                "is currently unimplemented\n";
-        },
-    );
+    warn "NOTICE: clause '$cd->{clause}' for type '$cd->{type}' ".
+        "is currently unimplemented\n";
 }
 
 1;
@@ -102,7 +101,7 @@ Data::Sah::Compiler::perl::TH - Base class for perl type handlers
 
 =head1 VERSION
 
-version 0.09
+version 0.10
 
 =for Pod::Coverage ^(compiler|clause_.+|gen_.+)$
 
@@ -112,7 +111,7 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Steven Haryanto.
+This software is copyright (c) 2013 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

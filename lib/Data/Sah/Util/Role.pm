@@ -5,15 +5,15 @@ use strict;
 use warnings;
 use Log::Any '$log';
 
-our $VERSION = '0.09'; # VERSION
+our $VERSION = '0.10'; # VERSION
 
 use Sub::Install qw(install_sub);
 
 require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(
-                       has_clause clause_alias
-                       has_func func_alias
+                       has_clause has_clause_alias
+                       has_func   has_func_alias
                );
 
 sub has_clause {
@@ -41,11 +41,11 @@ sub has_clause {
                  },
                  into => $into,
                  as => "clausemeta_$name"});
-    clause_alias($name, $args{alias}  , $into);
-    clause_alias($name, $args{aliases}, $into);
+    has_clause_alias($name, $args{alias}  , $into);
+    has_clause_alias($name, $args{aliases}, $into);
 }
 
-sub clause_alias {
+sub has_clause_alias {
     my ($name, $aliases, $into) = @_;
     my $caller   = caller;
     $into      //= $caller;
@@ -86,11 +86,11 @@ sub has_func {
         map { (!$args{$_} ? () :
                    ref($args{$_}) eq 'ARRAY' ? @{ $args{$_} } : $args{$_}) }
             qw/alias aliases/;
-    func_alias($name, $args{alias}  , $into);
-    func_alias($name, $args{aliases}, $into);
+    has_func_alias($name, $args{alias}  , $into);
+    has_func_alias($name, $args{aliases}, $into);
 }
 
-sub func_alias {
+sub has_func_alias {
     my ($name, $aliases, $into) = @_;
     my $caller   = caller;
     $into      //= $caller;
@@ -122,7 +122,7 @@ Data::Sah::Util::Role - Sah utility routines for roles
 
 =head1 VERSION
 
-version 0.09
+version 0.10
 
 =head1 DESCRIPTION
 
@@ -168,7 +168,7 @@ Example:
 
  has_clause minimum => (arg => 'int*', aliases => 'min');
 
-=head2 clause_alias TARGET => ALIAS | [ALIAS1, ...]
+=head2 has_clause_alias TARGET => ALIAS | [ALIAS1, ...]
 
 Specify that clause named ALIAS is an alias for TARGET.
 
@@ -177,7 +177,7 @@ You have to define TARGET clause first (see B<has_clause> above).
 Example:
 
  has_clause max_length => ...;
- clause_alias max_length => "max_len";
+ has_clause_alias max_length => "max_len";
 
 =head2 has_func($name, %opts)
 
@@ -211,7 +211,7 @@ Example:
 
  has_func abs => (args => 'num');
 
-=head2 func_alias TARGET => ALIAS | [ALIASES...]
+=head2 has_func_alias TARGET => ALIAS | [ALIASES...]
 
 Specify that function named ALIAS is an alias for TARGET.
 
@@ -219,7 +219,7 @@ You have to specify TARGET function first (see B<has_func> above).
 
 Example:
 
- func_alias 'atan' => 'arctan';
+ has_func_alias 'atan' => 'arctan';
 
 =head1 AUTHOR
 
@@ -227,7 +227,7 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Steven Haryanto.
+This software is copyright (c) 2013 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

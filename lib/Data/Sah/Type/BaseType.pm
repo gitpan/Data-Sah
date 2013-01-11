@@ -8,11 +8,9 @@ use Moo::Role;
 #use Data::Sah::Schema::sah;
 use Data::Sah::Util::Role 'has_clause';
 
-our $VERSION = '0.09'; # VERSION
+our $VERSION = '0.10'; # VERSION
 
 requires 'handle_type';
-
-# XXX define 'cset' schema
 
 has_clause 'v',
     prio=>0, tags=>['meta', 'defhash'],
@@ -25,60 +23,98 @@ has_clause 'v',
 #has_clause 'base_v';
 
 has_clause 'default',
-    prio=>1, tags=>[],
-    arg=>'any';
-
-#has_clause 'prefilters', prio=>10, arg=>'((expr*)[])*', tags=>[''], attrs=>{perm=>{}};
-
+    prio       => 1,
+    tags       => [],
+    arg        => 'any',
+    allow_expr => 1,
+    attrs      => {
+        temp => {
+            arg        => [bool => default=>0],
+            allow_expr => 0,
+        },
+    },
+    ;
+# has_clause 'prefilters',
+#     tags       => ['filter'],
+#     prio       => 10,
+#     arg        => ['array*' => of=>'expr*'],
+#     attrs      => {
+#         temp => {
+#         },
+#     }
+#     ;
 has_clause 'default_lang',
-    prio=>2, tags=>['meta', 'defhash'],
-    arg=>['str*'=>{default=>'en_US'}];
-
+    tags       => ['meta', 'defhash'],
+    prio       => 2,
+    arg        => ['str*'=>{default=>'en_US'}],
+    ;
 has_clause 'name',
-    prio=>2, tags=>['meta', 'defhash'],
-    arg=>'str*';
-
+    tags       => ['meta', 'defhash'],
+    prio       => 2,
+    arg        => 'str*'
+    ;
 has_clause 'summary',
-    prio=>2, tags=>['meta', 'defhash'],
-    arg=>'str*';
-
+    prio       => 2,
+    tags       => ['meta', 'defhash'],
+    arg        => 'str*',
+    ;
 has_clause 'description',
-    prio=>2, tags=>['meta', 'defhash'],
-    arg=>'str*';
-
+    tags       => ['meta', 'defhash'],
+    prio       => 2,
+    arg        => 'str*',
+    ;
 has_clause 'tags',
-    prio=>2, tags=>['meta', 'defhash'],
-    arg=>['array*', of=>'str*'];
-
+    tags       => ['meta', 'defhash'],
+    prio       => 2,
+    arg        => ['array*', of=>'str*'],
+    ;
 has_clause 'req',
-    prio=>3, tags=>['constraint'],
-    arg=>'bool';
-
+    tags       => ['constraint'],
+    prio       => 3,
+    arg        => 'bool',
+    allow_expr => 1,
+    ;
 has_clause 'forbidden',
-    prio=>3, tags=>['constraint'],
-    arg=>'bool';
-
+    tags       => ['constraint'],
+    prio       => 3,
+    arg        => 'bool',
+    allow_expr => 1,
+    ;
 has_clause 'ok',
-    prio=>50, tags=>['constraint'],
-    arg=>'any',;
+    tags       => ['constraint'],
+    prio       => 50,
+    arg        => 'any',
+    ;
+#has_clause 'if', tags=>['constraint'];
 
-#has_clause 'if';
+#has_clause 'each', tags=>['constraint'];
 
-#has_clause 'each';
+#has_clause 'check_each', tags=>['constraint'];
 
-#has_clause 'check_each';
+#has_clause 'exists', tags=>['constraint'];
 
-#has_clause 'exists';
-
-#has_clause 'check_exists';
+#has_clause 'check_exists', tags=>['constraint'];
 
 #has_clause 'check', arg=>'expr*', tags=>['constraint'];
 
-#has_clause 'cset',
-#    prio=>50, tags=>['constraint'],
-#    arg=>['cset*'];
-
-#has_clause 'postfilters', prio=>90, arg=>'((expr*)[])*', tags=>[''];
+has_clause 'clause',
+    tags       => ['constraint'],
+    prio       => 50,
+    arg        => ['array*' => elems => ['clname*', 'any']],
+    ;
+has_clause 'clset',
+    prio=>50, tags=>['constraint'],
+    arg=>['clset*']
+    ;
+# has_clause 'postfilters',
+#     tags       => ['filter'],
+#     prio       => 90,
+#     arg        => ['array*' => of=>'expr*'],
+#     attrs      => {
+#         temp => {
+#         },
+#     }
+#     ;
 
 1;
 # ABSTRACT: Base type
@@ -93,7 +129,7 @@ Data::Sah::Type::BaseType - Base type
 
 =head1 VERSION
 
-version 0.09
+version 0.10
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 
@@ -103,7 +139,7 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Steven Haryanto.
+This software is copyright (c) 2013 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

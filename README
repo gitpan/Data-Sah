@@ -1,8 +1,8 @@
 NAME
-    Data::Sah - Schema for data structures (Perl implementation)
+    Data::Sah - Fast and featureful data structure validation
 
 VERSION
-    version 0.09
+    version 0.10
 
 SYNOPSIS
     Non-OO interface:
@@ -11,9 +11,6 @@ SYNOPSIS
          normalize_schema
          gen_validator
      );
-
-     # normalize a schema
-     my $nschema = normalize_schema("int*"); # => ["int", {req=>1}, {}]
 
      # generate a validator for schema
      my $v = gen_validator(["int*", min=>1, max=>10]);
@@ -26,10 +23,13 @@ SYNOPSIS
 
      # generate validator which reports error message string, in Indonesian
      my $v = gen_validator(["int*", min=>1, max=>10],
-                           {return_type=>'str', lang=>'id'});
+                           {return_type=>'str', lang=>'id_ID'});
      say $v->(5);  # ''
      say $v->(12); # 'Data tidak boleh lebih besar dari 10'
                    # (in English: 'Data must not be larger than 10')
+
+     # normalize a schema
+     my $nschema = normalize_schema("int*"); # => ["int", {req=>1}, {}]
 
     OO interface (more advanced usage):
 
@@ -40,13 +40,13 @@ SYNOPSIS
      my $pl = $sah->get_compiler("perl");
 
      # compile schema into Perl code
-     my $cd = $pl->compile($schema, \%opts);
+     my $cd = $pl->compile(schema => $schema, ...);
 
 DESCRIPTION
     This module, Data::Sah, implements compilers for producing Perl and
-    JavaScript validators, as well as human description text (English and
-    Indonesian included) from Sah schemas. Compiler approach is used instead
-    of interpreter for faster speed.
+    JavaScript validators, as well as translatable human description text
+    from Sah schemas. Compiler approach is used instead of interpreter for
+    faster speed.
 
     The generated validator code can run without this module.
 
@@ -56,7 +56,7 @@ STATUS
 
     *   human compiler
 
-        not yet implemented.
+        *   markdown output
 
     *   js compiler
 
@@ -78,7 +78,7 @@ STATUS
 
         *   .result_var attribute
 
-        *   BaseType: ok, cset, if, prefilters, postfilters, check, prop,
+        *   BaseType: ok, clset, if, prefilters, postfilters, check, prop,
             check_prop
 
         *   HasElems: each_elem, each_index, check_each_elem,
@@ -234,6 +234,12 @@ FAQ
   Comparison to {JSON::Schema, Data::Rx, Data::FormValidator, ...}?
     See Sah::FAQ.
 
+  Why is it so slow?
+    You probably do not reuse the compiled schema, e.g. you continually
+    destroy and recreate Data::Sah object, or repeatedly recompile the same
+    schema. To gain the benefit of compilation, you need to keep the
+    compiled result and use the generated Perl code repeatedly.
+
   Can I generate another schema dynamically from within the schema?
     For example:
 
@@ -281,7 +287,7 @@ AUTHOR
     Steven Haryanto <stevenharyanto@gmail.com>
 
 COPYRIGHT AND LICENSE
-    This software is copyright (c) 2012 by Steven Haryanto.
+    This software is copyright (c) 2013 by Steven Haryanto.
 
     This is free software; you can redistribute it and/or modify it under
     the same terms as the Perl 5 programming language system itself.

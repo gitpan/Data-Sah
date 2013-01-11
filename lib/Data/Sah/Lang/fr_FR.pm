@@ -1,10 +1,72 @@
 package Data::Sah::Lang::fr_FR;
 
-our $VERSION = '0.09'; # VERSION
+use 5.010;
+use strict;
+use warnings;
+use Tie::IxHash;
+
+our $VERSION = '0.10'; # VERSION
 
 our %translations;
+tie %translations, 'Tie::IxHash', (
 
-%translations = (
+    # punctuations
+
+    q[ ], # inter-word boundary
+    q[ ],
+
+    q[, ],
+    q[, ],
+
+    q[: ],
+    q[: ],
+
+    q[. ],
+    q[. ],
+
+    q[(],
+    q[(],
+
+    q[)],
+    q[)],
+
+    # modal verbs
+
+    q[must],
+    q[doit],
+
+    q[must not],
+    q[ne doit pas],
+
+    q[should],
+    q[devrait],
+
+    q[should not],
+    q[ne devrait pas],
+
+    # multi
+
+    q[%s and %s],
+    q[%s et %s],
+
+    q[%s or %s],
+    q[%s ou %s],
+
+    q[one of %s],
+    q[une des %s],
+
+    q[all of %s],
+    q[toutes les valeurs %s],
+
+    q[%(modal_verb)s satisfy all of the following],
+    q[%(modal_verb)s satisfaire à toutes les conditions suivantes],
+
+    q[%(modal_verb)s satisfy one of the following],
+    q[%(modal_verb)s satisfaire l'une des conditions suivantes],
+
+    q[%(modal_verb)s satisfy none of the following],
+    q[%(modal_verb)s satisfaire à aucune des conditions suivantes],
+
     # type: BaseType
 
     # type: Sortable
@@ -16,11 +78,18 @@ our %translations;
     # type: num
 
     # type: int
-    q[be divisible by %s],
-    q[être divisible par %s],
 
-    q[leave a remainder of %s when divided by %s],
-    q[laissez un reste %s si divisé par %s],
+    q[integer],
+    q[nombre entier],
+
+    q[integers],
+    q[nombres entiers],
+
+    q[%(modal_verb)s be divisible by %s],
+    q[%(modal_verb)s être divisible par %s],
+
+    q[%(modal_verb)s leave a remainder of %2$s when divided by %1$s],
+    q[%(modal_verb)s laisser un reste %2$s si divisé par %1$s],
 
 );
 
@@ -37,7 +106,7 @@ Data::Sah::Lang::fr_FR - fr_FR locale
 
 =head1 VERSION
 
-version 0.09
+version 0.10
 
 =for Pod::Coverage .+
 
@@ -47,7 +116,7 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Steven Haryanto.
+This software is copyright (c) 2013 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

@@ -3,7 +3,7 @@ package Data::Sah::Compiler::TextResultRole;
 use 5.010;
 use Moo::Role;
 
-our $VERSION = '0.09'; # VERSION
+our $VERSION = '0.10'; # VERSION
 
 # can be changed to tab, for example
 has indent_character => (is => 'rw', default => sub {''});
@@ -46,7 +46,7 @@ Data::Sah::Compiler::TextResultRole - Role for compilers that produce text resul
 
 =head1 VERSION
 
-version 0.09
+version 0.10
 
 =head1 ATTRIBUTES
 
@@ -86,7 +86,7 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Steven Haryanto.
+This software is copyright (c) 2013 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

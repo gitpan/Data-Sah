@@ -4,7 +4,7 @@ use 5.010;
 use strict;
 use warnings;
 
-our $VERSION = '0.09'; # VERSION
+our $VERSION = '0.10'; # VERSION
 
 our @ISA    = qw(Exporter);
 our @EXPORT = qw(add_translations);
@@ -29,7 +29,7 @@ Data::Sah::Lang - Language routines
 
 =head1 VERSION
 
-version 0.09
+version 0.10
 
 =for Pod::Coverage add_translations
 
@@ -39,7 +39,7 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Steven Haryanto.
+This software is copyright (c) 2013 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

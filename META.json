@@ -1,10 +1,10 @@
 {
-   "abstract" : "Schema for data structures (Perl implementation)",
+   "abstract" : "Fast and featureful data structure validation",
    "author" : [
       "Steven Haryanto <stevenharyanto@gmail.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.300006, CPAN::Meta::Converter version 2.113640",
+   "generated_by" : "Dist::Zilla version 4.300015, CPAN::Meta::Converter version 2.120921",
    "license" : [
       "perl_5"
    ],
@@ -31,29 +31,33 @@
       },
       "runtime" : {
          "requires" : {
-            "Algorithm::Dependency::Ordered" : 0,
-            "Algorithm::Dependency::Source::HoA" : 0,
+            "Algorithm::Dependency::Ordered" : "0",
+            "Algorithm::Dependency::Source::HoA" : "0",
+            "Data::Clean::JSON" : "0",
             "Data::ModeMerge" : "0.21",
-            "JSON" : 0,
+            "JSON" : "0",
             "Language::Expr" : "0.13",
             "Language::Expr::Interpreter::VarEnumer" : "0.13",
+            "Lingua::EN::Numbers::Ordinate" : "1.02",
             "Log::Any" : "0.09",
-            "Moo" : 0,
-            "Moo::Role" : 0,
-            "SHARYANTO::String::Util" : 0,
-            "Sub::Install" : 0,
+            "Moo" : "0",
+            "Moo::Role" : "0",
+            "SHARYANTO::String::Util" : "0",
+            "Sub::Install" : "0",
+            "Text::sprintfn" : "0",
+            "Tie::IxHash" : "0",
             "perl" : "5.010001"
          }
       },
       "test" : {
          "requires" : {
-            "File::ShareDir::Tarball" : 0,
-            "File::chdir" : 0,
-            "Sah" : "v0.9.19",
-            "Test::Exception" : 0,
+            "File::ShareDir::Tarball" : "0",
+            "File::chdir" : "0",
+            "Sah" : "v0.9.23",
+            "Test::Exception" : "0",
             "Test::More" : "0.98",
-            "Test::Warn" : 0,
-            "YAML::Syck" : 0
+            "Test::Warn" : "0",
+            "YAML::Syck" : "0"
          }
       }
    },
@@ -64,6 +68,6 @@
          "url" : "http://github.com/sharyanto/perl-Data-Sah"
       }
    },
-   "version" : "0.09"
+   "version" : "0.10"
 }
 

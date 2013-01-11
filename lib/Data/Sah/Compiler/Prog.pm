@@ -5,18 +5,12 @@ use Moo;
 extends 'Data::Sah::Compiler';
 use Log::Any qw($log);
 
-our $VERSION = '0.09'; # VERSION
+our $VERSION = '0.10'; # VERSION
 
 #use Digest::MD5 qw(md5_hex);
 
 # human compiler, to produce error messages
-has hc => (
-    is => 'rw',
-    lazy => 1,
-    default => sub {
-        Data::Sah::Compiler::human->new;
-    },
-);
+has hc => (is => 'rw');
 
 # subclass should provide a default, choices: 'shell', 'c', 'ini', 'cpp'
 has comment_style => (is => 'rw');
@@ -27,13 +21,23 @@ sub init_cd {
     my ($self, %args) = @_;
 
     my $cd = $self->SUPER::init_cd(%args);
-    $cd->{vars} = [];
+    $cd->{vars} = {};
+
+    my $hc = $self->hc;
+    if (!$hc) {
+        $hc = $self->main->get_compiler("human");
+        $self->hc($hc);
+    }
+
     if (my $ocd = $cd->{outer_cd}) {
         $cd->{subs}    = $ocd->{subs};
         $cd->{modules} = $ocd->{modules};
+        $cd->{_hc}     = $ocd->{_hc};
+        $cd->{_hcd}    = $ocd->{_hcd};
     } else {
         $cd->{subs}    = [];
         $cd->{modules} = [];
+        $cd->{_hc}     = $hc;
     }
 
     $cd;
@@ -102,10 +106,10 @@ sub add_module {
 }
 
 sub add_var {
-    my ($self, $cd, $name) = @_;
+    my ($self, $cd, $name, $value) = @_;
 
-    return if $name ~~ $cd->{vars};
-    push @{ $cd->{vars} }, $name;
+    return if exists $cd->{vars}{$name};
+    $cd->{vars}{$name} = $value;
 }
 
 sub before_compile {
@@ -124,17 +128,22 @@ sub before_compile {
 
 sub before_clause {
     my ($self, $cd) = @_;
+
+    $self->_die($cd, "Sorry, .op + .is_expr not yet supported ".
+                    "(found in clause $cd->{clause})")
+        if $cd->{cl_is_expr} && $cd->{cl_op};
+
     if ($cd->{args}{debug}) {
         state $json = do {
             require JSON;
             JSON->new->allow_nonref;
         };
-        my $cset = $cd->{cset};
-        my $cl   = $cd->{clause};
-        my $res  = $json->encode({
-            map { $_ => $cset->{$_}}
+        my $clset = $cd->{clset};
+        my $cl    = $cd->{clause};
+        my $res   = $json->encode({
+            map { $_ => $clset->{$_}}
                 grep {/\A\Q$cl\E(?:\.|\z)/}
-                    keys %$cset });
+                    keys %$clset });
         $res =~ s/\n+/ /g;
         # a one-line dump of the clause, suitable for putting in generated
         # code's comment
@@ -142,65 +151,13 @@ sub before_clause {
     } else {
         $cd->{_debug_ccl_note} = "clause: $cd->{clause}";
     }
-}
 
-# a common routine to handle a regular clause (handle .is_multi, .is_expr,
-# .{min,max}_{ok,nok} attributes, produce default error message)
-sub handle_clause {
-    my ($self, $cd, %args) = @_;
+    # we save ccls to save_ccls and empty ccls for each clause, to let clause
+    # join and do stuffs to ccls. at after_clause(), we push the clause's result
+    # as a single ccl to the original ccls.
 
-    my @caller = caller(0);
-    $self->_die($cd, "BUG: on_term not supplied by ".$caller[3])
-        unless $args{on_term};
-
-    my $clause = $cd->{clause};
-    my $th     = $cd->{th};
-
-    $self->_die($cd, "Sorry, .is_multi + .is_expr not yet supported ".
-                    "(found in clause $clause)")
-        if $cd->{cl_is_expr} && $cd->{cl_is_multi};
-
-    my $cval = $cd->{cset}{$clause};
-    $self->_die($cd, "'$clause.is_multi' attribute set, ".
-                    "but value of '$clause' clause not an array")
-        if $cd->{cl_is_multi} && ref($cval) ne 'ARRAY';
-    my $cvals = $cd->{cl_is_multi} ? $cval : [$cval];
-    my $occls = $cd->{ccls};
+    push @{ $cd->{_save_ccls} }, $cd->{ccls};
     $cd->{ccls} = [];
-    my $i;
-    for my $v (@$cvals) {
-        local $cd->{cl_value} = $v;
-        local $cd->{cl_term}  = $self->literal($v);
-        local $cd->{_debug_ccl_note} = "" if $i++;
-        $args{on_term}->($self, $cd);
-    }
-    delete $cd->{ucset}{"$clause.err_msg"};
-    if (@{ $cd->{ccls} }) {
-        push @$occls, {
-            ccl => $self->join_ccls(
-                $cd,
-                $cd->{ccls},
-                {
-                    min_ok  => $cd->{cset}{"$clause.min_ok"},
-                    max_ok  => $cd->{cset}{"$clause.max_ok"},
-                    min_nok => $cd->{cset}{"$clause.min_nok"},
-                    max_nok => $cd->{cset}{"$clause.max_nok"},
-                },
-            ),
-            err_level => $cd->{cset}{"$clause.err_level"} // "error",
-        };
-    }
-    $cd->{ccls} = $occls;
-
-    delete $cd->{ucset}{$clause};
-    delete $cd->{ucset}{"$clause.err_level"};
-    delete $cd->{ucset}{"$clause.min_ok"};
-    delete $cd->{ucset}{"$clause.max_ok"};
-    delete $cd->{ucset}{"$clause.min_nok"};
-    delete $cd->{ucset}{"$clause.max_nok"};
-
-    delete $cd->{ucset}{$_} for
-        grep /\A\Q$clause\E\.human(\..+)?\z/, keys(%{$cd->{ucset}});
 }
 
 sub after_clause {
@@ -209,13 +166,28 @@ sub after_clause {
     if ($cd->{args}{debug}) {
         delete $cd->{_debug_ccl_note};
     }
+
+    my $save = pop @{ $cd->{_save_ccls} };
+    if (@{ $cd->{ccls} }) {
+        push @$save, {
+            ccl       => $self->join_ccls($cd, $cd->{ccls}, {op=>$cd->{cl_op}}),
+            err_level => $cd->{clset}{"$cd->{clause}.err_level"} // "error",
+        }
+    }
+    $cd->{ccls} = $save;
+}
+
+sub after_clause_sets {
+    my ($self, $cd) = @_;
+
+    # simply join them together with &&
+    $cd->{result} = $self->join_ccls($cd, $cd->{ccls}, {err_msg => ''});
 }
 
 sub after_all_clauses {
     my ($self, $cd) = @_;
 
     # simply join them together with &&
-
     $cd->{result} = $self->join_ccls($cd, $cd->{ccls}, {err_msg => ''});
 }
 
@@ -232,7 +204,7 @@ Data::Sah::Compiler::Prog - Base class for programming language compilers
 
 =head1 VERSION
 
-version 0.09
+version 0.10
 
 =head1 SYNOPSIS
 
@@ -276,11 +248,15 @@ Perhaps data compliance measurer, data transformer, or whatever.
 
 =back
 
-=for Pod::Coverage ^(handle_clause|after_.+|before_.+|add_module|add_var|check_compile_args|enclose_paren|init_cd)$
+=for Pod::Coverage ^(after_.+|before_.+|add_module|add_var|check_compile_args|enclose_paren|init_cd)$
 
 =head1 ATTRIBUTES
 
 These usually need not be set/changed by users.
+
+=head2 hc => OBJ
+
+Instance of L<Data::Sah::Compiler::human>, to generate error messages.
 
 =head2 comment_style => STR
 
@@ -419,7 +395,7 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Steven Haryanto.
+This software is copyright (c) 2013 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

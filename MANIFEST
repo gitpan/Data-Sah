@@ -6,6 +6,7 @@ MANIFEST.SKIP
 META.json
 META.yml
 README
+devscripts/list-missing-translations
 dist.ini
 lib/Data/Sah.pm
 lib/Data/Sah/Compiler.pm
@@ -15,8 +16,21 @@ lib/Data/Sah/Compiler/TH.pm
 lib/Data/Sah/Compiler/TextResultRole.pm
 lib/Data/Sah/Compiler/human.pm
 lib/Data/Sah/Compiler/human/TH.pm
+lib/Data/Sah/Compiler/human/TH/Comparable.pm
+lib/Data/Sah/Compiler/human/TH/HasElems.pm
+lib/Data/Sah/Compiler/human/TH/Sortable.pm
+lib/Data/Sah/Compiler/human/TH/all.pm
+lib/Data/Sah/Compiler/human/TH/any.pm
+lib/Data/Sah/Compiler/human/TH/array.pm
+lib/Data/Sah/Compiler/human/TH/bool.pm
+lib/Data/Sah/Compiler/human/TH/code.pm
+lib/Data/Sah/Compiler/human/TH/float.pm
+lib/Data/Sah/Compiler/human/TH/hash.pm
 lib/Data/Sah/Compiler/human/TH/int.pm
 lib/Data/Sah/Compiler/human/TH/num.pm
+lib/Data/Sah/Compiler/human/TH/obj.pm
+lib/Data/Sah/Compiler/human/TH/re.pm
+lib/Data/Sah/Compiler/human/TH/str.pm
 lib/Data/Sah/Compiler/perl.pm
 lib/Data/Sah/Compiler/perl/TH.pm
 lib/Data/Sah/Compiler/perl/TH/all.pm
@@ -34,6 +48,7 @@ lib/Data/Sah/Compiler/perl/TH/str.pm
 lib/Data/Sah/Lang.pm
 lib/Data/Sah/Lang/fr_FR.pm
 lib/Data/Sah/Lang/id_ID.pm
+lib/Data/Sah/Lang/zh_CN.pm
 lib/Data/Sah/Manual/Extending.pod
 lib/Data/Sah/Schema/Common.pm
 lib/Data/Sah/Schema/sah.pm
@@ -60,6 +75,8 @@ lib/Data/Sah/Util/Role.pm
 lib/Data/Sah/Util/TypeX.pm
 t/00-compile.t
 t/01-basics.t
+t/human-en_US.t
+t/human-id_ID.t
 t/perl-type-bool.t
 t/perl-type-code.t
 t/perl-type-float.t
@@ -69,4 +86,6 @@ t/perl-type-str.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
 t/release-rinci.t
+t/spectest-human.t-
 t/spectest-perl.t
+t/testlib.pl

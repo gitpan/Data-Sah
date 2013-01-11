@@ -3,7 +3,7 @@ package Data::Sah::Compiler::Prog::TH;
 use Moo;
 extends 'Data::Sah::Compiler::TH';
 
-our $VERSION = '0.09'; # VERSION
+our $VERSION = '0.10'; # VERSION
 
 sub clause_name {
     my ($self, $cd) = @_;
@@ -43,7 +43,7 @@ Data::Sah::Compiler::Prog::TH - Base class for programming-language emiting comp
 
 =head1 VERSION
 
-version 0.09
+version 0.10
 
 =for Pod::Coverage ^(compiler|clause_.+|handle_.+)$
 
@@ -53,7 +53,7 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Steven Haryanto.
+This software is copyright (c) 2013 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

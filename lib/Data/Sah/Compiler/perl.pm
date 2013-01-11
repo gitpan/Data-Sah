@@ -7,7 +7,7 @@ extends 'Data::Sah::Compiler::Prog';
 
 use SHARYANTO::String::Util;
 
-our $VERSION = '0.09'; # VERSION
+our $VERSION = '0.10'; # VERSION
 
 sub BUILD {
     my ($self, $args) = @_;
@@ -67,83 +67,120 @@ sub compile {
 # add compiled clause to ccls, along with extra information useful for joining
 # later (like error level, code for adding error message, etc). available
 # options: err_level (str, the default will be taken from current clause's
-# .err_level if not specified), err_msg (str, the default will be produced by
-# human compiler if not supplied, or taken from current clause's
-# .err_msg/.ok_err_msg)
+# .err_level if not specified), err_expr, err_msg (str, the default will be
+# produced by human compiler if not supplied, or taken from current clause's
+# .err_msg), subdata (bool, default false, if set to true then this means we are
+# delving into subdata, e.g. array elements, and appropriate things must be done
+# to adjust for this [e.g. push @$_dpath and pop @$_dpath at the end so that
+# error message can show the data path].
 sub add_ccl {
     my ($self, $cd, $ccl, $opts) = @_;
     $opts //= {};
     my $clause = $cd->{clause} // "";
+    my $op     = $cd->{cl_op} // "";
+    #$log->errorf("TMP: adding ccl %s, current ccls=%s", $ccl, $cd->{ccls});
 
-    my $el = $opts->{err_level} // $cd->{cset}{"$clause.err_level"} // "error";
-    my $err_msg    = $opts->{err_msg}    // $cd->{cset}{"$clause.err_msg"};
-    my $ok_err_msg = $opts->{ok_err_msg} // $cd->{cset}{"$clause.ok_err_msg"};
+    my $use_dpath = $cd->{args}{return_type} ne 'bool';
 
-    my $has_err    = !(defined($err_msg)    && $err_msg    eq '');
-    my $has_ok_err = !(defined($ok_err_msg) && $ok_err_msg eq '');
-    if (!defined($err_msg)) {
-        # XXX generate from human compiler, e.g. $err_expr = '$h->compile(...)'
-        $err_msg = "TMPERRMSG: clause failed: $clause";
+    my $el = $opts->{err_level} // $cd->{clset}{"$clause.err_level"} // "error";
+    my $err_expr = $opts->{err_expr};
+    my $err_msg  = $opts->{err_msg};
+
+    if (defined $err_expr) {
+        #
+    } else {
+        unless (defined $err_msg) { $err_msg = $cd->{clset}{"$clause.err_msg"} }
+        unless (defined $err_msg) {
+            # XXX how to invert on op='none' or op='not'?
+
+            my @msgpath = @{$cd->{spath}};
+            my $msgpath;
+            my $hc  = $cd->{_hc};
+            my $hcd = $cd->{_hcd};
+            while (1) {
+                # search error message, use more general one if the more
+                # specific one is not available
+                last unless @msgpath;
+                $msgpath = join("/", @msgpath);
+                my $ccls = $hcd->{result}{$msgpath};
+                pop @msgpath;
+                if ($ccls) {
+                    local $hcd->{args}{format} = 'inline_err_text';
+                    $err_msg = $hc->format_ccls($hcd, $ccls);
+                    # show path when debugging
+                    $err_msg = "[msgpath=$msgpath]$err_msg"
+                        if $cd->{args}{debug};
+                    last;
+                }
+            }
+            if (!$err_msg) {
+                $err_msg = "ERR (clause=$cd->{clause})";
+            } else {
+                $err_msg = ucfirst($err_msg);
+            }
+        }
+        if ($err_msg) {
+            $self->add_var($cd, '_dpath', []) if $use_dpath;
+            $err_expr = $self->literal($err_msg);
+            $err_expr = '(@$_dpath ? \'@\'.join("/",@$_dpath).": " : "") . ' .
+                $err_expr if $use_dpath;
+            # show schema path, when debugging only
+            $err_expr = $self->literal(
+                "[spath=".join("/", @{$cd->{spath}})."]") . " . $err_expr"
+                    if $cd->{args}{debug};
+        }
     }
-    if (!defined($ok_err_msg)) {
-        # XXX generate from human compiler, e.g. $err_expr = '$h->compile(...)'
-        $ok_err_msg = "TMPERRMSG: clause succeed: $clause";
-    }
-    my $err_expr    = $self->literal($err_msg)    if $has_err;
-    my $ok_err_expr = $self->literal($ok_err_msg) if $has_ok_err;
 
-    my $rt  = $cd->{args}{return_type};
-    my $et  = $cd->{args}{err_term};
-    my ($err_code, $ok_err_code);
+    my $rt = $cd->{args}{return_type};
+    my $et = $cd->{args}{err_term};
+    my $err_code;
     if ($rt eq 'full') {
+        $self->add_var($cd, '_dpath', []) if $use_dpath;
         my $k = $el eq 'warn' ? 'warnings' : 'errors';
-        $err_code    = "push \@{ $et\->{$k} }, $err_expr"    if $has_err;
-        $ok_err_code = "push \@{ $et\->{$k} }, $ok_err_expr" if $has_ok_err;
+        $err_code = "$et\->{$k}{join('/',\@\$_dpath)} //= $err_expr"
+            if $err_expr;
     } elsif ($rt eq 'str') {
-        if ($el eq 'warn') {
-            $has_err = 0;
-            $has_ok_err = 0;
-        } else {
-            $err_code    = "$et = $err_expr"    if $has_err;
-            $ok_err_code = "$et = $ok_err_expr" if $has_ok_err;
+        if ($el ne 'warn') {
+            $err_code = "$et //= $err_expr" if $err_expr;
         }
     }
 
     my $res = {
         ccl             => $ccl,
         err_level       => $el,
-        has_err         => $has_err,
-        has_ok_err      => $has_ok_err,
         err_code        => $err_code,
-        ok_err_code     => $ok_err_code,
         (_debug_ccl_note => $cd->{_debug_ccl_note}) x !!$cd->{_debug_ccl_note},
+        subdata         => $opts->{subdata},
     };
     push @{ $cd->{ccls} }, $res;
-    delete $cd->{ucset}{"$clause.err_level"};
-    delete $cd->{ucset}{"$clause.err_msg"};
-    delete $cd->{ucset}{"$clause.ok_err_msg"};
+    delete $cd->{uclset}{"$clause.err_level"};
+    delete $cd->{uclset}{"$clause.err_msg"};
 }
 
-# join ccls to handle {min,max}_{ok,nok} and insert error messages. opts =
-# {min,max}_{ok,nok}
+# join ccls to handle .op and insert error messages. opts = op
 sub join_ccls {
     my ($self, $cd, $ccls, $opts) = @_;
     $opts //= {};
-    my $min_ok   = $opts->{min_ok};
-    my $max_ok   = $opts->{max_ok};
-    my $min_nok  = $opts->{min_nok};
-    my $max_nok  = $opts->{max_nok};
-    my $dmin_ok  = defined($opts->{min_ok});
-    my $dmax_ok  = defined($opts->{max_ok});
-    my $dmin_nok = defined($opts->{min_nok});
-    my $dmax_nok = defined($opts->{max_nok});
+    my $op = $opts->{op} // "and";
+    #$log->errorf("TMP: joining ccl %s", $ccls);
+    #warn "join_ccls"; #TMP
+
+    my ($min_ok, $max_ok, $min_nok, $max_nok);
+    if ($op eq 'and') {
+        $max_nok = 0;
+    } elsif ($op eq 'or') {
+        $min_ok = 1;
+    } elsif ($op eq 'none') {
+        $max_ok = 0;
+    } elsif ($op eq 'not') {
+
+    }
+    my $dmin_ok  = defined($min_ok);
+    my $dmax_ok  = defined($max_ok);
+    my $dmin_nok = defined($min_nok);
+    my $dmax_nok = defined($max_nok);
 
     return "" unless @$ccls;
-
-    # TODO: support expression for {min,max}_{ok,nok} attributes.
-
-    # default is AND
-    $max_nok = 0 if !$dmin_ok && !$dmax_ok && !$dmin_nok && !$dmax_nok;
 
     my $rt      = $cd->{args}{return_type};
     my $vp      = $cd->{args}{var_prefix};
@@ -155,15 +192,17 @@ sub join_ccls {
     my $j2 = "\n$indent2  &&\n";
 
     # insert comment, error message, and $ok/$nok counting. $which is 0 by
-    # default (normal), or 1 (reverse logic, for NOT), or 2 (for $ok/$nok
-    # counting), or 3 (like 2, but for the last clause).
+    # default (normal), or 1 (reverse logic, for 'not' or 'none'), or 2 (for
+    # $ok/$nok counting), or 3 (like 2, but for the last clause).
     my $_ice = sub {
         my ($ccl, $which) = @_;
+
+        my $use_dpath = $rt ne 'bool' && $ccl->{subdata};
 
         my $res = "";
 
         if ($ccl->{_debug_ccl_note}) {
-            if ($cd->{args}{debug_log_clause} || $cd->{args}{debug}) {
+            if ($cd->{args}{debug_log_clause} // $cd->{args}{debug}) {
                 $self->add_module($cd, 'Log::Any');
                 $res .= "$indent(\$log->tracef('%s ...', ".
                     $self->literal($ccl->{_debug_ccl_note})."), 1) && \n";
@@ -174,11 +213,14 @@ sub join_ccls {
 
         $res .= $indent;
         $which //= 0;
-        my $e = ($which == 1 ? "!" : "") . $self->enclose_paren($ccl->{ccl});
+        # clause code
+        my $cc = ($which == 1 ? "!" : "") . $self->enclose_paren($ccl->{ccl});
+        $cc = $self->enclose_paren('push(@$_dpath, undef), '.$cc) if $use_dpath;
         my ($ec, $oec);
         my ($ret, $oret);
         if ($which >= 2) {
             my @chk;
+            push @chk, '(pop(@$_dpath), 1' if $use_dpath;
             if ($ccl->{err_level} eq 'warn') {
                 $oret = 1;
                 $ret  = 1;
@@ -193,55 +235,56 @@ sub join_ccls {
                 if ($which == 3) {
                     push @chk, "\$${vp}ok >= $min_ok"   if $dmin_ok;
                     push @chk, "\$${vp}nok >= $min_nok" if $dmin_nok;
+
+                    # we need to clear the error message previously set
+                    if ($rt ne 'bool') {
+                        my $et = $cd->{args}{err_term};
+                        my $clerrc;
+                        if ($rt eq 'full') {
+                            $clerrc = "(delete($et\->{errors}{join('/',\@\$_dpath)})".
+                                ", 1)";
+                        } else {
+                            $clerrc = "($et = undef, 1)";
+                        }
+                        push @chk, $clerrc;
+                    }
                 }
             }
-            $res .= "($e ? $oret : $ret)";
+            $res .= "($cc ? $oret : $ret)";
             $res .= " && " . join(" && ", @chk) if @chk;
         } else {
-            $ec = $ccl->{ $which == 1 ? "ok_err_code" : "err_code" };
-            $ret = $ccl->{err_level} eq 'fatal' ? 0 :
-                $rt eq 'full' || $ccl->{err_level} eq 'warn' ? 1 : 0;
+            $ec = $ccl->{err_code};
+            $ret =
+                $ccl->{err_level} eq 'fatal' ? 0 :
+                    # this must not be done because it messes up ok/nok counting
+                    #$rt eq 'full' ? 1 :
+                        $ccl->{err_level} eq 'warn' ? 1 : 0;
             if ($rt eq 'bool' && $ret) {
                 $res .= "1";
-            } elsif ($rt eq 'bool' || !$ccl->{has_err}) {
-                $res .= $self->enclose_paren($e);
+            } elsif ($rt eq 'bool' || !$ec) {
+                $res .= $self->enclose_paren($cc);
             } else {
+                my $popdpc = $use_dpath ? ', pop(@$_dpath)' : '';
                 $res .= $self->enclose_paren(
-                    $self->enclose_paren($e) . " ? 1 : (($ec),$ret)",
+                    $self->enclose_paren($cc) . " ? 1 : (($ec$popdpc),$ret)",
                     "force");
             }
         }
         $res;
     };
 
-    if (@$ccls==1 &&
-            !$dmin_ok && $dmax_ok && $max_ok==0 && !$dmin_nok && !$dmax_nok) {
-        # special case for NOT
+    if ($op eq 'not') {
         return $_ice->($ccls->[0], 1);
-    } elsif (!$dmin_ok && !$dmax_ok && !$dmin_nok && (!$dmax_nok||$max_nok==0)){
-        # special case for AND
+    } elsif ($op eq 'and') {
         return join $j, map { $_ice->($_) } @$ccls;
+    } elsif ($op eq 'none') {
+        return join $j, map { $_ice->($_, 1) } @$ccls;
     } else {
         my $jccl = join $j, map {$_ice->($ccls->[$_], $_ == @$ccls-1 ? 3:2)}
             0..@$ccls-1;
         {
             local $cd->{ccls} = [];
-            local $cd->{_debug_ccl_note} = join(
-                " ",
-                ($dmin_ok  ? "min_ok=$min_ok"   : ""),
-                ($dmax_ok  ? "max_ok=$max_ok"   : ""),
-                ($dmin_nok ? "min_nok=$min_nok" : ""),
-                ($dmax_nok ? "max_nok=$max_nok" : ""),
-            );
-            my $tmperrmsg;
-            for ($tmperrmsg) {
-                $_ = "TMPERRMSG:";
-                $_ .= $cd->{clause} ? " clause $cd->{clause}" : " cset";
-                $_ .= " min_ok=$min_ok"   if $dmin_ok;
-                $_ .= " max_ok=$max_ok"   if $dmax_ok;
-                $_ .= " min_nok=$min_nok" if $dmin_nok;
-                $_ .= " max_nok=$max_nok" if $dmax_nok;
-            }
+            local $cd->{_debug_ccl_note} = "op=$op";
             $self->add_ccl(
                 $cd,
                 "do { my \$${vp}ok=0; my \$${vp}nok=0;\n".
@@ -250,32 +293,52 @@ sub join_ccls {
                         $jccl,
                     )." }",
                 {
-                    err_msg => $tmperrmsg,
-                    ok_err_msg => '',
                 }
             );
             $_ice->($cd->{ccls}[0]);
         }
+    }
+}
 
+sub _xlt {
+    my ($self, $cd, $text) = @_;
+
+    my $hc  = $cd->{_hc};
+    my $hcd = $cd->{_hcd};
+    #$log->tracef("(perl) Translating text %s ...", $text);
+    $hc->_xlt($hcd, $text);
+}
+
+sub before_handle_type {
+    my ($self, $cd) = @_;
+
+    # do a human compilation first to collect all the error messages
+
+    unless ($cd->{_inner}) {
+        my $hc = $cd->{_hc};
+        my %hargs = %{$cd->{args}};
+        $hargs{format}               = 'msg_catalog';
+        $hargs{schema_is_normalized} = 1;
+        $hargs{schema}               = $cd->{nschema};
+        $hargs{on_unhandled_clause}  = 'ignore';
+        $hargs{on_unhandled_attr}    = 'ignore';
+        $cd->{_hcd} = $hc->compile(%hargs);
     }
 }
 
 sub before_all_clauses {
     my ($self, $cd) = @_;
 
-    $self->SUPER::before_clause_set($cd)
-        if $self->can("SUPER::before_all_clause_set");
-
     # handle default/prefilters/req/forbidden clauses
 
-    my $dt    = $cd->{data_term};
-    my $csets = $cd->{csets};
+    my $dt     = $cd->{data_term};
+    my $clsets = $cd->{clsets};
 
     # handle default
-    for my $i (0..@$csets-1) {
-        my $cset  = $csets->[$i];
-        my $def   = $cset->{default};
-        my $defie = $cset->{"default.is_expr"};
+    for my $i (0..@$clsets-1) {
+        my $clset  = $clsets->[$i];
+        my $def    = $clset->{default};
+        my $defie  = $clset->{"default.is_expr"};
         if (defined $def) {
             local $cd->{_debug_ccl_note} = "default #$i";
             my $ct = $defie ?
@@ -286,19 +349,19 @@ sub before_all_clauses {
                 {err_msg => ""},
             );
         }
-        delete $cd->{ucsets}[$i]{"default"};
-        delete $cd->{ucsets}[$i]{"default.is_expr"};
+        delete $cd->{uclsets}[$i]{"default"};
+        delete $cd->{uclsets}[$i]{"default.is_expr"};
     }
 
     # XXX handle prefilters
 
     # handle req
     my $has_req;
-    for my $i (0..@$csets-1) {
-        my $cset  = $csets->[$i];
-        my $req   = $cset->{req};
-        my $reqie = $cset->{"req.is_expr"};
-        my $req_err_msg = "TMPERRMSG: required data not specified";
+    for my $i (0..@$clsets-1) {
+        my $clset  = $clsets->[$i];
+        my $req    = $clset->{req};
+        my $reqie  = $clset->{"req.is_expr"};
+        my $req_err_msg = $self->_xlt($cd, "Required input not specified");
         local $cd->{_debug_ccl_note} = "req #$i";
         if ($req && !$reqie) {
             $has_req++;
@@ -320,17 +383,17 @@ sub before_all_clauses {
                 },
             );
         }
-        delete $cd->{ucsets}[$i]{"req"};
-        delete $cd->{ucsets}[$i]{"req.is_expr"};
+        delete $cd->{uclsets}[$i]{"req"};
+        delete $cd->{uclsets}[$i]{"req.is_expr"};
     }
 
     # handle forbidden
     my $has_fbd;
-    for my $i (0..@$csets-1) {
-        my $cset  = $csets->[$i];
-        my $fbd   = $cset->{forbidden};
-        my $fbdie = $cset->{"forbidden.is_expr"};
-        my $fbd_err_msg = "TMPERRMSG: forbidden data specified";
+    for my $i (0..@$clsets-1) {
+        my $clset  = $clsets->[$i];
+        my $fbd    = $clset->{forbidden};
+        my $fbdie  = $clset->{"forbidden.is_expr"};
+        my $fbd_err_msg = $self->_xlt($cd, "Forbidden input specified");
         local $cd->{_debug_ccl_note} = "forbidden #$i";
         if ($fbd && !$fbdie) {
             $has_fbd++;
@@ -352,8 +415,8 @@ sub before_all_clauses {
                 },
             );
         }
-        delete $cd->{ucsets}[$i]{"forbidden"};
-        delete $cd->{ucsets}[$i]{"forbidden.is_expr"};
+        delete $cd->{uclsets}[$i]{"forbidden"};
+        delete $cd->{uclsets}[$i]{"forbidden.is_expr"};
     }
 
     if (!$has_req && !$has_fbd) {
@@ -368,7 +431,14 @@ sub before_all_clauses {
     $self->add_ccl(
         $cd, $cd->{_ccl_check_type},
         {
-            err_msg   => 'TMPERRMSG: type check failed',
+            err_msg   => sprintf(
+                $self->_xlt($cd, "Input is not of type %s"),
+                $self->_xlt(
+                    $cd,
+                    $cd->{_hc}->get_th(name=>$cd->{type})->name //
+                        $cd->{type}
+                    ),
+            ),
             err_level => 'fatal',
         },
     );
@@ -411,7 +481,7 @@ Data::Sah::Compiler::perl - Compile Sah schema to Perl code
 
 =head1 VERSION
 
-version 0.09
+version 0.10
 
 =head1 SYNOPSIS
 
@@ -421,7 +491,7 @@ version 0.09
 
 Derived from L<Data::Sah::Compiler::Prog>.
 
-=for Pod::Coverage BUILD ^(after_.+|before_.+|name|expr|literal|add_ccl|join_ccls)$
+=for Pod::Coverage BUILD ^(after_.+|before_.+|name|expr|literal|add_ccl|join_ccls|xlt)$
 
 =head1 METHODS
 
@@ -441,7 +511,7 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Steven Haryanto.
+This software is copyright (c) 2013 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
