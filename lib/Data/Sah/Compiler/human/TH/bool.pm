@@ -8,7 +8,7 @@ with 'Data::Sah::Compiler::human::TH::Comparable';
 with 'Data::Sah::Compiler::human::TH::Sortable';
 with 'Data::Sah::Type::bool';
 
-our $VERSION = '0.11'; # VERSION
+our $VERSION = '0.12'; # VERSION
 
 sub name { "boolean value" }
 
@@ -60,7 +60,7 @@ Data::Sah::Compiler::human::TH::bool - perl's type handler for type "bool"
 
 =head1 VERSION
 
-version 0.11
+version 0.12
 
 =for Pod::Coverage ^(name|clause_.+|superclause_.+|before_.+|after_.+)$
 

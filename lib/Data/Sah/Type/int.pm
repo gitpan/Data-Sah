@@ -4,7 +4,7 @@ use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 with 'Data::Sah::Type::num';
 
-our $VERSION = '0.11'; # VERSION
+our $VERSION = '0.12'; # VERSION
 
 has_clause 'mod',
     tags       => ['constraint'],
@@ -30,7 +30,7 @@ Data::Sah::Type::int - int type
 
 =head1 VERSION
 
-version 0.11
+version 0.12
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

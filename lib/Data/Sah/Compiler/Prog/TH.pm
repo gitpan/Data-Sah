@@ -3,7 +3,7 @@ package Data::Sah::Compiler::Prog::TH;
 use Moo;
 extends 'Data::Sah::Compiler::TH';
 
-our $VERSION = '0.11'; # VERSION
+our $VERSION = '0.12'; # VERSION
 
 sub clause_name {
     my ($self, $cd) = @_;
@@ -43,7 +43,7 @@ Data::Sah::Compiler::Prog::TH - Base class for programming-language emiting comp
 
 =head1 VERSION
 
-version 0.11
+version 0.12
 
 =for Pod::Coverage ^(compiler|clause_.+|handle_.+)$
 

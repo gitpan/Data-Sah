@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::num';
 
-our $VERSION = '0.11'; # VERSION
+our $VERSION = '0.12'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -75,7 +75,7 @@ Data::Sah::Compiler::perl::TH::num - perl's type handler for type "num"
 
 =head1 VERSION
 
-version 0.11
+version 0.12
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

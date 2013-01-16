@@ -41,4 +41,4 @@ requires:
 resources:
   homepage: http://search.cpan.org/dist/Data-Sah/
   repository: http://github.com/sharyanto/perl-Data-Sah
-version: 0.11
+version: 0.12
