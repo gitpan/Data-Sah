@@ -5,7 +5,7 @@ with 'Data::Sah::Type::BaseType';
 with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::Sortable';
 
-our $VERSION = '0.10'; # VERSION
+our $VERSION = '0.11'; # VERSION
 
 1;
 # ABSTRACT: num type
@@ -20,7 +20,7 @@ Data::Sah::Type::num - num type
 
 =head1 VERSION
 
-version 0.10
+version 0.11
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

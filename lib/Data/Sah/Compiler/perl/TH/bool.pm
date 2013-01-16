@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::bool';
 
-our $VERSION = '0.10'; # VERSION
+our $VERSION = '0.11'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -87,7 +87,7 @@ Data::Sah::Compiler::perl::TH::bool - perl's type handler for type "bool"
 
 =head1 VERSION
 
-version 0.10
+version 0.11
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

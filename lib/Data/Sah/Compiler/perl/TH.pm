@@ -3,7 +3,7 @@ package Data::Sah::Compiler::perl::TH;
 use Moo;
 extends 'Data::Sah::Compiler::Prog::TH';
 
-our $VERSION = '0.10'; # VERSION
+our $VERSION = '0.11'; # VERSION
 
 # handled in compiler's before_all_clauses()
 
@@ -35,8 +35,8 @@ sub gen_each {
     my $icd = $c->compile(%iargs);
     my @code = (
         $c->indent_str($cd), "!defined(List::Util::first {!(\n",
-        ($c->indent_str($cd), "(\$_dpath->[-1] = defined(\$_dpath->[-1]) ? ".
-             "\$_dpath->[-1]+1 : 0),\n") x !!$use_dpath,
+        ($c->indent_str($cd), "(\$_sahv_dpath->[-1] = defined(\$_sahv_dpath->[-1]) ? ".
+             "\$_sahv_dpath->[-1]+1 : 0),\n") x !!$use_dpath,
         $icd->{result}, "\n",
         $c->indent_str($icd), ")} ",
         $which eq 'each_index' ? $indices_expr : $elems_expr,
@@ -101,7 +101,7 @@ Data::Sah::Compiler::perl::TH - Base class for perl type handlers
 
 =head1 VERSION
 
-version 0.10
+version 0.11
 
 =for Pod::Coverage ^(compiler|clause_.+|gen_.+)$
 

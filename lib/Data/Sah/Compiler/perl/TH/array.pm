@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::array';
 
-our $VERSION = '0.10'; # VERSION
+our $VERSION = '0.11'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -96,7 +96,7 @@ sub clause_elems {
             $iargs{indent_level}++;
             my $icd = $c->compile(%iargs);
             my @code = (
-                ($c->indent_str($cd), "(\$_dpath->[-1] = $i),\n") x !!$use_dpath,
+                ($c->indent_str($cd), "(\$_sahv_dpath->[-1] = $i),\n") x !!$use_dpath,
                 $icd->{result}, "\n",
             );
             my $ires = join("", @code);
@@ -126,7 +126,7 @@ Data::Sah::Compiler::perl::TH::array - perl's type handler for type "array"
 
 =head1 VERSION
 
-version 0.10
+version 0.11
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

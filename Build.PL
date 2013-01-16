@@ -7,6 +7,7 @@ use Module::Build 0.3601;
 
 my %module_build_args = (
   "build_requires" => {
+    "Data::Dump::OneLine" => 0,
     "File::ShareDir::Tarball" => 0,
     "File::chdir" => 0,
     "Module::Build" => "0.3601",
@@ -24,7 +25,7 @@ my %module_build_args = (
     "Steven Haryanto <stevenharyanto\@gmail.com>"
   ],
   "dist_name" => "Data-Sah",
-  "dist_version" => "0.10",
+  "dist_version" => "0.11",
   "license" => "perl",
   "module_name" => "Data::Sah",
   "recommends" => {},

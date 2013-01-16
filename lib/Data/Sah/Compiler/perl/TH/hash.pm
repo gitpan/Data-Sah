@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::hash';
 
-our $VERSION = '0.10'; # VERSION
+our $VERSION = '0.11'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -134,21 +134,21 @@ sub clause_keys {
             # should we set default for hash value?
             my $sdef = $cdef && defined($sch->[1]{default});
 
-            $c->add_var($cd, '_stack', []) if $use_dpath;
+            $c->add_var($cd, '_sahv_stack', []) if $use_dpath;
 
             my @code = (
-                ($c->indent_str($cd), "(push(@\$_dpath, undef), push(\@\$_stack, undef), \$_stack->[-1] = \n")
+                ($c->indent_str($cd), "(push(@\$_sahv_dpath, undef), push(\@\$_sahv_stack, undef), \$_sahv_stack->[-1] = \n")
                     x !!($use_dpath && $i == 1),
 
                 $sdef ? "" : "!exists($kdt) || (",
 
-                ($c->indent_str($cd), "(\$_dpath->[-1] = ".
+                ($c->indent_str($cd), "(\$_sahv_dpath->[-1] = ".
                      $c->literal($k)."),\n") x !!$use_dpath,
                 $icd->{result}, "\n",
 
                 $sdef ? "" : ")",
 
-                ($c->indent_str($cd), "), (pop \@\$_dpath), pop(\@\$_stack)\n")
+                ($c->indent_str($cd), "), (pop \@\$_sahv_dpath), pop(\@\$_sahv_stack)\n")
                     x !!($use_dpath && $i == $nkeys),
             );
             my $ires = join("", @code);
@@ -194,7 +194,7 @@ Data::Sah::Compiler::perl::TH::hash - perl's type handler for type "hash"
 
 =head1 VERSION
 
-version 0.10
+version 0.11
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 
