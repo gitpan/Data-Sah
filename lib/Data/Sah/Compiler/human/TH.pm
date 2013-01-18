@@ -5,7 +5,7 @@ use Log::Any '$log';
 use Moo;
 extends 'Data::Sah::Compiler::TH';
 
-our $VERSION = '0.12'; # VERSION
+our $VERSION = '0.13'; # VERSION
 
 sub name { undef }
 
@@ -73,7 +73,7 @@ Data::Sah::Compiler::human::TH - Base class for human type handlers
 
 =head1 VERSION
 
-version 0.12
+version 0.13
 
 =for Pod::Coverage ^(name|compiler|clause_.+|handle_.+|before_.+|after_.+)$
 

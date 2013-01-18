@@ -7,7 +7,7 @@ extends 'Data::Sah::Compiler::Prog';
 
 use SHARYANTO::String::Util;
 
-our $VERSION = '0.12'; # VERSION
+our $VERSION = '0.13'; # VERSION
 
 sub BUILD {
     my ($self, $args) = @_;
@@ -481,7 +481,7 @@ Data::Sah::Compiler::perl - Compile Sah schema to Perl code
 
 =head1 VERSION
 
-version 0.12
+version 0.13
 
 =head1 SYNOPSIS
 

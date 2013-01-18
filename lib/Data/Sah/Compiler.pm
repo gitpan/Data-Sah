@@ -9,7 +9,7 @@ with 'Data::Sah::Compiler::TextResultRole';
 
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.12'; # VERSION
+our $VERSION = '0.13'; # VERSION
 
 has main => (is => 'rw');
 
@@ -182,24 +182,34 @@ sub _get_clauses_from_clsets {
             }
         }
         $metab //= {prio=>50};
-        $res = $metaa->{prio} <=> $metab->{prio};
-        return $res if $res;
 
-        # prio from schema
-        my $sprioa = $clsets->[$ia]{"$ca.prio"} // 50;
-        my $spriob = $clsets->[$ib]{"$cb.prio"} // 50;
-        $res = $sprioa <=> $spriob;
-        return $res if $res;
+        {
+            $res = $metaa->{prio} <=> $metab->{prio};
+            #$log->errorf("TMP:   sort1");
+            last if $res;
 
-        # alphabetical order of clause name
-        $res = $a cmp $b;
-        return $res if $res;
+            # prio from schema
+            my $sprioa = $clsets->[$ia]{"$ca.prio"} // 50;
+            my $spriob = $clsets->[$ib]{"$cb.prio"} // 50;
+            $res = $sprioa <=> $spriob;
+            #$log->errorf("TMP:   sort2");
+            last if $res;
 
-        # clause set order
-        $res = $ia <=> $ib;
-        return $res if $res;
+            # alphabetical order of clause name
+            $res = $ca cmp $cb;
+            #$log->errorf("TMP:   sort3");
+            last if $res;
 
-        0;
+            # clause set order
+            $res = $ia <=> $ib;
+            #$log->errorf("TMP:   sort4");
+            last if $res;
+
+            $res = 0;
+        }
+
+        #$log->errorf("TMP:   sort [%s,%s] vs [%s,%s] = %s", $ia, $ca, $ib, $cb, $res);
+        $res;
     };
 
     my @clauses;
@@ -208,7 +218,9 @@ sub _get_clauses_from_clsets {
             grep {!/\A_/ && !/\./} keys %{$clsets->[$i]};
     }
 
-    [sort $sorter @clauses];
+    my $res = [sort $sorter @clauses];
+    #$log->errorf("TMP: sorted clauses: %s", $res);
+    $res;
 }
 
 sub get_th {
@@ -647,7 +659,7 @@ Data::Sah::Compiler - Base class for Sah compilers (Data::Sah::Compiler::*)
 
 =head1 VERSION
 
-version 0.12
+version 0.13
 
 =for Pod::Coverage ^(check_compile_args|def|expr|init_cd|literal|name)$
 

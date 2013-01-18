@@ -3,7 +3,7 @@ package Data::Sah::Type::Sortable;
 use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 
-our $VERSION = '0.12'; # VERSION
+our $VERSION = '0.13'; # VERSION
 
 requires 'superclause_sortable';
 
@@ -26,6 +26,7 @@ has_clause 'xmin',
     },
     ;
 has_clause 'max',
+    prio       => 51,
     tags       => ['constraint'],
     arg        => 'any*',
     allow_expr => 1,
@@ -35,6 +36,7 @@ has_clause 'max',
     },
     ;
 has_clause 'xmax',
+    prio       => 51,
     tags       => ['constraint'],
     arg        => 'any*',
     allow_expr => 1,
@@ -75,7 +77,7 @@ Data::Sah::Type::Sortable - Role for sortable types
 
 =head1 VERSION
 
-version 0.12
+version 0.13
 
 =head1 DESCRIPTION
 

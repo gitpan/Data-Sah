@@ -3,7 +3,7 @@ package Data::Sah::Type::Comparable;
 use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 
-our $VERSION = '0.12'; # VERSION
+our $VERSION = '0.13'; # VERSION
 
 requires 'superclause_comparable';
 
@@ -37,7 +37,7 @@ Data::Sah::Type::Comparable - Comparable type role
 
 =head1 VERSION
 
-version 0.12
+version 0.13
 
 =head1 DESCRIPTION
 

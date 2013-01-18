@@ -5,7 +5,7 @@ use Moo;
 extends 'Data::Sah::Compiler';
 use Log::Any qw($log);
 
-our $VERSION = '0.12'; # VERSION
+our $VERSION = '0.13'; # VERSION
 
 #use Digest::MD5 qw(md5_hex);
 
@@ -204,7 +204,7 @@ Data::Sah::Compiler::Prog - Base class for programming language compilers
 
 =head1 VERSION
 
-version 0.12
+version 0.13
 
 =head1 SYNOPSIS
 

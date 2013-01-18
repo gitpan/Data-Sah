@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::array';
 
-our $VERSION = '0.12'; # VERSION
+our $VERSION = '0.13'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -126,7 +126,7 @@ Data::Sah::Compiler::perl::TH::array - perl's type handler for type "array"
 
 =head1 VERSION
 
-version 0.12
+version 0.13
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

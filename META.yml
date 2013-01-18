@@ -31,6 +31,7 @@ requires:
   Language::Expr::Interpreter::VarEnumer: 0.13
   Lingua::EN::Numbers::Ordinate: 1.02
   Log::Any: 0.09
+  Module::Path: 0.08
   Moo: 0
   Moo::Role: 0
   SHARYANTO::String::Util: 0
@@ -41,4 +42,4 @@ requires:
 resources:
   homepage: http://search.cpan.org/dist/Data-Sah/
   repository: http://github.com/sharyanto/perl-Data-Sah
-version: 0.12
+version: 0.13

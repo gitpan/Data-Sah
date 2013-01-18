@@ -25,7 +25,7 @@ my %module_build_args = (
     "Steven Haryanto <stevenharyanto\@gmail.com>"
   ],
   "dist_name" => "Data-Sah",
-  "dist_version" => "0.12",
+  "dist_version" => "0.13",
   "license" => "perl",
   "module_name" => "Data::Sah",
   "recommends" => {},
@@ -40,6 +40,7 @@ my %module_build_args = (
     "Language::Expr::Interpreter::VarEnumer" => "0.13",
     "Lingua::EN::Numbers::Ordinate" => "1.02",
     "Log::Any" => "0.09",
+    "Module::Path" => "0.08",
     "Moo" => 0,
     "Moo::Role" => 0,
     "SHARYANTO::String::Util" => 0,

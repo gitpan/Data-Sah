@@ -6,7 +6,7 @@ with 'Data::Sah::Type::BaseType';
 with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::HasElems';
 
-our $VERSION = '0.12'; # VERSION
+our $VERSION = '0.13'; # VERSION
 
 has_clause_alias each_elem => 'of';
 
@@ -26,6 +26,7 @@ has_clause "keys",
     },
     ;
 has_clause "re_keys",
+    prio       => 51,
     tags       => ['constraint'],
     arg        => ['hash*' => {keys => 're*', values => 'schema*'}],
     allow_expr => 0,
@@ -47,6 +48,7 @@ has_clause "allowed_keys",
     allow_expr => 1,
     ;
 has_clause "allowed_keys_re",
+    prio       => 51,
     tags       => ['constraint'],
     arg        => 're*',
     allow_expr => 1,
@@ -73,7 +75,7 @@ Data::Sah::Type::hash - hash type
 
 =head1 VERSION
 
-version 0.12
+version 0.13
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 
