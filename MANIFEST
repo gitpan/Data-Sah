@@ -12,6 +12,8 @@ lib/Data/Sah.pm
 lib/Data/Sah/Compiler.pm
 lib/Data/Sah/Compiler/Prog.pm
 lib/Data/Sah/Compiler/Prog/TH.pm
+lib/Data/Sah/Compiler/Prog/TH/all.pm
+lib/Data/Sah/Compiler/Prog/TH/any.pm
 lib/Data/Sah/Compiler/TH.pm
 lib/Data/Sah/Compiler/TextResultRole.pm
 lib/Data/Sah/Compiler/human.pm
@@ -31,6 +33,20 @@ lib/Data/Sah/Compiler/human/TH/num.pm
 lib/Data/Sah/Compiler/human/TH/obj.pm
 lib/Data/Sah/Compiler/human/TH/re.pm
 lib/Data/Sah/Compiler/human/TH/str.pm
+lib/Data/Sah/Compiler/js.pm
+lib/Data/Sah/Compiler/js/TH.pm
+lib/Data/Sah/Compiler/js/TH/all.pm
+lib/Data/Sah/Compiler/js/TH/any.pm
+lib/Data/Sah/Compiler/js/TH/array.pm
+lib/Data/Sah/Compiler/js/TH/bool.pm
+lib/Data/Sah/Compiler/js/TH/code.pm
+lib/Data/Sah/Compiler/js/TH/float.pm
+lib/Data/Sah/Compiler/js/TH/hash.pm
+lib/Data/Sah/Compiler/js/TH/int.pm
+lib/Data/Sah/Compiler/js/TH/num.pm
+lib/Data/Sah/Compiler/js/TH/obj.pm
+lib/Data/Sah/Compiler/js/TH/re.pm
+lib/Data/Sah/Compiler/js/TH/str.pm
 lib/Data/Sah/Compiler/perl.pm
 lib/Data/Sah/Compiler/perl/TH.pm
 lib/Data/Sah/Compiler/perl/TH/all.pm
@@ -87,5 +103,6 @@ t/release-pod-coverage.t
 t/release-pod-syntax.t
 t/release-rinci.t
 t/spectest-human.t-
+t/spectest-js.t
 t/spectest-perl.t
 t/testlib.pl

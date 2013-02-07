@@ -9,13 +9,14 @@ my %module_build_args = (
   "build_requires" => {
     "Data::Dump::OneLine" => 0,
     "File::ShareDir::Tarball" => 0,
+    "File::Slurp" => 0,
+    "File::Which" => 0,
     "File::chdir" => 0,
     "Module::Build" => "0.3601",
-    "Sah" => "v0.9.23",
+    "Sah" => "v0.9.25",
     "Test::Exception" => 0,
     "Test::More" => "0.98",
-    "Test::Warn" => 0,
-    "YAML::Syck" => 0
+    "Test::Warn" => 0
   },
   "configure_requires" => {
     "Module::Build" => "0.3601"
@@ -25,7 +26,7 @@ my %module_build_args = (
     "Steven Haryanto <stevenharyanto\@gmail.com>"
   ],
   "dist_name" => "Data-Sah",
-  "dist_version" => "0.13",
+  "dist_version" => "0.14",
   "license" => "perl",
   "module_name" => "Data::Sah",
   "recommends" => {},

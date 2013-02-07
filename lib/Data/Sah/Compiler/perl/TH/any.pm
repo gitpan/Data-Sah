@@ -3,23 +3,11 @@ package Data::Sah::Compiler::perl::TH::any;
 use 5.010;
 use Log::Any '$log';
 use Moo;
-extends 'Data::Sah::Compiler::perl::TH';
-with 'Data::Sah::Type::any';
+extends
+    'Data::Sah::Compiler::perl::TH',
+    'Data::Sah::Compiler::Prog::TH::any';
 
-our $VERSION = '0.13'; # VERSION
-
-sub handle_type {
-    my ($self, $cd) = @_;
-    my $c = $self->compiler;
-
-    my $dt = $cd->{data_term};
-    $cd->{_ccl_check_type} = "1";
-}
-
-sub clause_of {
-    my ($self, $cd) = @_;
-    $self->gen_any_or_all_of("any", $cd);
-}
+our $VERSION = '0.14'; # VERSION
 
 1;
 # ABSTRACT: perl's type handler for type "any"
@@ -34,7 +22,7 @@ Data::Sah::Compiler::perl::TH::any - perl's type handler for type "any"
 
 =head1 VERSION
 
-version 0.13
+version 0.14
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

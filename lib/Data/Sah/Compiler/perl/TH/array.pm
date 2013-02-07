@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::array';
 
-our $VERSION = '0.13'; # VERSION
+our $VERSION = '0.14'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -73,6 +73,7 @@ sub clause_elems {
     my $cv = $cd->{cl_value};
     my $dt = $cd->{data_term};
 
+    local $cd->{_subdata_level} = $cd->{_subdata_level} + 1;
     my $use_dpath = $cd->{args}{return_type} ne 'bool';
 
     my $jccl;
@@ -126,7 +127,7 @@ Data::Sah::Compiler::perl::TH::array - perl's type handler for type "array"
 
 =head1 VERSION
 
-version 0.13
+version 0.14
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

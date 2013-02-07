@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::human::TH';
 with 'Data::Sah::Type::all';
 
-our $VERSION = '0.13'; # VERSION
+our $VERSION = '0.14'; # VERSION
 
 sub handle_type {
 }
@@ -83,7 +83,7 @@ Data::Sah::Compiler::human::TH::all - perl's type handler for type "all"
 
 =head1 VERSION
 
-version 0.13
+version 0.14
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

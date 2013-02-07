@@ -5,7 +5,7 @@ use Moo;
 extends 'Data::Sah::Compiler';
 use Log::Any qw($log);
 
-our $VERSION = '0.13'; # VERSION
+our $VERSION = '0.14'; # VERSION
 
 #use Digest::MD5 qw(md5_hex);
 
@@ -15,7 +15,15 @@ has hc => (is => 'rw');
 # subclass should provide a default, choices: 'shell', 'c', 'ini', 'cpp'
 has comment_style => (is => 'rw');
 
-has var_sigil => (is => 'rw', default => sub {''});
+has var_sigil => (is => 'rw');
+
+has concat_op => (is => 'rw');
+
+has logical_and_op => (is => 'rw', default => sub {'&&'});
+
+has logical_not_op => (is => 'rw', default => sub {'!'});
+
+#has logical_or_op => (is => 'rw', default => sub {'||'});
 
 sub init_cd {
     my ($self, %args) = @_;
@@ -30,14 +38,16 @@ sub init_cd {
     }
 
     if (my $ocd = $cd->{outer_cd}) {
-        $cd->{subs}    = $ocd->{subs};
+        $cd->{vars}    = $ocd->{vars};
         $cd->{modules} = $ocd->{modules};
         $cd->{_hc}     = $ocd->{_hc};
         $cd->{_hcd}    = $ocd->{_hcd};
+        $cd->{_subdata_level} = $ocd->{_subdata_level};
     } else {
-        $cd->{subs}    = [];
+        $cd->{vars}    = {};
         $cd->{modules} = [];
         $cd->{_hc}     = $hc;
+        $cd->{_subdata_level} = 0;
     }
 
     $cd;
@@ -61,7 +71,9 @@ sub check_compile_args {
     $args->{sub_prefix} //= "_sahs_";
     $args->{data_term}  //= $self->var_sigil . $args->{data_name};
     $args->{data_term_is_lvalue} //= 1;
-    $args->{comment} //= 1;
+    $args->{tmp_data_name} //= "tmp_$args->{data_name}";
+    $args->{tmp_data_term} //= $self->var_sigil . $args->{tmp_data_name};
+    $args->{comment}    //= 1;
     $args->{err_term}   //= $self->var_sigil . "err_$args->{data_name}";
 }
 
@@ -109,7 +121,374 @@ sub add_var {
     my ($self, $cd, $name, $value) = @_;
 
     return if exists $cd->{vars}{$name};
+    #$log->tracef("TMP: add_var %s", $name);
     $cd->{vars}{$name} = $value;
+}
+
+# naming convention: expr_NOUN(), stmt_VERB(_NOUN)?()
+
+sub expr_assign {
+    my ($self, $v, $t) = @_;
+    "$v = $t";
+}
+
+sub _xlt {
+    my ($self, $cd, $text) = @_;
+
+    my $hc  = $cd->{_hc};
+    my $hcd = $cd->{_hcd};
+    #$log->tracef("(Prog) Translating text %s ...", $text);
+    $hc->_xlt($hcd, $text);
+}
+
+sub expr_concat {
+    my ($self, @t) = @_;
+    join(" " . $self->concat_op . " ", @t);
+}
+
+sub expr_var {
+    my ($self, $v) = @_;
+    $self->var_sigil. $v;
+}
+
+sub expr_preinc {
+    my ($self, $t) = @_;
+    "++$t";
+}
+
+sub expr_preinc_var {
+    my ($self, $v) = @_;
+    "++" . $self->var_sigil. $v;
+}
+
+# expr_postinc
+# expr_predec
+# expr_postdec
+
+# args: log_result, var_term, err_term. the rest is the same/supplied to
+# compile().
+sub expr_validator_sub {
+    my ($self, %args) = @_;
+
+    my $log_result = delete $args{log_result};
+    my $dt         = $args{data_term};
+    my $vt         = delete($args{var_term}) // $dt;
+    my $do_log     = $args{debug_log} || $args{debug};
+    my $rt         = $args{return_type} // 'bool';
+
+    $args{indent_level} = 1;
+
+    my $cd = $self->compile(%args);
+    my $et = $cd->{args}{err_term};
+
+    if ($rt ne 'bool') {
+        my ($ev) = $et =~ /(\w+)/; # to remove sigil
+        $self->add_var($cd, $ev, $rt eq 'str' ? undef : {});
+    }
+    my $resv = '_sahv_res';
+    my $rest = $self->var_sigil . $resv;
+
+    my $needs_expr_block = @{ $cd->{modules} } || $do_log;
+
+    my $code = join(
+        "",
+        ($self->stmt_require_log_module."\n") x !!$do_log,
+        (map { $self->stmt_require_module($_)."\n" } @{ $cd->{modules} }),
+        $self->expr_anon_sub(
+            [$vt],
+            join(
+                "",
+                (map {$self->stmt_declare_local_var(
+                    $_, $self->literal($cd->{vars}{$_}))."\n"}
+                     sort keys %{ $cd->{vars} }),
+                #$log->tracef('-> (validator)(%s) ...', $dt);\n";
+                $self->stmt_declare_local_var($resv, "\n\n" . $cd->{result})."\n\n",
+
+                # when rt=bool, return true/false result
+                #(";\n\n\$log->tracef('<- validator() = %s', \$res)")
+                #    x !!($do_log && $rt eq 'bool'),
+                ($self->stmt_return($rest)."\n")
+                    x !!($rt eq 'bool'),
+
+                # when rt=str, return string error message
+                #($log->tracef('<- validator() = %s', ".
+                #     "\$err_data);\n\n";
+                #    x !!($do_log && $rt eq 'str'),
+                ($self->expr_set_err_str($et, $self->literal('')).";",
+                 "\n\n".$self->stmt_return($et)."\n")
+                    x !!($rt eq 'str'),
+
+                # when rt=full, return error hash
+                ($self->stmt_return($et)."\n")
+                    x !!($rt eq 'full'),
+            )
+        ),
+    );
+
+    if ($needs_expr_block) {
+        $code = $self->expr_block($code);
+    }
+
+    if ($log_result && $log->is_trace) {
+        $log->tracef("validator code:\n%s",
+                     ($ENV{LINENUM} // 1) ?
+                         SHARYANTO::String::Util::linenum($code) :
+                               $code);
+    }
+
+    $code;
+}
+
+# add compiled clause to ccls, along with extra information useful for joining
+# later (like error level, code for adding error message, etc). available
+# options:
+#
+# - err_level (str, the default will be taken from current clause's .err_level
+# if not specified),
+#
+# - err_expr,
+#
+# - err_msg (str, the default will be produced by human compiler if not
+# supplied, or taken from current clause's .err_msg),
+#
+# - subdata (bool, default false, if set to true then this means we are
+# delving into subdata, e.g. array elements or hash pair values, and appropriate
+# things must be done to adjust for this [e.g. push_dpath/pop_dpath at the end
+# so that error message can show the proper data path].
+#
+# - assert (bool, default false, if set to true means this ccl is an assert ccl,
+# meaning it always returns true and is not translated from an actual clause. it
+# will not affect number of errors nor produce error messages.)
+sub add_ccl {
+    my ($self, $cd, $ccl, $opts) = @_;
+    $opts //= {};
+    my $clause = $cd->{clause} // "";
+    my $op     = $cd->{cl_op} // "";
+    #$log->errorf("TMP: adding ccl %s, current ccls=%s", $ccl, $cd->{ccls});
+
+    my $use_dpath = $cd->{args}{return_type} ne 'bool';
+
+    my $el = $opts->{err_level} // $cd->{clset}{"$clause.err_level"} // "error";
+    my $err_expr = $opts->{err_expr};
+    my $err_msg  = $opts->{err_msg};
+
+    if (defined $err_expr) {
+        #
+    } else {
+        unless (defined $err_msg) { $err_msg = $cd->{clset}{"$clause.err_msg"} }
+        unless (defined $err_msg) {
+            # XXX how to invert on op='none' or op='not'?
+
+            my @msgpath = @{$cd->{spath}};
+            my $msgpath;
+            my $hc  = $cd->{_hc};
+            my $hcd = $cd->{_hcd};
+            while (1) {
+                # search error message, use more general one if the more
+                # specific one is not available
+                last unless @msgpath;
+                $msgpath = join("/", @msgpath);
+                my $ccls = $hcd->{result}{$msgpath};
+                pop @msgpath;
+                if ($ccls) {
+                    local $hcd->{args}{format} = 'inline_err_text';
+                    $err_msg = $hc->format_ccls($hcd, $ccls);
+                    # show path when debugging
+                    $err_msg = "[msgpath=$msgpath]$err_msg"
+                        if $cd->{args}{debug};
+                    last;
+                }
+            }
+            if (!$err_msg) {
+                $err_msg = "ERR (clause=".($cd->{clause} // "").")";
+            } else {
+                $err_msg = ucfirst($err_msg);
+            }
+        }
+        if ($err_msg) {
+            $self->add_var($cd, '_sahv_dpath', []) if $use_dpath;
+            $err_expr = $self->literal($err_msg);
+            $err_expr = $self->expr_prefix_dpath($err_expr) if $use_dpath;
+            # show schema path, when debugging only
+            $err_expr = $self->expr_concat(
+                $self->literal("[spath=".join("/",@{$cd->{spath}}."]")),
+                $err_expr
+            ) if $cd->{args}{debug};
+        }
+    }
+
+    my $rt = $cd->{args}{return_type};
+    my $et = $cd->{args}{err_term};
+    my $err_code;
+    if ($rt eq 'full') {
+        $self->add_var($cd, '_sahv_dpath', []) if $use_dpath;
+        my $k = $el eq 'warn' ? 'warnings' : 'errors';
+        $err_code = $self->expr_set_err_full($et, $k, $err_expr) if $err_expr;
+    } elsif ($rt eq 'str') {
+        if ($el ne 'warn') {
+            $err_code = $self->expr_set_err_str($et, $err_expr) if $err_expr;
+        }
+    }
+
+    my $res = {
+        ccl             => $ccl,
+        err_level       => $el,
+        err_code        => $err_code,
+        (_debug_ccl_note => $cd->{_debug_ccl_note}) x !!$cd->{_debug_ccl_note},
+        subdata         => $opts->{subdata},
+    };
+    push @{ $cd->{ccls} }, $res;
+    delete $cd->{uclset}{"$clause.err_level"};
+    delete $cd->{uclset}{"$clause.err_msg"};
+}
+
+# join ccls to handle .op and insert error messages. opts = op
+sub join_ccls {
+    my ($self, $cd, $ccls, $opts) = @_;
+    $opts //= {};
+    my $op = $opts->{op} // "and";
+    #$log->errorf("TMP: joining ccl %s", $ccls);
+    #warn "join_ccls"; #TMP
+
+    my ($min_ok, $max_ok, $min_nok, $max_nok);
+    if ($op eq 'and') {
+        $max_nok = 0;
+    } elsif ($op eq 'or') {
+        $min_ok = 1;
+    } elsif ($op eq 'none') {
+        $max_ok = 0;
+    } elsif ($op eq 'not') {
+
+    }
+    my $dmin_ok  = defined($min_ok);
+    my $dmax_ok  = defined($max_ok);
+    my $dmin_nok = defined($min_nok);
+    my $dmax_nok = defined($max_nok);
+
+    return "" unless @$ccls;
+
+    my $rt      = $cd->{args}{return_type};
+    my $vp      = $cd->{args}{var_prefix};
+
+    my $aop = $self->logical_and_op;
+    my $nop = $self->logical_not_op;
+
+    my $true = $self->true;
+
+    # insert comment, error message, and $ok/$nok counting. $which is 0 by
+    # default (normal), or 1 (reverse logic, for 'not' or 'none'), or 2 (for
+    # $ok/$nok counting), or 3 (like 2, but for the last clause).
+    my $_ice = sub {
+        my ($ccl, $which) = @_;
+
+        return $self->enclose_paren($ccl->{ccl}) if $ccl->{assert};
+
+        my $use_dpath = $rt ne 'bool' && $ccl->{subdata};
+
+        my $res = "";
+
+        if ($ccl->{_debug_ccl_note}) {
+            if ($cd->{args}{debug_log_clause} // $cd->{args}{debug}) {
+                $res .= $self->expr_log($cd, $ccl) . " $aop\n";
+            } else {
+                $res .= $self->comment($cd, $ccl->{_debug_ccl_note});
+            }
+        }
+
+        $which //= 0;
+        # clause code
+        my $cc = ($which == 1 ? $nop:"") . $self->enclose_paren($ccl->{ccl});
+        $cc = $self->expr_push_dpath_before_expr($self->literal(undef), $cc)
+            if $use_dpath;
+        my ($ec, $oec);
+        my ($ret, $oret);
+        if ($which >= 2) {
+            my @chk;
+            push @chk, '('.$self->expr_pop_dpath.", $true" if $use_dpath;
+            if ($ccl->{err_level} eq 'warn') {
+                $oret = 1;
+                $ret  = 1;
+            } elsif ($ccl->{err_level} eq 'fatal') {
+                $oret = 1;
+                $ret  = 0;
+            } else {
+                $oret = $self->expr_preinc_var("${vp}ok");
+                $ret  = $self->expr_preinc_var("${vp}nok");
+                push @chk, $self->expr_var("${vp}ok"). " <= $max_ok"
+                    if $dmax_ok;
+                push @chk, $self->expr_var("${vp}nok")." <= $max_nok"
+                    if $dmax_nok;
+                if ($which == 3) {
+                    push @chk, $self->expr_var("${vp}ok"). " >= $min_ok"
+                        if $dmin_ok;
+                    push @chk, $self->expr_var("${vp}nok")." >= $min_nok"
+                        if $dmin_nok;
+
+                    # we need to clear the error message previously set
+                    if ($rt ne 'bool') {
+                        my $et = $cd->{args}{err_term};
+                        my $clerrc;
+                        if ($rt eq 'full') {
+                            $clerrc = $self->expr_reset_err_full($et);
+                        } else {
+                            $clerrc = $self->expr_reset_err_str($et);
+                        }
+                        push @chk, $clerrc;
+                    }
+                }
+            }
+            $res .= "($cc ? $oret : $ret)";
+            $res .= " $aop " . join(" $aop ", @chk) if @chk;
+        } else {
+            $ec = $ccl->{err_code};
+            $ret =
+                $ccl->{err_level} eq 'fatal' ? 0 :
+                    # this must not be done because it messes up ok/nok counting
+                    #$rt eq 'full' ? 1 :
+                        $ccl->{err_level} eq 'warn' ? 1 : 0;
+            if ($rt eq 'bool' && $ret) {
+                $res .= $true;
+            } elsif ($rt eq 'bool' || !$ec) {
+                $res .= $self->enclose_paren($cc);
+            } else {
+                my $popdpc = $use_dpath ? ', '.$self->expr_pop_dpath : '';
+                $res .= $self->enclose_paren(
+                    $self->enclose_paren($cc). " ? $true : (($ec$popdpc),$ret)",
+                    "force");
+            }
+        }
+        $res;
+    };
+
+    my $j = "\n\n$aop\n\n";
+    if ($op eq 'not') {
+        return $_ice->($ccls->[0], 1);
+    } elsif ($op eq 'and') {
+        return join $j, map { $_ice->($_) } @$ccls;
+    } elsif ($op eq 'none') {
+        return join $j, map { $_ice->($_, 1) } @$ccls;
+    } else {
+        my $jccl = join $j, map {$_ice->($ccls->[$_], $_ == @$ccls-1 ? 3:2)}
+            0..@$ccls-1;
+        {
+            local $cd->{ccls} = [];
+            local $cd->{_debug_ccl_note} = "op=$op";
+            $self->add_ccl(
+                $cd,
+                $self->expr_block(
+                    join(
+                        "",
+                        $self->stmt_declare_local_var("${vp}ok" , "0"), "\n",
+                        $self->stmt_declare_local_var("${vp}nok", "0"), "\n",
+                        "\n",
+                        $self->block_uses_sub ?
+                            $self->stmt_return($jccl) : $jccl,
+                    )
+                ),
+            );
+            $_ice->($cd->{ccls}[0]);
+        }
+    }
 }
 
 sub before_compile {
@@ -124,6 +503,141 @@ sub before_compile {
         # XXX perl specific!
         push @{ $cd->{ccls} }, ["(local($cd->{data_term} = $cd->{args}{data_term}), 1)"];
     }
+}
+
+sub before_handle_type {
+    my ($self, $cd) = @_;
+
+    # do a human compilation first to collect all the error messages
+
+    unless ($cd->{_inner}) {
+        my $hc = $cd->{_hc};
+        my %hargs = %{$cd->{args}};
+        $hargs{format}               = 'msg_catalog';
+        $hargs{schema_is_normalized} = 1;
+        $hargs{schema}               = $cd->{nschema};
+        $hargs{on_unhandled_clause}  = 'ignore';
+        $hargs{on_unhandled_attr}    = 'ignore';
+        $cd->{_hcd} = $hc->compile(%hargs);
+    }
+}
+
+sub before_all_clauses {
+    my ($self, $cd) = @_;
+
+    # handle default/prefilters/req/forbidden clauses
+
+    my $dt     = $cd->{data_term};
+    my $clsets = $cd->{clsets};
+
+    # handle default
+    for my $i (0..@$clsets-1) {
+        my $clset  = $clsets->[$i];
+        my $def    = $clset->{default};
+        my $defie  = $clset->{"default.is_expr"};
+        if (defined $def) {
+            local $cd->{_debug_ccl_note} = "default #$i";
+            my $ct = $defie ?
+                $self->expr($def) : $self->literal($def);
+            $self->add_ccl(
+                $cd,
+                "(".$self->expr_setif($dt, $ct).", ".$self->true.")",
+                {err_msg => ""},
+            );
+        }
+        delete $cd->{uclsets}[$i]{"default"};
+        delete $cd->{uclsets}[$i]{"default.is_expr"};
+    }
+
+    # XXX handle prefilters
+
+    # handle req
+    my $has_req;
+    for my $i (0..@$clsets-1) {
+        my $clset  = $clsets->[$i];
+        my $req    = $clset->{req};
+        my $reqie  = $clset->{"req.is_expr"};
+        my $req_err_msg = $self->_xlt($cd, "Required input not specified");
+        local $cd->{_debug_ccl_note} = "req #$i";
+        if ($req && !$reqie) {
+            $has_req++;
+            $self->add_ccl(
+                $cd, $self->expr_defined($dt),
+                {
+                    err_msg   => $req_err_msg,
+                    err_level => 'fatal',
+                },
+            );
+        } elsif ($reqie) {
+            $has_req++;
+            my $ct = $self->expr($req);
+            $self->add_ccl(
+                $cd, "!($ct) || ".$self->expr_defined($dt),
+                {
+                    err_msg   => $req_err_msg,
+                    err_level => 'fatal',
+                },
+            );
+        }
+        delete $cd->{uclsets}[$i]{"req"};
+        delete $cd->{uclsets}[$i]{"req.is_expr"};
+    }
+
+    # handle forbidden
+    my $has_fbd;
+    for my $i (0..@$clsets-1) {
+        my $clset  = $clsets->[$i];
+        my $fbd    = $clset->{forbidden};
+        my $fbdie  = $clset->{"forbidden.is_expr"};
+        my $fbd_err_msg = $self->_xlt($cd, "Forbidden input specified");
+        local $cd->{_debug_ccl_note} = "forbidden #$i";
+        if ($fbd && !$fbdie) {
+            $has_fbd++;
+            $self->add_ccl(
+                $cd, "!".$self->expr_defined($dt),
+                {
+                    err_msg   => $fbd_err_msg,
+                    err_level => 'fatal',
+                },
+            );
+        } elsif ($fbdie) {
+            $has_fbd++;
+            my $ct = $self->expr($fbd);
+            $self->add_ccl(
+                $cd, "!($ct) || !".$self->expr_defined($dt),
+                {
+                    err_msg   => $fbd_err_msg,
+                    err_level => 'fatal',
+                },
+            );
+        }
+        delete $cd->{uclsets}[$i]{"forbidden"};
+        delete $cd->{uclsets}[$i]{"forbidden.is_expr"};
+    }
+
+    if (!$has_req && !$has_fbd) {
+        $cd->{_skip_undef} = 1;
+        $cd->{_ccls_idx1} = @{$cd->{ccls}};
+    }
+
+
+    $self->_die($cd, "BUG: type handler did not produce _ccl_check_type")
+        unless defined($cd->{_ccl_check_type});
+    local $cd->{_debug_ccl_note} = "check type '$cd->{type}'";
+    $self->add_ccl(
+        $cd, $cd->{_ccl_check_type},
+        {
+            err_msg   => sprintf(
+                $self->_xlt($cd, "Input is not of type %s"),
+                $self->_xlt(
+                    $cd,
+                    $cd->{_hc}->get_th(name=>$cd->{type})->name //
+                        $cd->{type}
+                    ),
+            ),
+            err_level => 'fatal',
+        },
+    );
 }
 
 sub before_clause {
@@ -181,14 +695,34 @@ sub after_clause_sets {
     my ($self, $cd) = @_;
 
     # simply join them together with &&
-    $cd->{result} = $self->join_ccls($cd, $cd->{ccls}, {err_msg => ''});
+    $cd->{result} = $self->indent(
+        $cd,
+        $self->join_ccls($cd, $cd->{ccls}, {err_msg => ''}),
+    );
 }
 
 sub after_all_clauses {
     my ($self, $cd) = @_;
 
+    if (delete $cd->{_skip_undef}) {
+        my $jccl = $self->join_ccls(
+            $cd,
+            [splice(@{ $cd->{ccls} }, $cd->{_ccls_idx1})],
+        );
+        local $cd->{_debug_ccl_note} = "skip if undef";
+        $self->add_ccl(
+            $cd,
+            "!".$self->expr_defined($cd->{data_term})." ? ".$self->true." : \n\n".
+                $self->enclose_paren($jccl),
+            {err_msg => ''},
+        );
+    }
+
     # simply join them together with &&
-    $cd->{result} = $self->join_ccls($cd, $cd->{ccls}, {err_msg => ''});
+    $cd->{result} = $self->indent(
+        $cd,
+        $self->join_ccls($cd, $cd->{ccls}, {err_msg => ''}),
+    );
 }
 
 1;
@@ -204,51 +738,78 @@ Data::Sah::Compiler::Prog - Base class for programming language compilers
 
 =head1 VERSION
 
-version 0.13
+version 0.14
 
 =head1 SYNOPSIS
 
 =head1 DESCRIPTION
 
 This class is derived from L<Data::Sah::Compiler>. It is used as base class for
-compilers which compile schemas into code (usually a validator) in programming
-language targets, like L<Data::Sah::Compiler::perl> and
-L<Data::Sah::Compiler::js>. The generated validator code by the compiler will be
-able to validate data according to the source schema, usually without requiring
-Data::Sah anymore.
+compilers which compile schemas into code (validator) in several programming
+languages, Perl (L<Data::Sah::Compiler::perl>) and JavaScript
+(L<Data::Sah::Compiler::js>) being two of them. (Other similar programming
+languages like PHP and Ruby might also be supported later on if needed).
 
-Aside from Perl and JavaScript, this base class is also suitable for generating
-validators in other procedural languages, like PHP, Python, and Ruby. See CPAN
-if compilers for those languages exist.
-
-Compilers using this base class are usually flexible in the kind of code they
-produce:
+Compilers using this base class are flexible in the kind of code they produce:
 
 =over 4
 
 =item * configurable validator return type
 
 Can generate validator that returns a simple bool result, str, or full data
-structure.
+structure (containing errors, warnings, and potentially other information).
 
 =item * configurable data term
 
-For flexibility in combining the validator code with other code, e.g. in sub
-wrapper (one such application is in L<Perinci::Sub::Wrapper>).
+For flexibility in combining the validator code with other code, e.g. putting
+inside subroutine wrapper (see L<Perinci::Sub::Wrapper>) or directly embedded to
+your source code (see L<Dist::Zilla::Plugin::Rinci::Validate>).
 
 =back
 
-Planned future features include:
+=for Pod::Coverage ^(after_.+|before_.+|add_module|add_var|add_ccl|join_ccls|check_compile_args|enclose_paren|init_cd|expr|expr_.+|stmt_.+)$
 
-=over 4
+=head1 HOW IT WORKS
 
-=item * generating other kinds of code (aside from validators)
+The compiler generates code in the following form:
 
-Perhaps data compliance measurer, data transformer, or whatever.
+ EXPR && EXPR2 && ...
 
-=back
+where C<EXPR> can be a single expression or multiple expressions joined by the
+list operator (which Perl and JavaScript support). Each C<EXPR> is typically
+generated out of a single schema clause. Some pseudo-example of generated
+JavaScript code:
 
-=for Pod::Coverage ^(after_.+|before_.+|add_module|add_var|check_compile_args|enclose_paren|init_cd)$
+ (data >= 0)  # from clause: min => 0
+ &&
+ (data <= 10) # from clause: max => 10
+
+Another example, a fuller translation of schema C<< [int => {min=>0, max=>10}]
+>> to Perl, returning string result (error message) instead of boolean:
+
+ # from clause: req => 0
+ !defined($data) ? 1 : (
+
+     # type check
+     ($data =~ /^[+-]?\d+$/ ? 1 : ($err //= "Data is not an integer", 0))
+
+     &&
+
+     # from clause: min => 0
+     ($data >=  0 ? 1 : ($err //= "Must be at least 0", 0))
+
+     &&
+
+     # from clause: max => 10
+     ($data <= 10 ? 1 : ($err //= "Must be at most 10", 0))
+
+ )
+
+The final validator code will add enclosing subroutine and variable declaration,
+loading of modules, etc.
+
+Note: Current assumptions/hard-coded things for the supported languages: ternary
+operator (C<? :>), semicolon as statement separator.
 
 =head1 ATTRIBUTES
 
@@ -267,7 +828,11 @@ perl compiler sets this to 'shell' while js sets this to 'cpp'.
 
 =head2 var_sigil => STR
 
-To be moved to Perlish.
+=head2 concat_op => STR
+
+=head2 logical_and_op => STR
+
+=head2 logical_not_op => STR
 
 =head1 METHODS
 
@@ -288,6 +853,36 @@ defaults to I<var_sigil> + C<name> if not specified.
 =item * data_term_is_lvalue => BOOL (default: 1)
 
 Whether C<data_term> can be assigned to.
+
+=item * tmp_data_name => STR
+
+Normally need not be set manually, as it will be set to "tmp_" . data_name. Used
+to store temporary data during clause evaluation.
+
+=item * tmp_data_term => STR
+
+Normally need not be set manually, as it will be set to var_sigil .
+tmp_data_name. Used to store temporary data during clause evaluation. For
+example, in JavaScript, the 'int' and 'float' type pass strings in the type
+check. But for further checking with the clauses (like 'min', 'max',
+'divisible_by') the string data needs to be converted to number first. Likewise
+with prefiltering. This variable holds the temporary value. The clauses compare
+against this value. At the end of clauses, the original data_term is restored.
+So the output validator code for schema C<< [int => min => 1] >> will look
+something like:
+
+ // type check 'int'
+ type(data)=='number' && Math.round(data)==data || parseInt(data)==data)
+
+ &&
+
+ // convert to number
+ (tmp_data = type(data)=='number' ? data : parseFloat(data), true)
+
+ &&
+
+ // check clause 'min'
+ (tmp_data >= 1)
 
 =item * err_term => STR
 
@@ -377,7 +972,7 @@ _sah_s_nonzero { $_[0] != 0 }'] ] >>. For flexibility, you'll need to do this
 bit of arranging yourself to get the final usable code you can compile in your
 chosen programming language.
 
-=item * B<vars> => ARRAY ?
+=item * B<vars> => HASH
 
 =back
 
@@ -388,6 +983,38 @@ Generate a comment. For example, in perl compiler:
  $c->comment($cd, "123"); # -> "# 123\n"
 
 Will return an empty string if compile argument C<comment> is set to false.
+
+=head1 INTERNAL VARIABLES IN THE GENERATED CODE
+
+The generated code maintains the following variables. C<_sahv_> prefix stands
+for "Sah validator", it is used to minimize clash with data_term.
+
+=over
+
+=item * _sahv_dpath => ARRAY
+
+Analogous to C<spath> in compilation data, this variable stands for "data path"
+and is used to track location within data. If a clause is checking each element
+of an array (like the 'each_elem' or 'elems' array clause), this variable will
+be adjusted accordingly. Error messages thus can be more informative by pointing
+more exactly where in the data the problem lies.
+
+=item * C<tmp_data_term> => ANY
+
+As explained in the C<compile()> method, this is used to store temporary value
+when checking against clauses.
+
+=item * _sahv_stack => ARRAY
+
+This variable is used to store validation result of subdata. It is only used if
+the validator is returning a string or full structure, not a single boolean
+value. See C<Data::Sah::Compiler::js::TH::hash> for an example.
+
+=item * _sahv_x
+
+Usually used as temporary variable in short, anonymous functions.
+
+=back
 
 =head1 AUTHOR
 

@@ -4,7 +4,7 @@ use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 with 'Data::Sah::Type::BaseType';
 
-our $VERSION = '0.13'; # VERSION
+our $VERSION = '0.14'; # VERSION
 
 has_clause 'can',
     tags       => ['constraint'],
@@ -30,7 +30,7 @@ Data::Sah::Type::obj - obj type
 
 =head1 VERSION
 
-version 0.13
+version 0.14
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

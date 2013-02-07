@@ -9,7 +9,7 @@ with 'Data::Sah::Compiler::TextResultRole';
 
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.13'; # VERSION
+our $VERSION = '0.14'; # VERSION
 
 has main => (is => 'rw');
 
@@ -602,7 +602,7 @@ sub compile {
         $self->after_compile($cd);
     }
 
-    if ($Data::Sah::Log_Validator_Code && $log->is_trace) {
+    if ($args{log_result} && $log->is_trace) {
         require SHARYANTO::String::Util;
         $log->tracef(
             "Schema compilation result:\n%s",
@@ -659,7 +659,7 @@ Data::Sah::Compiler - Base class for Sah compilers (Data::Sah::Compiler::*)
 
 =head1 VERSION
 
-version 0.13
+version 0.14
 
 =for Pod::Coverage ^(check_compile_args|def|expr|init_cd|literal|name)$
 

@@ -3,19 +3,27 @@ package Data::Sah::Compiler::TextResultRole;
 use 5.010;
 use Moo::Role;
 
-our $VERSION = '0.13'; # VERSION
+use SHARYANTO::String::Util;
+
+our $VERSION = '0.14'; # VERSION
 
 # can be changed to tab, for example
 has indent_character => (is => 'rw', default => sub {''});
 
-sub line {
+sub add_result {
     my ($self, $cd, @args) = @_;
 
     $cd->{result} //= [];
-    push @{ $cd->{result} }, join(
-        "", $self->indent_character x $cd->{indent_level},
-        @args);
+    push @{ $cd->{result} }, $self->indent($cd, join("", @args));
     $self;
+}
+
+sub indent {
+    my ($self, $cd, $str) = @_;
+    SHARYANTO::String::Util::indent(
+        $self->indent_character x $cd->{indent_level},
+        $str,
+    );
 }
 
 sub inc_indent {
@@ -46,7 +54,7 @@ Data::Sah::Compiler::TextResultRole - Role for compilers that produce text resul
 
 =head1 VERSION
 
-version 0.13
+version 0.14
 
 =head1 ATTRIBUTES
 
@@ -54,17 +62,10 @@ version 0.13
 
 =head1 METHODS
 
-=head2 $c->line($cd, @arg)
+=head2 $c->add_result($cd, @arg)
 
-Append a line to C<< $cd->{result} >>. Will use C<< $cd->{indent_level} >> to
-indent the line. Used by compiler; users normally do not need this. Example:
-
- $c->line($cd, 'this is a line', ' of ', 'code');
-
-When C<< $cd->{indent_level} >> is 2 and C<< $cd->{args}{indent_width} >> is 2,
-this line will be added with 4-spaces indent:
-
- this is a line of code
+Append result to C<< $cd->{result} >>. Will use C<< $cd->{indent_level} >> to
+indent the line. Used by compiler; users normally do not need this.
 
 =head2 $c->inc_indent($cd)
 
@@ -79,6 +80,10 @@ Decrease indent level. This is done by decreasing C<< $cd->{indent_level} >> by
 =head2 $c->indent_str($cd)
 
 Shortcut for C<< $c->indent_character x $cd->{indent_level} >>.
+
+=head2 $c->indent($cd, $str) => STR
+
+Indent each line in $str with indent_str and return the result.
 
 =head1 AUTHOR
 

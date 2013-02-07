@@ -8,7 +8,7 @@ use Log::Any qw($log);
 use POSIX qw(locale_h);
 use Text::sprintfn;
 
-our $VERSION = '0.13'; # VERSION
+our $VERSION = '0.14'; # VERSION
 
 # every type extension is registered here
 our %typex; # key = type, val = [clause, ...]
@@ -46,8 +46,19 @@ sub init_cd {
     $cd;
 }
 
+sub expr {
+    my ($self, $cd, $expr) = @_;
+
+    # for now we dump expression as is. we should probably parse it first to
+    # localize number, e.g. "1.1 + 2" should become "1,1 + 2" in id_ID.
+
+    # XXX for nicer output, perhaps say "the expression X" instead of just "X",
+    # especially if X has a variable or rather complex.
+    $expr;
+}
+
 sub literal {
-    my ($self, $cd, $val) = @_;
+    my ($self, $val) = @_;
 
     return $val unless ref($val);
 
@@ -68,17 +79,6 @@ sub literal {
     # XXX for nicer output, perhaps say "empty array" instead of "[]", "empty
     # hash" instead of "{}", etc.
     $json->encode($cleanser->clone_and_clean($val));
-}
-
-sub expr {
-    my ($self, $cd, $expr) = @_;
-
-    # for now we dump expression as is. we should probably parse it first to
-    # localize number, e.g. "1.1 + 2" should become "1,1 + 2" in id_ID.
-
-    # XXX for nicer output, perhaps say "the expression X" instead of just "X",
-    # especially if X has a variable or rather complex.
-    $expr;
 }
 
 # translate
@@ -216,34 +216,34 @@ sub add_ccl {
     } elsif ($op eq 'and') {
         if (@$cv == 2) {
             $vals = [sprintf($self->_xlt($cd, "%s and %s"),
-                             $self->literal($cd, $cv->[0]),
-                             $self->literal($cd, $cv->[1]))];
+                             $self->literal($cv->[0]),
+                             $self->literal($cv->[1]))];
         } else {
             $vals = [sprintf($self->_xlt($cd, "all of %s"),
-                             $self->literal($cd, $cv))];
+                             $self->literal($cv))];
         }
     } elsif ($op eq 'or') {
         if (@$cv == 2) {
             $vals = [sprintf($self->_xlt($cd, "%s or %s"),
-                             $self->literal($cd, $cv->[0]),
-                             $self->literal($cd, $cv->[1]))];
+                             $self->literal($cv->[0]),
+                             $self->literal($cv->[1]))];
         } else {
             $vals = [sprintf($self->_xlt($cd, "one of %s"),
-                             $self->literal($cd, $cv))];
+                             $self->literal($cv))];
         }
     } elsif ($op eq 'none') {
         ($hvals->{modal_verb}, $hvals->{modal_verbneg}) =
             ($hvals->{modal_verb_neg}, $hvals->{modal_verb});
         if (@$cv == 2) {
             $vals = [sprintf($self->_xlt($cd, "%s nor %s"),
-                             $self->literal($cd, $cv->[0]),
-                             $self->literal($cd, $cv->[1]))];
+                             $self->literal($cv->[0]),
+                             $self->literal($cv->[1]))];
         } else {
             $vals = [sprintf($self->_xlt($cd, "any of %s"),
-                             $self->literal($cd, $cv))];
+                             $self->literal($cv))];
         }
     } else {
-        $vals = [map {$self->literal($cd, $_)} @$vals];
+        $vals = [map {$self->literal($_)} @$vals];
     }
 
   ERR_LEVEL:
@@ -506,7 +506,7 @@ Data::Sah::Compiler::human - Compile Sah schema to human language
 
 =head1 VERSION
 
-version 0.13
+version 0.14
 
 =head1 SYNOPSIS
 

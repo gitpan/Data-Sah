@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::hash';
 
-our $VERSION = '0.13'; # VERSION
+our $VERSION = '0.14'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -76,6 +76,7 @@ sub clause_keys {
     my $cv = $cd->{cl_value};
     my $dt = $cd->{data_term};
 
+    local $cd->{_subdata_level} = $cd->{_subdata_level} + 1;
     my $use_dpath = $cd->{args}{return_type} ne 'bool';
 
     # we handle subdata manually here, because in generated code for
@@ -90,8 +91,8 @@ sub clause_keys {
             $c->add_module($cd, "List::Util");
             $c->add_ccl(
                 $cd,
-                "!defined(List::Util::first {!(\$_ ~~ ".
-                    $c->literal([keys %$cv]).")} keys %{$dt})",
+                "!defined(List::Util::first(sub {!(\$_ ~~ ".
+                    $c->literal([keys %$cv]).")}, keys %{$dt}))",
                 {
                     err_msg => 'TMP1',
                     err_expr => join(
@@ -134,6 +135,7 @@ sub clause_keys {
             # should we set default for hash value?
             my $sdef = $cdef && defined($sch->[1]{default});
 
+            # stack is used to store (non-bool) subresults
             $c->add_var($cd, '_sahv_stack', []) if $use_dpath;
 
             my @code = (
@@ -194,7 +196,7 @@ Data::Sah::Compiler::perl::TH::hash - perl's type handler for type "hash"
 
 =head1 VERSION
 
-version 0.13
+version 0.14
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

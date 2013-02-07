@@ -57,12 +57,13 @@
          "requires" : {
             "Data::Dump::OneLine" : "0",
             "File::ShareDir::Tarball" : "0",
+            "File::Slurp" : "0",
+            "File::Which" : "0",
             "File::chdir" : "0",
-            "Sah" : "v0.9.23",
+            "Sah" : "v0.9.25",
             "Test::Exception" : "0",
             "Test::More" : "0.98",
-            "Test::Warn" : "0",
-            "YAML::Syck" : "0"
+            "Test::Warn" : "0"
          }
       }
    },
@@ -73,6 +74,6 @@
          "url" : "http://github.com/sharyanto/perl-Data-Sah"
       }
    },
-   "version" : "0.13"
+   "version" : "0.14"
 }
 
