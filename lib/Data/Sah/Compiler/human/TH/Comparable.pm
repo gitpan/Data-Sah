@@ -5,7 +5,7 @@ use Log::Any '$log';
 use Moo::Role;
 with 'Data::Sah::Type::Comparable';
 
-our $VERSION = '0.14'; # VERSION
+our $VERSION = '0.15'; # VERSION
 
 sub superclause_comparable {
     my ($self, $which, $cd) = @_;
@@ -17,7 +17,7 @@ sub superclause_comparable {
                           fmt => '%(modal_verb)s have the value %s'});
     } elsif ($which eq 'in') {
         $c->add_ccl($cd, {expr=>1, multi=>1,
-                          fmt => '%(modal_verb)s one of %s'});
+                          fmt => '%(modal_verb)s be one of %s'});
     }
 }
 1;
@@ -33,7 +33,7 @@ Data::Sah::Compiler::human::TH::Comparable - human's type handler for role "Comp
 
 =head1 VERSION
 
-version 0.14
+version 0.15
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Tie::IxHash;
 
-our $VERSION = '0.14'; # VERSION
+our $VERSION = '0.15'; # VERSION
 
 sub ordinate {
     my ($n, $noun) = @_;
@@ -100,7 +100,7 @@ tie %translations, 'Tie::IxHash', (
     q[%(modal_verb)s have the value %s],
     q[%(modal_verb)s bernilai %s],
 
-    q[%(modal_verb)s one of %s],
+    q[%(modal_verb)s be one of %s],
     q[%(modal_verb)s salah satu dari %s],
 
     # type: HasElems
@@ -355,7 +355,7 @@ Data::Sah::Lang::id_ID - id_ID locale
 
 =head1 VERSION
 
-version 0.14
+version 0.15
 
 =for Pod::Coverage .+
 

@@ -6,7 +6,7 @@ with 'Data::Sah::Type::BaseType';
 with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::HasElems';
 
-our $VERSION = '0.14'; # VERSION
+our $VERSION = '0.15'; # VERSION
 
 has_clause_alias each_elem => 'of';
 
@@ -75,7 +75,7 @@ Data::Sah::Type::hash - hash type
 
 =head1 VERSION
 
-version 0.14
+version 0.15
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

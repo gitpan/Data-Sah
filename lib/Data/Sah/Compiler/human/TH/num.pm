@@ -8,7 +8,7 @@ with 'Data::Sah::Compiler::human::TH::Comparable';
 with 'Data::Sah::Compiler::human::TH::Sortable';
 with 'Data::Sah::Type::num';
 
-our $VERSION = '0.14'; # VERSION
+our $VERSION = '0.15'; # VERSION
 
 sub name { "number" }
 
@@ -32,7 +32,7 @@ Data::Sah::Compiler::human::TH::num - human's type handler for type "num"
 
 =head1 VERSION
 
-version 0.14
+version 0.15
 
 =for Pod::Coverage ^(name|clause_.+|superclause_.+|before_.+|after_.+)$
 

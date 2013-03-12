@@ -8,7 +8,7 @@ use Log::Any qw($log);
 use POSIX qw(locale_h);
 use Text::sprintfn;
 
-our $VERSION = '0.14'; # VERSION
+our $VERSION = '0.15'; # VERSION
 
 # every type extension is registered here
 our %typex; # key = type, val = [clause, ...]
@@ -275,9 +275,10 @@ sub add_ccl {
   FILL_FORMAT:
 
     if (ref($ccl->{fmt}) eq 'ARRAY') {
-        $ccl->{text} = [map {sprintfn($_, $hvals, @$vals)} @{$ccl->{fmt}}];
+        $ccl->{text} = [map {sprintfn($_, (map {$_//""} ($hvals, @$vals)))}
+                            @{$ccl->{fmt}}];
     } elsif (!ref($ccl->{fmt})) {
-        $ccl->{text} = sprintfn($ccl->{fmt}, $hvals, @$vals);
+        $ccl->{text} = sprintfn($ccl->{fmt}, (map {$_//""} ($hvals, @$vals)));
     }
     delete $ccl->{fmt} unless $cd->{args}{debug};
 
@@ -506,7 +507,7 @@ Data::Sah::Compiler::human - Compile Sah schema to human language
 
 =head1 VERSION
 
-version 0.14
+version 0.15
 
 =head1 SYNOPSIS
 

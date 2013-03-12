@@ -3,7 +3,7 @@ package Data::Sah::Compiler::js::TH;
 use Moo;
 extends 'Data::Sah::Compiler::Prog::TH';
 
-our $VERSION = '0.14'; # VERSION
+our $VERSION = '0.15'; # VERSION
 
 sub gen_each {
     my ($self, $which, $cd, $indices_expr, $elems_expr) = @_;
@@ -45,7 +45,7 @@ Data::Sah::Compiler::js::TH - Base class for js type handlers
 
 =head1 VERSION
 
-version 0.14
+version 0.15
 
 =for Pod::Coverage ^(compiler|clause_.+|gen_.+)$
 

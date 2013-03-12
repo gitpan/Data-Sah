@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Tie::IxHash;
 
-our $VERSION = '0.14'; # VERSION
+our $VERSION = '0.15'; # VERSION
 
 our %translations;
 tie %translations, 'Tie::IxHash', (
@@ -106,7 +106,7 @@ Data::Sah::Lang::fr_FR - fr_FR locale
 
 =head1 VERSION
 
-version 0.14
+version 0.15
 
 =for Pod::Coverage .+
 

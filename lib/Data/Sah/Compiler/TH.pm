@@ -3,7 +3,7 @@ package Data::Sah::Compiler::TH;
 use 5.010;
 use Moo;
 
-our $VERSION = '0.14'; # VERSION
+our $VERSION = '0.15'; # VERSION
 
 # reference to compiler object
 has compiler => (is => 'rw');
@@ -59,7 +59,7 @@ Data::Sah::Compiler::TH - Base class for type handlers
 
 =head1 VERSION
 
-version 0.14
+version 0.15
 
 =for Pod::Coverage ^(compiler|clause_.+)$
 

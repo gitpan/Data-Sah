@@ -7,7 +7,7 @@ extends
     'Data::Sah::Compiler::perl::TH',
     'Data::Sah::Compiler::Prog::TH::any';
 
-our $VERSION = '0.14'; # VERSION
+our $VERSION = '0.15'; # VERSION
 
 1;
 # ABSTRACT: perl's type handler for type "any"
@@ -22,7 +22,7 @@ Data::Sah::Compiler::perl::TH::any - perl's type handler for type "any"
 
 =head1 VERSION
 
-version 0.14
+version 0.15
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 
