@@ -5,7 +5,7 @@ use Log::Any '$log';
 use Moo::Role;
 with 'Data::Sah::Type::Comparable';
 
-our $VERSION = '0.15'; # VERSION
+our $VERSION = '0.16'; # VERSION
 
 sub superclause_comparable {
     my ($self, $which, $cd) = @_;
@@ -23,8 +23,8 @@ sub superclause_comparable {
 1;
 # ABSTRACT: human's type handler for role "Comparable"
 
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -33,7 +33,7 @@ Data::Sah::Compiler::human::TH::Comparable - human's type handler for role "Comp
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 
@@ -49,4 +49,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

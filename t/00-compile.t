@@ -1,73 +1,118 @@
-#!perl
-
 use strict;
 use warnings;
 
-use Test::More;
+# This test was generated via Dist::Zilla::Plugin::Test::Compile 2.018
+
+use Test::More 0.88;
 
 
 
-use File::Find;
-use File::Temp qw{ tempdir };
+use Capture::Tiny qw{ capture };
 
-my @modules;
-find(
-  sub {
-    return if $File::Find::name !~ /\.pm\z/;
-    my $found = $File::Find::name;
-    $found =~ s{^lib/}{};
-    $found =~ s{[/\\]}{::}g;
-    $found =~ s/\.pm$//;
-    # nothing to skip
-    push @modules, $found;
-  },
-  'lib',
+my @module_files = qw(
+Data/Sah.pm
+Data/Sah/Compiler.pm
+Data/Sah/Compiler/Prog.pm
+Data/Sah/Compiler/Prog/TH.pm
+Data/Sah/Compiler/Prog/TH/all.pm
+Data/Sah/Compiler/Prog/TH/any.pm
+Data/Sah/Compiler/TH.pm
+Data/Sah/Compiler/TextResultRole.pm
+Data/Sah/Compiler/human.pm
+Data/Sah/Compiler/human/TH.pm
+Data/Sah/Compiler/human/TH/Comparable.pm
+Data/Sah/Compiler/human/TH/HasElems.pm
+Data/Sah/Compiler/human/TH/Sortable.pm
+Data/Sah/Compiler/human/TH/all.pm
+Data/Sah/Compiler/human/TH/any.pm
+Data/Sah/Compiler/human/TH/array.pm
+Data/Sah/Compiler/human/TH/bool.pm
+Data/Sah/Compiler/human/TH/code.pm
+Data/Sah/Compiler/human/TH/float.pm
+Data/Sah/Compiler/human/TH/hash.pm
+Data/Sah/Compiler/human/TH/int.pm
+Data/Sah/Compiler/human/TH/num.pm
+Data/Sah/Compiler/human/TH/obj.pm
+Data/Sah/Compiler/human/TH/re.pm
+Data/Sah/Compiler/human/TH/str.pm
+Data/Sah/Compiler/js.pm
+Data/Sah/Compiler/js/TH.pm
+Data/Sah/Compiler/js/TH/all.pm
+Data/Sah/Compiler/js/TH/any.pm
+Data/Sah/Compiler/js/TH/array.pm
+Data/Sah/Compiler/js/TH/bool.pm
+Data/Sah/Compiler/js/TH/code.pm
+Data/Sah/Compiler/js/TH/float.pm
+Data/Sah/Compiler/js/TH/hash.pm
+Data/Sah/Compiler/js/TH/int.pm
+Data/Sah/Compiler/js/TH/num.pm
+Data/Sah/Compiler/js/TH/obj.pm
+Data/Sah/Compiler/js/TH/re.pm
+Data/Sah/Compiler/js/TH/str.pm
+Data/Sah/Compiler/perl.pm
+Data/Sah/Compiler/perl/TH.pm
+Data/Sah/Compiler/perl/TH/all.pm
+Data/Sah/Compiler/perl/TH/any.pm
+Data/Sah/Compiler/perl/TH/array.pm
+Data/Sah/Compiler/perl/TH/bool.pm
+Data/Sah/Compiler/perl/TH/code.pm
+Data/Sah/Compiler/perl/TH/float.pm
+Data/Sah/Compiler/perl/TH/hash.pm
+Data/Sah/Compiler/perl/TH/int.pm
+Data/Sah/Compiler/perl/TH/num.pm
+Data/Sah/Compiler/perl/TH/obj.pm
+Data/Sah/Compiler/perl/TH/re.pm
+Data/Sah/Compiler/perl/TH/str.pm
+Data/Sah/Lang.pm
+Data/Sah/Lang/fr_FR.pm
+Data/Sah/Lang/id_ID.pm
+Data/Sah/Lang/zh_CN.pm
+Data/Sah/Schema/Common.pm
+Data/Sah/Schema/sah.pm
+Data/Sah/Type/BaseType.pm
+Data/Sah/Type/Comparable.pm
+Data/Sah/Type/HasElems.pm
+Data/Sah/Type/Sortable.pm
+Data/Sah/Type/all.pm
+Data/Sah/Type/any.pm
+Data/Sah/Type/array.pm
+Data/Sah/Type/bool.pm
+Data/Sah/Type/buf.pm
+Data/Sah/Type/code.pm
+Data/Sah/Type/float.pm
+Data/Sah/Type/hash.pm
+Data/Sah/Type/int.pm
+Data/Sah/Type/num.pm
+Data/Sah/Type/obj.pm
+Data/Sah/Type/re.pm
+Data/Sah/Type/str.pm
+Data/Sah/Type/undef.pm
+Data/Sah/Util/Func.pm
+Data/Sah/Util/Role.pm
+Data/Sah/Util/TypeX.pm
 );
 
-sub _find_scripts {
-    my $dir = shift @_;
+my @scripts = qw(
 
-    my @found_scripts = ();
-    find(
-      sub {
-        return unless -f;
-        my $found = $File::Find::name;
-        # nothing to skip
-        open my $FH, '<', $_ or do {
-          note( "Unable to open $found in ( $! ), skipping" );
-          return;
-        };
-        my $shebang = <$FH>;
-        return unless $shebang =~ /^#!.*?\bperl\b\s*$/;
-        push @found_scripts, $found;
-      },
-      $dir,
-    );
+);
 
-    return @found_scripts;
-}
+# no fake home requested
 
-my @scripts;
-do { push @scripts, _find_scripts($_) if -d $_ }
-    for qw{ bin script scripts };
-
-my $plan = scalar(@modules) + scalar(@scripts);
-$plan ? (plan tests => $plan) : (plan skip_all => "no tests to run");
-
+my @warnings;
+for my $lib (@module_files)
 {
-    # fake home for cpan-testers
-    # no fake requested ## local $ENV{HOME} = tempdir( CLEANUP => 1 );
-
-    like( qx{ $^X -Ilib -e "require $_; print '$_ ok'" }, qr/^\s*$_ ok/s, "$_ loaded ok" )
-        for sort @modules;
-
-    SKIP: {
-        eval "use Test::Script 1.05; 1;";
-        skip "Test::Script needed to test script compilation", scalar(@scripts) if $@;
-        foreach my $file ( @scripts ) {
-            my $script = $file;
-            $script =~ s!.*/!!;
-            script_compiles( $file, "$script script compiles" );
-        }
-    }
+    my ($stdout, $stderr, $exit) = capture {
+        system($^X, '-Mblib', '-e', qq{require q[$lib]});
+    };
+    is($?, 0, "$lib loaded ok");
+    warn $stderr if $stderr;
+    push @warnings, $stderr if $stderr;
 }
+
+
+
+is(scalar(@warnings), 0, 'no warnings found') if $ENV{AUTHOR_TESTING};
+
+
+
+done_testing;

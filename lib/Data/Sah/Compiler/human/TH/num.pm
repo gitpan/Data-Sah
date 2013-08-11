@@ -8,7 +8,7 @@ with 'Data::Sah::Compiler::human::TH::Comparable';
 with 'Data::Sah::Compiler::human::TH::Sortable';
 with 'Data::Sah::Type::num';
 
-our $VERSION = '0.15'; # VERSION
+our $VERSION = '0.16'; # VERSION
 
 sub name { "number" }
 
@@ -22,8 +22,8 @@ sub handle_type {
 1;
 # ABSTRACT: human's type handler for type "num"
 
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -32,7 +32,7 @@ Data::Sah::Compiler::human::TH::num - human's type handler for type "num"
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =for Pod::Coverage ^(name|clause_.+|superclause_.+|before_.+|after_.+)$
 
@@ -48,4 +48,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

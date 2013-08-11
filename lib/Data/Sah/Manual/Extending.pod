@@ -1,13 +1,12 @@
 package Data::Sah::Manual::Extending; # just to make PodWeaver happy
 
-our $VERSION = '0.15'; # VERSION
+# VERSION
 
 1;
 # ABSTRACT: Extending Data::Sah
 
-
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -16,7 +15,7 @@ Data::Sah::Manual::Extending - Extending Data::Sah
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =head1 DESCRIPTION
 
@@ -132,4 +131,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

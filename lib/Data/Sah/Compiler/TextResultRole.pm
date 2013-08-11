@@ -5,7 +5,7 @@ use Moo::Role;
 
 use SHARYANTO::String::Util;
 
-our $VERSION = '0.15'; # VERSION
+our $VERSION = '0.16'; # VERSION
 
 # can be changed to tab, for example
 has indent_character => (is => 'rw', default => sub {''});
@@ -44,8 +44,8 @@ sub indent_str {
 1;
 # ABSTRACT: Role for compilers that produce text result (array of lines)
 
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -54,7 +54,7 @@ Data::Sah::Compiler::TextResultRole - Role for compilers that produce text resul
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =head1 ATTRIBUTES
 
@@ -97,4 +97,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

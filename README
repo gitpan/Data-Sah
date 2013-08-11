@@ -2,7 +2,7 @@ NAME
     Data::Sah - Fast and featureful data structure validation
 
 VERSION
-    version 0.15
+    version 0.16
 
 SYNOPSIS
     Non-OO interface:
@@ -17,7 +17,7 @@ SYNOPSIS
 
      # validate your data using the generated validator
      say "valid" if $v->(5);     # valid
-     say "valid" if $->(11);     # invalid
+     say "valid" if $v->(11);    # invalid
      say "valid" if $v->(undef); # invalid
      say "valid" if $v->("x");   # invalid
 
@@ -54,15 +54,7 @@ STATUS
     Early implementation, some features are not implemented yet. Below is a
     list of things that are not yet implemented:
 
-    *   human compiler
-
-        *   markdown output
-
-    *   js compiler
-
-        not yet implemented.
-
-    *   perl compiler
+    *   General
 
         *   def/subschema
 
@@ -90,6 +82,14 @@ STATUS
             check_each_value, allowed_keys, allowed_keys_re
 
         *   array: has, uniq
+
+    *   human compiler
+
+        *   markdown output
+
+    *   perl compiler
+
+    *   js compiler
 
 EXPORTS
     None exported by default.
@@ -209,6 +209,8 @@ MODULE ORGANIZATION
     the schema for Sah schema itself.
 
 FAQ
+    See also Sah::FAQ.
+
   Relation to Data::Schema?
     Data::Schema is the old incarnation of this module, deprecated since
     2011.
@@ -256,13 +258,13 @@ FAQ
     However, an "eval_schema()" Sah function which uses Data::Sah can be
     trivially declared and target the Perl compiler.
 
-  How to display the Perl (JavaScript, ...) validator code being generated?
-    If you compile using one of the compiler, e.g.:
+  How to display the validator code being generated?
+    If you use the OO interface, e.g.:
 
      # generate perl code
-     $cd = $plc->compile(schema=>..., ...);
+     my $cd = $plc->compile(schema=>..., ...);
 
-    then the Perl code is in "$cd->{result}" and you can just print it.
+    then the generated code is in "$cd->{result}" and you can just print it.
 
     If you generate validator using "gen_validator()", you can set
     environment LOG_SAH_VALIDATOR_CODE or package variable
@@ -274,14 +276,79 @@ FAQ
        perl -MLog::Any::App -MData::Sah=gen_validator \
        -e '$sub = gen_validator([int => min=>1, max=>10])'
 
-SEE ALSO
-  Alternatives to Sah
-    Moose has a type system. MooseX::Params::Validate, among others, can
-    validate method parameters based on this.
+    Sample output:
 
-    Some other data validation and data schema modules on CPAN:
-    Data::FormValidator, Params::Validate, Data::Rx, Kwalify,
+     normalized schema=['int',{max => 10,min => 1},{}]
+     schema already normalized, skipped normalization
+     validator code:
+        1|do {
+        2|    require Scalar::Util;
+        3|    sub {
+        4|        my($data) = @_;
+        5|        my $_sahv_res =
+         |
+        7|            # skip if undef
+        8|            (!defined($data) ? 1 :
+         |
+       10|            (# check type 'int'
+       11|            (Scalar::Util::looks_like_number($data) =~ /^(?:1|2|9|10|4352)$/)
+         |
+       13|            &&
+         |
+       15|            (# clause: min
+       16|            ($data >= 1))
+         |
+       18|            &&
+         |
+       20|            (# clause: max
+       21|            ($data <= 10))));
+         |
+       23|        return($_sahv_res);
+       24|    }}
+
+  What else can I do with the compiled code?
+    Data::Sah offers some options in code generation. Beside compiling the
+    validator code into a subroutine, there are also some other options.
+    Examples:
+
+    *   Dist::Zilla::Plugin::Rinci::Validate
+
+        This plugin inserts the generated code (without the "sub { ... }"
+        wrapper) to validate the content of %args right before "#
+        VALIDATE_ARG" or "# VALIDATE_ARGS" like below:
+
+         $SPEC{foo} = {
+             args => {
+                 arg1 => { schema => ..., req=>1 },
+                 arg2 => { schema => ... },
+             },
+             ...
+         };
+         sub foo {
+             my %args = @_; # VALIDATE_ARGS
+         }
+
+        The schemas will be retrieved from the Rinci metadata ($SPEC{foo}
+        above). This means, subroutines in your built distribution will do
+        argument validation.
+
+    *   Perinci::Sub::Wrapper
+
+        This module is part of the Perinci family. What the module does is
+        basically wrap your subroutine with a wrapper code that can include
+        validation code (among others). This is a convenient way to add
+        argument validation to an existing subroutine/code.
+
+SEE ALSO
+   Other compiled validators
+   Other interpreted validators
+    Params::Validate is very fast, although minimal. Data::Rx, Kwalify,
     Data::Verifier, Data::Validator, JSON::Schema, Validation::Class.
+
+    For Moo/Mouse/Moose stuffs: Moose type system, MooseX::Params::Validate,
+    Type::Tiny, among others.
+
+    Form-oriented: Data::FormValidator, FormValidator::Lite, among others.
 
 AUTHOR
     Steven Haryanto <stevenharyanto@gmail.com>

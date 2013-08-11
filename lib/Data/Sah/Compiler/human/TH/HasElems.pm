@@ -5,7 +5,7 @@ use Log::Any '$log';
 use Moo::Role;
 with 'Data::Sah::Type::HasElems';
 
-our $VERSION = '0.15'; # VERSION
+our $VERSION = '0.16'; # VERSION
 
 sub before_clause {
     my ($self_th, $which, $cd) = @_;
@@ -55,8 +55,8 @@ sub superclause_has_elems {
 1;
 # ABSTRACT: human's type handler for role "HasElems"
 
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -65,7 +65,7 @@ Data::Sah::Compiler::human::TH::HasElems - human's type handler for role "HasEle
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =for Pod::Coverage ^(name|clause_.+|superclause_.+|before_.+|after_.+)$
 
@@ -81,4 +81,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

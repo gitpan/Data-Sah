@@ -4,7 +4,7 @@ use 5.010001;
 use Moo;
 use Log::Any qw($log);
 
-our $VERSION = '0.15'; # VERSION
+our $VERSION = '0.16'; # VERSION
 
 our $Log_Validator_Code = $ENV{LOG_SAH_VALIDATOR_CODE} // 0;
 
@@ -288,9 +288,8 @@ sub normalize_var {
 1;
 # ABSTRACT: Fast and featureful data structure validation
 
-
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -299,7 +298,7 @@ Data::Sah - Fast and featureful data structure validation
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =head1 SYNOPSIS
 
@@ -315,7 +314,7 @@ Non-OO interface:
 
  # validate your data using the generated validator
  say "valid" if $v->(5);     # valid
- say "valid" if $->(11);     # invalid
+ say "valid" if $v->(11);    # invalid
  say "valid" if $v->(undef); # invalid
  say "valid" if $v->("x");   # invalid
 
@@ -356,19 +355,7 @@ things that are not yet implemented:
 
 =over
 
-=item * human compiler
-
-=over
-
-=item * markdown output
-
-=back
-
-=item * js compiler
-
-not yet implemented.
-
-=item * perl compiler
+=item * General
 
 =over
 
@@ -395,6 +382,26 @@ not yet implemented.
 =item * hash: re_keys, each_key, each_value, check_each_key, check_each_value, allowed_keys, allowed_keys_re
 
 =item * array: has, uniq
+
+=back
+
+=item * human compiler
+
+=over
+
+=item * markdown output
+
+=back
+
+=item * perl compiler
+
+=over
+
+=back
+
+=item * js compiler
+
+=over
 
 =back
 
@@ -533,6 +540,8 @@ schema itself.
 
 =head1 FAQ
 
+See also L<Sah::FAQ>.
+
 =head2 Relation to Data::Schema?
 
 L<Data::Schema> is the old incarnation of this module, deprecated since 2011.
@@ -580,34 +589,103 @@ evaluate the generated schema.
 However, an C<eval_schema()> Sah function which uses Data::Sah can be trivially
 declared and target the Perl compiler.
 
-=head2 How to display the Perl (JavaScript, ...) validator code being generated?
+=head2 How to display the validator code being generated?
 
-If you compile using one of the compiler, e.g.:
+If you use the OO interface, e.g.:
 
  # generate perl code
- $cd = $plc->compile(schema=>..., ...);
+ my $cd = $plc->compile(schema=>..., ...);
 
-then the Perl code is in C<< $cd->{result} >> and you can just print it.
+then the generated code is in C<< $cd->{result} >> and you can just print it.
 
 If you generate validator using C<gen_validator()>, you can set environment
-LOG_SAH_VALIDATOR_CODE or package variable $Log_Validator_Code to true and the
-generated code will be logged at trace level using L<Log::Any>. The log can be
-displayed using, e.g., L<Log::Any::App>:
+LOG_SAH_VALIDATOR_CODE or package variable C<$Log_Validator_Code> to true and
+the generated code will be logged at trace level using L<Log::Any>. The log can
+be displayed using, e.g., L<Log::Any::App>:
 
  % LOG_SAH_VALIDATOR_CODE=1 TRACE=1 \
    perl -MLog::Any::App -MData::Sah=gen_validator \
    -e '$sub = gen_validator([int => min=>1, max=>10])'
 
+Sample output:
+
+ normalized schema=['int',{max => 10,min => 1},{}]
+ schema already normalized, skipped normalization
+ validator code:
+    1|do {
+    2|    require Scalar::Util;
+    3|    sub {
+    4|        my($data) = @_;
+    5|        my $_sahv_res =
+     |
+    7|            # skip if undef
+    8|            (!defined($data) ? 1 :
+     |
+   10|            (# check type 'int'
+   11|            (Scalar::Util::looks_like_number($data) =~ /^(?:1|2|9|10|4352)$/)
+     |
+   13|            &&
+     |
+   15|            (# clause: min
+   16|            ($data >= 1))
+     |
+   18|            &&
+     |
+   20|            (# clause: max
+   21|            ($data <= 10))));
+     |
+   23|        return($_sahv_res);
+   24|    }}
+
+=head2 What else can I do with the compiled code?
+
+Data::Sah offers some options in code generation. Beside compiling the validator
+code into a subroutine, there are also some other options. Examples:
+
+=over
+
+=item * L<Dist::Zilla::Plugin::Rinci::Validate>
+
+This plugin inserts the generated code (without the C<sub { ... }> wrapper) to
+validate the content of C<%args> right before C<# VALIDATE_ARG> or C<#
+VALIDATE_ARGS> like below:
+
+ $SPEC{foo} = {
+     args => {
+         arg1 => { schema => ..., req=>1 },
+         arg2 => { schema => ... },
+     },
+     ...
+ };
+ sub foo {
+     my %args = @_; # VALIDATE_ARGS
+ }
+
+The schemas will be retrieved from the Rinci metadata (C<$SPEC{foo}> above).
+This means, subroutines in your built distribution will do argument validation.
+
+=item * L<Perinci::Sub::Wrapper>
+
+This module is part of the L<Perinci> family. What the module does is basically
+wrap your subroutine with a wrapper code that can include validation code (among
+others). This is a convenient way to add argument validation to an existing
+subroutine/code.
+
+=back
+
 =head1 SEE ALSO
 
-=head2 Alternatives to Sah
+=head3 Other compiled validators
 
-B<Moose> has a type system. B<MooseX::Params::Validate>, among others, can
-validate method parameters based on this.
+=head3 Other interpreted validators
 
-Some other data validation and data schema modules on CPAN:
-L<Data::FormValidator>, L<Params::Validate>, L<Data::Rx>, L<Kwalify>,
+L<Params::Validate> is very fast, although minimal. L<Data::Rx>, L<Kwalify>,
 L<Data::Verifier>, L<Data::Validator>, L<JSON::Schema>, L<Validation::Class>.
+
+For Moo/Mouse/Moose stuffs: L<Moose> type system, L<MooseX::Params::Validate>,
+L<Type::Tiny>, among others.
+
+Form-oriented: L<Data::FormValidator>, L<FormValidator::Lite>, among others.
 
 =head1 AUTHOR
 
@@ -621,4 +699,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

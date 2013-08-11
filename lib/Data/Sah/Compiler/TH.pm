@@ -3,7 +3,7 @@ package Data::Sah::Compiler::TH;
 use 5.010;
 use Moo;
 
-our $VERSION = '0.15'; # VERSION
+our $VERSION = '0.16'; # VERSION
 
 # reference to compiler object
 has compiler => (is => 'rw');
@@ -49,8 +49,8 @@ sub clause_clset {
 1;
 # ABSTRACT: Base class for type handlers
 
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -59,7 +59,7 @@ Data::Sah::Compiler::TH - Base class for type handlers
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =for Pod::Coverage ^(compiler|clause_.+)$
 
@@ -75,4 +75,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

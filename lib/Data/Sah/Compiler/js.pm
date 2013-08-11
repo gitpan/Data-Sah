@@ -7,7 +7,7 @@ use Log::Any qw($log);
 
 use SHARYANTO::String::Util;
 
-our $VERSION = '0.15'; # VERSION
+our $VERSION = '0.16'; # VERSION
 
 sub BUILD {
     my ($self, $args) = @_;
@@ -225,8 +225,8 @@ sub expr_validator_sub {
 1;
 # ABSTRACT: Compile Sah schema to JavaScript code
 
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -235,7 +235,7 @@ Data::Sah::Compiler::js - Compile Sah schema to JavaScript code
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =head1 SYNOPSIS
 
@@ -271,4 +271,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

@@ -9,7 +9,7 @@ with 'Data::Sah::Compiler::TextResultRole';
 
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.15'; # VERSION
+our $VERSION = '0.16'; # VERSION
 
 has main => (is => 'rw');
 
@@ -299,7 +299,8 @@ sub init_cd {
         $cd->{indent_level} = $cd->{args}{indent_level} // 0;
         $cd->{th_map}       = {};
         $cd->{fsh_map}      = {};
-        $cd->{default_lang} = $ENV{LANG} // "en_US";
+        # we use || here because in some env, LANG/LANGUAGE is set to ''
+        $cd->{default_lang} = $ENV{LANG} || "en_US";
         $cd->{default_lang} =~ s/\..+//; # en_US.UTF-8 -> en_US
         $cd->{spath}        = [];
     }
@@ -322,7 +323,7 @@ sub check_compile_args {
     $args->{skip_clause}         //= [];
     $args->{mark_missing_translation} //= 1;
     for ($args->{lang}) {
-        $_ //= $ENV{LANG} // $ENV{LANGUAGE} // "en_US";
+        $_ //= $ENV{LANG} || $ENV{LANGUAGE} || "en_US";
         s/\W.*//; # LANG=en_US.UTF-8, LANGUAGE=en_US:en
     }
     # locale, no default
@@ -562,7 +563,7 @@ sub compile {
     my $nschema;
     if ($args{schema_is_normalized}) {
         $nschema = $schema0;
-        $log->tracef("schema already normalized, skipped normalization");
+        #$log->tracef("schema already normalized, skipped normalization");
     } else {
         $nschema = $main->normalize_schema($schema0);
         $log->tracef("normalized schema=%s", $nschema);
@@ -649,8 +650,8 @@ sub _ignore_clause_and_attrs {
 1;
 # ABSTRACT: Base class for Sah compilers (Data::Sah::Compiler::*)
 
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -659,7 +660,7 @@ Data::Sah::Compiler - Base class for Sah compilers (Data::Sah::Compiler::*)
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =for Pod::Coverage ^(check_compile_args|def|expr|init_cd|literal|name)$
 
@@ -1069,4 +1070,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

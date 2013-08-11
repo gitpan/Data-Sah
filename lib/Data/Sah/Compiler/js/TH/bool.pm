@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::js::TH';
 with 'Data::Sah::Type::bool';
 
-our $VERSION = '0.15'; # VERSION
+our $VERSION = '0.16'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -77,8 +77,8 @@ sub clause_is_true {
 1;
 # ABSTRACT: js's type handler for type "bool"
 
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -87,7 +87,7 @@ Data::Sah::Compiler::js::TH::bool - js's type handler for type "bool"
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 
@@ -103,4 +103,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

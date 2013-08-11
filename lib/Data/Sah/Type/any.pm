@@ -4,7 +4,7 @@ use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 with 'Data::Sah::Type::BaseType';
 
-our $VERSION = '0.15'; # VERSION
+our $VERSION = '0.16'; # VERSION
 
 has_clause 'of',
     tags       => ['constraint'],
@@ -15,8 +15,8 @@ has_clause 'of',
 1;
 # ABSTRACT: any type
 
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -25,7 +25,7 @@ Data::Sah::Type::any - any type
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 
@@ -41,4 +41,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

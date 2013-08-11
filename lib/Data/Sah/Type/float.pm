@@ -4,7 +4,7 @@ use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 with 'Data::Sah::Type::num';
 
-our $VERSION = '0.15'; # VERSION
+our $VERSION = '0.16'; # VERSION
 
 has_clause 'is_nan',
     tags        => ['constraint'],
@@ -37,8 +37,8 @@ has_clause 'is_neg_inf',
 1;
 # ABSTRACT: float type
 
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -47,7 +47,7 @@ Data::Sah::Type::float - float type
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 
@@ -63,4 +63,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

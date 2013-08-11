@@ -4,7 +4,7 @@ use Log::Any '$log';
 use Moo;
 extends 'Data::Sah::Compiler::TH';
 
-our $VERSION = '0.15'; # VERSION
+our $VERSION = '0.16'; # VERSION
 
 # handled in compiler's before_all_clauses()
 
@@ -119,8 +119,8 @@ sub gen_any_or_all_of {
 1;
 # ABSTRACT: Base class for programming-language emiting compiler's type handlers
 
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -129,7 +129,7 @@ Data::Sah::Compiler::Prog::TH - Base class for programming-language emiting comp
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =for Pod::Coverage ^(compiler|clause_.+|handle_.+|gen_.+|set_tmp_data_term|restore_data_term)$
 
@@ -145,4 +145,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

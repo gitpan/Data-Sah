@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH::num';
 with 'Data::Sah::Type::float';
 
-our $VERSION = '0.15'; # VERSION
+our $VERSION = '0.16'; # VERSION
 
 my $LLN = "Scalar::Util::looks_like_number";
 
@@ -101,8 +101,8 @@ sub clause_is_inf {
 1;
 # ABSTRACT: perl's type handler for type "float"
 
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -111,7 +111,7 @@ Data::Sah::Compiler::perl::TH::float - perl's type handler for type "float"
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =for Pod::Coverage ^(compiler|clause_.+|handle_.+)$
 
@@ -127,4 +127,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

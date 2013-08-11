@@ -3,7 +3,7 @@ package Data::Sah::Type::HasElems;
 use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 
-our $VERSION = '0.15'; # VERSION
+our $VERSION = '0.16'; # VERSION
 
 requires 'superclause_has_elems';
 
@@ -105,8 +105,8 @@ has_clause 'exists',
 1;
 # ABSTRACT: HasElems role
 
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -115,7 +115,7 @@ Data::Sah::Type::HasElems - HasElems role
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 
@@ -131,4 +131,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

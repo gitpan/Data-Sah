@@ -3,7 +3,7 @@ package Data::Sah::Type::Comparable;
 use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 
-our $VERSION = '0.15'; # VERSION
+our $VERSION = '0.16'; # VERSION
 
 requires 'superclause_comparable';
 
@@ -27,8 +27,8 @@ has_clause 'is',
 1;
 # ABSTRACT: Comparable type role
 
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -37,7 +37,7 @@ Data::Sah::Type::Comparable - Comparable type role
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =head1 DESCRIPTION
 
@@ -59,4 +59,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

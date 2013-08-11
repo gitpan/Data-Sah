@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Tie::IxHash;
 
-our $VERSION = '0.15'; # VERSION
+our $VERSION = '0.16'; # VERSION
 
 sub ordinate {
     my ($n, $noun) = @_;
@@ -345,8 +345,8 @@ tie %translations, 'Tie::IxHash', (
 1;
 # ABSTRACT: id_ID locale
 
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -355,7 +355,7 @@ Data::Sah::Lang::id_ID - id_ID locale
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =for Pod::Coverage .+
 
@@ -371,4 +371,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

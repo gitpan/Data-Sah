@@ -3,7 +3,7 @@ package Data::Sah::Type::Sortable;
 use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 
-our $VERSION = '0.15'; # VERSION
+our $VERSION = '0.16'; # VERSION
 
 requires 'superclause_sortable';
 
@@ -67,8 +67,8 @@ has_clause 'xbetween',
 1;
 # ABSTRACT: Role for sortable types
 
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -77,7 +77,7 @@ Data::Sah::Type::Sortable - Role for sortable types
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =head1 DESCRIPTION
 
@@ -99,4 +99,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

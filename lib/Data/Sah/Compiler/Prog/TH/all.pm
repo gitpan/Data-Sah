@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::Prog::TH';
 with 'Data::Sah::Type::all';
 
-our $VERSION = '0.15'; # VERSION
+our $VERSION = '0.16'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -24,8 +24,8 @@ sub clause_of {
 1;
 # ABSTRACT: Base class for programming language compiler handler for type "all"
 
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -34,7 +34,7 @@ Data::Sah::Compiler::Prog::TH::all - Base class for programming language compile
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 
@@ -50,4 +50,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

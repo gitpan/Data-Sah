@@ -7,13 +7,13 @@ extends
     'Data::Sah::Compiler::perl::TH',
     'Data::Sah::Compiler::Prog::TH::all';
 
-our $VERSION = '0.15'; # VERSION
+our $VERSION = '0.16'; # VERSION
 
 1;
 # ABSTRACT: perl's type handler for type "all"
 
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -22,7 +22,7 @@ Data::Sah::Compiler::perl::TH::all - perl's type handler for type "all"
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 
@@ -38,4 +38,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

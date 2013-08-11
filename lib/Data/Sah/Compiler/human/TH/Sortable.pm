@@ -5,7 +5,7 @@ use Log::Any '$log';
 use Moo::Role;
 with 'Data::Sah::Type::Sortable';
 
-our $VERSION = '0.15'; # VERSION
+our $VERSION = '0.16'; # VERSION
 
 sub before_clause_between {
     my ($self, $cd) = @_;
@@ -58,8 +58,8 @@ sub superclause_sortable {
 1;
 # ABSTRACT: human's type handler for role "Sortable"
 
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -68,7 +68,7 @@ Data::Sah::Compiler::human::TH::Sortable - human's type handler for role "Sortab
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =for Pod::Coverage ^(name|clause_.+|superclause_.+|before_.+|after_.+)$
 
@@ -84,4 +84,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

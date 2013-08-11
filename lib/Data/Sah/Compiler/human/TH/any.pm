@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::human::TH';
 with 'Data::Sah::Type::any';
 
-our $VERSION = '0.15'; # VERSION
+our $VERSION = '0.16'; # VERSION
 
 sub handle_type {
     # does not have a noun
@@ -73,8 +73,8 @@ sub clause_of {
 1;
 # ABSTRACT: perl's type handler for type "any"
 
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -83,7 +83,7 @@ Data::Sah::Compiler::human::TH::any - perl's type handler for type "any"
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 
@@ -99,4 +99,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-
