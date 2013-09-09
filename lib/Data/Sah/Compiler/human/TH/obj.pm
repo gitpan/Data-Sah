@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::human::TH';
 with 'Data::Sah::Type::obj';
 
-our $VERSION = '0.16'; # VERSION
+our $VERSION = '0.17'; # VERSION
 
 sub name { "object" }
 
@@ -54,7 +54,7 @@ Data::Sah::Compiler::human::TH::obj - perl's type handler for type "obj"
 
 =head1 VERSION
 
-version 0.16
+version 0.17
 
 =for Pod::Coverage ^(name|clause_.+|superclause_.+|before_.+|after_.+)$
 

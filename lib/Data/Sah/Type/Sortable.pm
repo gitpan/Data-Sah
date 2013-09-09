@@ -3,7 +3,7 @@ package Data::Sah::Type::Sortable;
 use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 
-our $VERSION = '0.16'; # VERSION
+our $VERSION = '0.17'; # VERSION
 
 requires 'superclause_sortable';
 
@@ -77,7 +77,7 @@ Data::Sah::Type::Sortable - Role for sortable types
 
 =head1 VERSION
 
-version 0.16
+version 0.17
 
 =head1 DESCRIPTION
 

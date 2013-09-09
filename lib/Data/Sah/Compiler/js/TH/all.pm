@@ -7,7 +7,7 @@ extends
     'Data::Sah::Compiler::js::TH',
     'Data::Sah::Compiler::Prog::TH::all';
 
-our $VERSION = '0.16'; # VERSION
+our $VERSION = '0.17'; # VERSION
 
 1;
 # ABSTRACT: js's type handler for type "all"
@@ -22,7 +22,7 @@ Data::Sah::Compiler::js::TH::all - js's type handler for type "all"
 
 =head1 VERSION
 
-version 0.16
+version 0.17
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

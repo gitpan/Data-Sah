@@ -3,13 +3,14 @@ package Data::Sah::Compiler;
 use 5.010;
 #use Carp;
 use Moo;
+use experimental 'smartmatch';
 use Log::Any qw($log);
 
 with 'Data::Sah::Compiler::TextResultRole';
 
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.16'; # VERSION
+our $VERSION = '0.17'; # VERSION
 
 has main => (is => 'rw');
 
@@ -660,7 +661,7 @@ Data::Sah::Compiler - Base class for Sah compilers (Data::Sah::Compiler::*)
 
 =head1 VERSION
 
-version 0.16
+version 0.17
 
 =for Pod::Coverage ^(check_compile_args|def|expr|init_cd|literal|name)$
 

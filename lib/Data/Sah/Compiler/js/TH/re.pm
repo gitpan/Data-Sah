@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::js::TH';
 with 'Data::Sah::Type::re';
 
-our $VERSION = '0.16'; # VERSION
+our $VERSION = '0.17'; # VERSION
 
 # XXX prefilter to convert string to regex object
 
@@ -31,7 +31,7 @@ Data::Sah::Compiler::js::TH::re - js's type handler for type "re"
 
 =head1 VERSION
 
-version 0.16
+version 0.17
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

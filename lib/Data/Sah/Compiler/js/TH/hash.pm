@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::js::TH';
 with 'Data::Sah::Type::hash';
 
-our $VERSION = '0.16'; # VERSION
+our $VERSION = '0.17'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -192,7 +192,7 @@ Data::Sah::Compiler::js::TH::hash - js's type handler for type "hash"
 
 =head1 VERSION
 
-version 0.16
+version 0.17
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

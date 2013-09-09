@@ -8,7 +8,7 @@ with 'Data::Sah::Compiler::human::TH::Comparable';
 with 'Data::Sah::Compiler::human::TH::HasElems';
 with 'Data::Sah::Type::array';
 
-our $VERSION = '0.16'; # VERSION
+our $VERSION = '0.17'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -115,7 +115,7 @@ Data::Sah::Compiler::human::TH::array - human's type handler for type "array"
 
 =head1 VERSION
 
-version 0.16
+version 0.17
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

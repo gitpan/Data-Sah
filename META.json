@@ -4,7 +4,7 @@
       "Steven Haryanto <stevenharyanto@gmail.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.300035, CPAN::Meta::Converter version 2.132140",
+   "generated_by" : "Dist::Zilla version 4.300035, CPAN::Meta::Converter version 2.131560",
    "license" : [
       "perl_5"
    ],
@@ -14,14 +14,9 @@
    },
    "name" : "Data-Sah",
    "prereqs" : {
-      "build" : {
-         "requires" : {
-            "Module::Build" : "0.3601"
-         }
-      },
       "configure" : {
          "requires" : {
-            "Module::Build" : "0.3601"
+            "ExtUtils::MakeMaker" : "6.30"
          }
       },
       "develop" : {
@@ -50,12 +45,12 @@
             "Sub::Install" : "0",
             "Text::sprintfn" : "0",
             "Tie::IxHash" : "0",
+            "experimental" : "0",
             "perl" : "5.010001"
          }
       },
       "test" : {
          "requires" : {
-            "Capture::Tiny" : "0",
             "Data::Dump::OneLine" : "0",
             "File::ShareDir::Tarball" : "0",
             "File::Slurp" : "0",
@@ -64,8 +59,7 @@
             "Sah" : "v0.9.25",
             "Test::Exception" : "0",
             "Test::More" : "0.98",
-            "Test::Warn" : "0",
-            "blib" : "0"
+            "Test::Warn" : "0"
          }
       }
    },
@@ -76,6 +70,6 @@
          "url" : "http://github.com/sharyanto/perl-Data-Sah"
       }
    },
-   "version" : "0.16"
+   "version" : "0.17"
 }
 

@@ -7,7 +7,7 @@ use Log::Any qw($log);
 
 use SHARYANTO::String::Util;
 
-our $VERSION = '0.16'; # VERSION
+our $VERSION = '0.17'; # VERSION
 
 sub BUILD {
     my ($self, $args) = @_;
@@ -235,7 +235,7 @@ Data::Sah::Compiler::js - Compile Sah schema to JavaScript code
 
 =head1 VERSION
 
-version 0.16
+version 0.17
 
 =head1 SYNOPSIS
 
