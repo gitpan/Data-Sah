@@ -7,7 +7,7 @@ use experimental 'smartmatch';
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::array';
 
-our $VERSION = '0.17'; # VERSION
+our $VERSION = '0.18'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -32,6 +32,7 @@ sub superclause_comparable {
     if ($which eq 'is') {
         $c->add_ccl($cd, "$FRZ($dt) eq $FRZ($ct)");
     } elsif ($which eq 'in') {
+        $c->add_smartmatch_pragma($cd);
         $c->add_ccl($cd, "$FRZ($dt) ~~ [map {$FRZ(\$_)} \@{ $ct }]");
     }
 }
@@ -128,7 +129,7 @@ Data::Sah::Compiler::perl::TH::array - perl's type handler for type "array"
 
 =head1 VERSION
 
-version 0.17
+version 0.18
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

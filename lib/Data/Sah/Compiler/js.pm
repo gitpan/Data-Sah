@@ -7,7 +7,7 @@ use Log::Any qw($log);
 
 use SHARYANTO::String::Util;
 
-our $VERSION = '0.17'; # VERSION
+our $VERSION = '0.18'; # VERSION
 
 sub BUILD {
     my ($self, $args) = @_;
@@ -194,7 +194,7 @@ sub expr_anon_sub {
 }
 
 sub stmt_require_module {
-    my ($self, $mod) = @_;
+    my ($self, $mod, $cd) = @_;
     # currently loading module is not supported by js?
     #"require $mod;";
     '';
@@ -235,7 +235,7 @@ Data::Sah::Compiler::js - Compile Sah schema to JavaScript code
 
 =head1 VERSION
 
-version 0.17
+version 0.18
 
 =head1 SYNOPSIS
 

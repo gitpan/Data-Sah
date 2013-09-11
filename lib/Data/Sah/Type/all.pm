@@ -4,7 +4,7 @@ use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 with 'Data::Sah::Type::BaseType';
 
-our $VERSION = '0.17'; # VERSION
+our $VERSION = '0.18'; # VERSION
 
 has_clause 'of',
     tags       => ['constraint'],
@@ -25,7 +25,7 @@ Data::Sah::Type::all - all type
 
 =head1 VERSION
 
-version 0.17
+version 0.18
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

@@ -7,7 +7,7 @@ use experimental 'smartmatch';
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::num';
 
-our $VERSION = '0.17'; # VERSION
+our $VERSION = '0.18'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -27,6 +27,7 @@ sub superclause_comparable {
     if ($which eq 'is') {
         $c->add_ccl($cd, "$dt == $ct");
     } elsif ($which eq 'in') {
+        $c->add_smartmatch_pragma($cd);
         $c->add_ccl($cd, "$dt ~~ $ct");
     }
 }
@@ -76,7 +77,7 @@ Data::Sah::Compiler::perl::TH::num - perl's type handler for type "num"
 
 =head1 VERSION
 
-version 0.17
+version 0.18
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

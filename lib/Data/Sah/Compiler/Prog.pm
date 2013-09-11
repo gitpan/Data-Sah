@@ -6,7 +6,7 @@ use experimental 'smartmatch';
 extends 'Data::Sah::Compiler';
 use Log::Any qw($log);
 
-our $VERSION = '0.17'; # VERSION
+our $VERSION = '0.18'; # VERSION
 
 #use Digest::MD5 qw(md5_hex);
 
@@ -114,8 +114,9 @@ sub enclose_paren {
 sub add_module {
     my ($self, $cd, $name) = @_;
 
-    return if $name ~~ $cd->{modules};
+    return 0 if $name ~~ $cd->{modules};
     push @{ $cd->{modules} }, $name;
+    1;
 }
 
 sub add_var {
@@ -194,7 +195,7 @@ sub expr_validator_sub {
     my $code = join(
         "",
         ($self->stmt_require_log_module."\n") x !!$do_log,
-        (map { $self->stmt_require_module($_)."\n" } @{ $cd->{modules} }),
+        (map { $self->stmt_require_module($_, $cd)."\n" } @{ $cd->{modules} }),
         $self->expr_anon_sub(
             [$vt],
             join(
@@ -739,7 +740,7 @@ Data::Sah::Compiler::Prog - Base class for programming language compilers
 
 =head1 VERSION
 
-version 0.17
+version 0.18
 
 =head1 SYNOPSIS
 
