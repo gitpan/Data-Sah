@@ -5,12 +5,16 @@ use experimental 'smartmatch';
 use FindBin qw($Bin);
 
 use Data::Sah;
+use Data::Sah::JS qw();
 use File::chdir;
-use File::ShareDir::Tarball;
+use File::ShareDir ();
+use File::ShareDir::Tarball ();
 use File::Slurp;
 use File::Temp qw(tempfile);
 use JSON;
+use List::Util qw(first);
 use SHARYANTO::String::Util qw(indent);
+use SHARYANTO::Version::Util qw(version_eq);
 use Test::Exception;
 use Test::More 0.98;
 
@@ -18,11 +22,50 @@ my $json = JSON->new->allow_nonref;
 
 my $sah = Data::Sah->new;
 
+# return true if all elements in $list1 are in $list2
+sub all_match {
+    my ($list1, $list2) = @_;
+
+    for (@$list1) {
+        return 0 unless $_ ~~ @$list2;
+    }
+    1;
+}
+
+# return true if any element in $list1 is in $list2
+sub any_match {
+    my ($list1, $list2) = @_;
+
+    for (@$list1) {
+        return 1 if $_ ~~ @$list2;
+    }
+    0;
+}
+
+# return true if none of the elements in $list1 is in $list2
+sub none_match {
+    my ($list1, $list2) = @_;
+
+    for (@$list1) {
+        return 0 if $_ ~~ @$list2;
+    }
+    1;
+}
+
 sub run_spectest {
+    require Sah;
+
     my ($cname, $opts) = @_; # compiler name
     $opts //= {};
 
-    my $dir = File::ShareDir::Tarball::dist_dir("Sah");
+    my $dir;
+    if (version_eq($Sah::VERSION, "0.9.27")) {
+        # this version of Sah temporarily uses ShareDir instead of
+        # ShareDir::Tarball due to garbled output problem of tarball.
+        $dir = File::ShareDir::dist_dir("Sah");
+    } else {
+        $dir = File::ShareDir::Tarball::dist_dir("Sah");
+    }
     $dir && (-d $dir) or die "Can't find spectest, have you installed Sah?";
     (-f "$dir/spectest/00-normalize_schema.json")
         or die "Something's wrong, spectest doesn't contain the correct files";
@@ -33,17 +76,68 @@ sub run_spectest {
         @specfiles = <*.json>;
     }
 
-    #my @files = split /\s+/, ($ENV{SAH_SPECTEST_FILES} // "");
-    my @files = @ARGV;
+    # to test certain files only
+    my @files;
+    if ($ENV{TEST_SAH_SPECTEST_FILES}) {
+        @files = split /\s*,\s*|\s+/, $ENV{TEST_SAH_SPECTEST_FILES};
+    } else {
+        @files = @ARGV;
+    }
+
+    # to test certain types only
+    my @types;
+    if ($ENV{TEST_SAH_SPECTEST_TYPES}) {
+        @types = split /\s*,\s*|\s+/, $ENV{TEST_SAH_SPECTEST_TYPES};
+    }
+
+    # to test only tests that have all matching tags
+    my @include_tags;
+    if ($ENV{TEST_SAH_SPECTEST_INCLUDE_TAGS}) {
+        @include_tags = split /\s*,\s*|\s+/,
+            $ENV{TEST_SAH_SPECTEST_INCLUDE_TAGS};
+    }
+
+    # to skip tests that have all matching tags
+    my @exclude_tags;
+    if ($ENV{TEST_SAH_SPECTEST_EXCLUDE_TAGS}) {
+        @exclude_tags = split /\s*,\s*|\s+/,
+            $ENV{TEST_SAH_SPECTEST_EXCLUDE_TAGS};
+    }
+
+    my $should_skip_test = sub {
+        my $t = shift;
+        if ($opts->{skip_if}) {
+            my $reason = $opts->{skip_if}->($t);
+            return $reason if $reason;
+        }
+        if ($t->{tags} && @exclude_tags) {
+            return "contains all excluded tags (".
+                join(", ", @exclude_tags).")"
+                    if all_match(\@exclude_tags, $t->{tags});
+        }
+        if (@include_tags) {
+            return "does not contain all include tags (".
+                join(", ", @include_tags).")"
+                    if !all_match(\@include_tags, $t->{tags} // []);
+        }
+        "";
+    };
 
     goto SKIP1 unless $cname eq 'perl';
 
     for my $file ("00-normalize_schema.json") {
-        next unless !@files || $file ~~ @files;
+        unless (!@files || $file ~~ @files) {
+            diag "Skipping file $file";
+            next;
+        }
         subtest $file => sub {
             my $tspec = $json->decode(~~read_file("$dir/spectest/$file"));
             for my $test (@{ $tspec->{tests} }) {
                 subtest $test->{name} => sub {
+                    if (my $reason = $should_skip_test->($test)) {
+                        plan skip_all => "Skipping test $test->{name}: $reason";
+                        return;
+                    }
                     eval {
                         is_deeply($sah->normalize_schema($test->{input}),
                                   $test->{result}, "result");
@@ -57,15 +151,23 @@ sub run_spectest {
                     }
                 };
             }
+            ok 1; # an extra dummy ok to pass even if all spectest is skipped
         };
     }
 
     for my $file ("01-merge_clause_sets.json") {
-        next unless !@files || $file ~~ @files;
+        unless (!@files || $file ~~ @files) {
+            diag "Skipping file $file";
+            next;
+        }
         subtest $file => sub {
             my $tspec = $json->decode(~~read_file("$dir/spectest/$file"));
             for my $test (@{ $tspec->{tests} }) {
                 subtest $test->{name} => sub {
+                    if (my $reason = $should_skip_test->($test)) {
+                        plan skip_all => "Skipping test $test->{name}: $reason";
+                        return;
+                    }
                     eval {
                         is_deeply($sah->_merge_clause_sets(@{ $test->{input} }),
                                   $test->{result}, "result");
@@ -79,25 +181,33 @@ sub run_spectest {
                     }
                 };
             }
+            ok 1; # an extra dummy ok to pass even if all spectest is skipped
         };
     }
 
   SKIP1:
 
     for my $file (grep /^10-type-/, @specfiles) {
-        next unless !@files || $file ~~ @files;
+        unless (!@files || $file ~~ @files) {
+            diag "Skipping file $file";
+            next;
+        }
         subtest $file => sub {
             diag "Loading $file ...";
             my $tspec = $json->decode(~~read_file("$dir/spectest/$file"));
             note "Test version: ", $tspec->{version};
             my $tests = $tspec->{tests};
             if ($cname eq 'perl') {
-                run_st_tests_perl($tests, $opts);
+                run_st_tests_perl(
+                    $tests, { %$opts, _should_skip_test=>$should_skip_test });
             } elsif ($cname eq 'human') {
-                run_st_tests_human($tests, $opts);
+                run_st_tests_human(
+                    $tests, { %$opts, _should_skip_test=>$should_skip_test });
             } elsif ($cname eq 'js') {
-                run_st_tests_js($tests, $opts);
+                run_st_tests_js(
+                    $tests, { %$opts, _should_skip_test=>$should_skip_test });
             }
+            ok 1; # an extra dummy ok to pass even if all spectest is skipped
         };
     } # file
 }
@@ -105,8 +215,15 @@ sub run_spectest {
 sub run_st_tests_perl {
     my ($tests, $opts) = @_;
     for my $test (@$tests) {
+        my $tname = "(tags=".join(", ", sort @{ $test->{tags} // [] }).
+            ") $test->{name}";
+        if ($opts->{_should_skip_test} &&
+                (my $reason = $opts->{_should_skip_test}->($test))) {
+            diag "Skipping test $tname: $reason";
+            next;
+        }
         note explain $test;
-        subtest $test->{name} => sub {
+        subtest $tname => sub {
             run_st_test_perl($test);
         };
     }
@@ -115,24 +232,28 @@ sub run_st_tests_perl {
 sub run_st_tests_human {
     my ($tests, $opts) = @_;
     for my $test (@$tests) {
+        my $tname = "(tags=".join(", ", sort @{ $test->{tags} // [] }).
+            ") $test->{name}";
+        if ($opts->{_should_skip_test} &&
+                (my $reason = $opts->{_should_skip_test}->($test))) {
+            diag "Skipping test $tname: $reason";
+            next;
+        }
         note explain $test;
-        subtest $test->{name} => sub {
+        subtest $tname => sub {
             run_st_test_human($test);
         };
     }
 }
 
 sub run_st_tests_js {
-    require JSON;
-
     my ($tests, $opts) = @_;
 
     # we compile all the schemas (plus some control code) to a single js file
     # then execute it using nodejs. the js file is supposed to produce TAP
     # output.
 
-    my $node_path = $opts->{node_path} // get_nodejs_path();
-    state $json = JSON->new->allow_nonref;
+    my $node_path = $opts->{node_path} // Data::Sah::JS::get_nodejs_path();
     my $js = $sah->get_compiler('js');
 
     my %names; # key: json(schema)
@@ -207,6 +328,13 @@ _
 
   TEST:
     for my $test (@$tests) {
+        my $tname = "(tags=".join(", ", sort @{ $test->{tags} // [] }).
+            ") $test->{name}";
+        if ($opts->{_should_skip_test} &&
+                (my $reason = $opts->{_should_skip_test}->($test))) {
+            diag "Skipping test $tname: $reason";
+            next TEST;
+        }
         my $k = $json->encode($test->{schema});
         my $ns = $sah->normalize_schema($test->{schema});
         $test->{nschema} = $ns;
@@ -231,10 +359,10 @@ _
                 my $err = $@;
                 if ($test->{dies}) {
                     #note "schema = ", explain($ns);
-                    ok($err, $test->{name});
+                    ok($err, $tname);
                     next TEST;
                 } else {
-                    ok(!$err, "compile ok ($test->{name}, $rt)") or do {
+                    ok(!$err, "compile ok ($tname}, $rt)") or do {
                         diag $err;
                         next TEST;
                     };
@@ -244,42 +372,63 @@ _
         }
 
         push @js_code,
-            "subtest(".$json->encode($test->{name}).", function() {\n";
+            "subtest(".$json->encode($tname).", function() {\n";
 
         # bool
-        if ($test->{valid}) {
-            # XXX test output
-            push @js_code,
-                "    ok($fn\_bool(".$json->encode($test->{input}).")".
-                    ", 'valid (rt=bool)');\n";
-        } else {
-            push @js_code,
-                "    ok(!$fn\_bool(".$json->encode($test->{input}).")".
-                    ", 'invalid (rt=bool)');\n";
+        if ($test->{valid_inputs}) {
+            # test multiple inputs, currently done for rt=bool only
+            for my $i (0..@{ $test->{valid_inputs} }-1) {
+                my $data = $test->{valid_inputs}[$i];
+                push @js_code,
+                    "    ok($fn\_bool(".$json->encode($data).")".
+                        ", 'valid input [$i]');\n";
+            }
+            for my $i (0..@{ $test->{invalid_inputs} }-1) {
+                my $data = $test->{invalid_inputs}[$i];
+                push @js_code,
+                    "    ok(!$fn\_bool(".$json->encode($data).")".
+                        ", 'invalid input [$i]');\n";
+            }
+        } elsif (exists $test->{valid}) {
+            if ($test->{valid}) {
+                # XXX test output
+                push @js_code,
+                    "    ok($fn\_bool(".$json->encode($test->{input}).")".
+                        ", 'valid (rt=bool)');\n";
+            } else {
+                push @js_code,
+                    "    ok(!$fn\_bool(".$json->encode($test->{input}).")".
+                        ", 'invalid (rt=bool)');\n";
+            }
         }
 
         # str
-        if ($test->{valid}) {
-            push @js_code,
-                "    ok($fn\_str(".$json->encode($test->{input}).")".
-                    "=='', 'valid (rt=str)');\n";
-        } else {
-            push @js_code,
-                "    ok($fn\_str(".$json->encode($test->{input}).")".
-                    ".match(/\\S/), 'invalid (rt=str)');\n";
+        if (exists $test->{valid}) {
+            if ($test->{valid}) {
+                push @js_code,
+                    "    ok($fn\_str(".$json->encode($test->{input}).")".
+                        "=='', 'valid (rt=str)');\n";
+            } else {
+                push @js_code,
+                    "    ok($fn\_str(".$json->encode($test->{input}).")".
+                        ".match(/\\S/), 'invalid (rt=str)');\n";
+            }
         }
 
         # full
-        my $errors   = $test->{errors} // ($test->{valid} ? 0 : 1);
-        my $warnings = $test->{warnings} // 0;
-        push @js_code, (
-            "    res = $fn\_full(".$json->encode($test->{input}).");\n",
-            "    ok(typeof(res)=='object', ".
-                "'validator (rt=full) returns object');\n",
-            "    ok(Object.keys(res['errors']   ? res['errors']   : {}).length==$errors, 'errors (rt=full)');\n",
-            "    ok(Object.keys(res['warnings'] ? res['warnings'] : {}).length==$warnings, ".
-                "'warningss (rt=full)');\n",
-        );
+        if (exists($test->{errors}) || exists($test->{warnings}) ||
+                exists($test->{valid})) {
+            my $errors   = $test->{errors} // ($test->{valid} ? 0 : 1);
+            my $warnings = $test->{warnings} // 0;
+            push @js_code, (
+                "    res = $fn\_full(".$json->encode($test->{input}).");\n",
+                "    ok(typeof(res)=='object', ".
+                    "'validator (rt=full) returns object');\n",
+                "    ok(Object.keys(res['errors']   ? res['errors']   : {}).length==$errors, 'errors (rt=full)');\n",
+                "    ok(Object.keys(res['warnings'] ? res['warnings'] : {}).length==$warnings, ".
+                    "'warnings (rt=full)');\n",
+            );
+        }
 
         push @js_code, "});\n\n";
     } # test
@@ -317,34 +466,52 @@ sub run_st_test_perl {
         };
     }
 
-    if ($test->{valid}) {
-        ok($vbool->($ho ? \$data : $data), "valid (rt=bool)");
-        if ($ho) {
-            is_deeply($data, $test->{output}, "output");
+    if ($test->{valid_inputs}) {
+        # test multiple inputs, currently only done for rt=bool
+        for my $i (0..@{ $test->{valid_inputs} }-1) {
+            my $data = $test->{valid_inputs}[$i];
+            ok($vbool->($ho ? \$data : $data), "valid input [$i]");
         }
-    } else {
-        ok(!$vbool->($ho ? \$data : $data), "invalid (rt=bool)");
+        for my $i (0..@{ $test->{invalid_inputs} }-1) {
+            my $data = $test->{invalid_inputs}[$i];
+            ok(!$vbool->($ho ? \$data : $data), "invalid input [$i]");
+        }
+    } elsif (exists $test->{valid}) {
+        # test a single input
+        if ($test->{valid}) {
+            ok($vbool->($ho ? \$data : $data), "valid (rt=bool)");
+            if ($ho) {
+                is_deeply($data, $test->{output}, "output");
+            }
+        } else {
+            ok(!$vbool->($ho ? \$data : $data), "invalid (rt=bool)");
+        }
     }
 
     my $vstr = $sah->gen_validator($test->{schema},
                                    {return_type=>'str'});
-    if ($test->{valid}) {
-        is($vstr->($test->{input}), "", "valid (rt=str)");
-    } else {
-        like($vstr->($test->{input}), qr/\S/, "invalid (rt=str)");
+    if (exists $test->{valid}) {
+        if ($test->{valid}) {
+            is($vstr->($test->{input}), "", "valid (rt=str)");
+        } else {
+            like($vstr->($test->{input}), qr/\S/, "invalid (rt=str)");
+        }
     }
 
     my $vfull = $sah->gen_validator($test->{schema},
                                     {return_type=>'full'});
     my $res = $vfull->($test->{input});
     is(ref($res), 'HASH', "validator (rt=full) returns hash");
-    my $errors = $test->{errors} // ($test->{valid} ? 0 : 1);
-    is(scalar(keys %{ $res->{errors} // {} }), $errors, "errors (rt=full)")
-        or diag explain $res;
-    my $warnings = $test->{warnings} // 0;
-    is(scalar(keys %{ $res->{warnings} // {} }), $warnings,
-       "warnings (rt=full)")
-        or diag explain $res;
+    if (exists($test->{errors}) || exists($test->{warnings}) ||
+            exists($test->{valid})) {
+        my $errors = $test->{errors} // ($test->{valid} ? 0 : 1);
+        is(scalar(keys %{ $res->{errors} // {} }), $errors, "errors (rt=full)")
+            or diag explain $res;
+        my $warnings = $test->{warnings} // 0;
+        is(scalar(keys %{ $res->{warnings} // {} }), $warnings,
+           "warnings (rt=full)")
+            or diag explain $res;
+    }
 }
 
 sub run_st_test_human {
@@ -381,30 +548,6 @@ sub test_human {
             }
         }
     };
-}
-
-# check availability of the node.js executable, return the path to executable or
-# undef if none is available. node.js is normally installed as 'node', except on
-# debian ('nodejs').
-sub get_nodejs_path {
-    require File::Which;
-
-    my $path;
-    for my $name (qw/nodejs node/) {
-        $path = File::Which::which($name);
-        next unless $path;
-
-        # check if it's really nodejs
-        my $cmd = "$path -e 'console.log(1+1)'";
-        my $out = `$cmd`;
-        if ($out =~ /\A2\n?\z/) {
-            note "node.js binary is $path";
-            return $path;
-        } else {
-            note "Output of $cmd: $out";
-        }
-    }
-    return undef;
 }
 
 1;

@@ -5,7 +5,7 @@ use Log::Any '$log';
 use Moo::Role;
 with 'Data::Sah::Type::HasElems';
 
-our $VERSION = '0.18'; # VERSION
+our $VERSION = '0.19'; # VERSION
 
 sub before_clause {
     my ($self_th, $which, $cd) = @_;
@@ -41,14 +41,22 @@ sub superclause_has_elems {
             fmt   => q[length %(modal_verb)s be between %s and %s],
             vals  => $cv,
         });
+    } elsif ($which eq 'has') {
+        $c->add_ccl($cd, {
+            expr=>1, multi=>1,
+            fmt => "%(modal_verb)s have %s in its elements"});
     } elsif ($which eq 'each_index') {
         $self_th->clause_each_index($cd);
     } elsif ($which eq 'each_elem') {
         $self_th->clause_each_elem($cd);
-    #} elsif ($which eq 'check_each_index') {
-    #} elsif ($which eq 'check_each_elem') {
-    #} elsif ($which eq 'uniq') {
-    #} elsif ($which eq 'exists') {
+    } elsif ($which eq 'check_each_index') {
+        $self_th->compiler->_die_unimplemented_clause($cd);
+    } elsif ($which eq 'check_each_elem') {
+        $self_th->compiler->_die_unimplemented_clause($cd);
+    } elsif ($which eq 'uniq') {
+        $self_th->compiler->_die_unimplemented_clause($cd);
+    } elsif ($which eq 'exists') {
+        $self_th->compiler->_die_unimplemented_clause($cd);
     }
 }
 
@@ -59,15 +67,33 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Data::Sah::Compiler::human::TH::HasElems - human's type handler for role "HasElems"
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =for Pod::Coverage ^(name|clause_.+|superclause_.+|before_.+|after_.+)$
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 =head1 AUTHOR
 

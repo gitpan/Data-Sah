@@ -8,7 +8,7 @@ with 'Data::Sah::Compiler::human::TH::Comparable';
 with 'Data::Sah::Compiler::human::TH::HasElems';
 with 'Data::Sah::Type::hash';
 
-our $VERSION = '0.18'; # VERSION
+our $VERSION = '0.19'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -18,6 +18,15 @@ sub handle_type {
         fmt   => ["hash", "hashes"],
         type  => 'noun',
     });
+}
+
+sub clause_has {
+    my ($self, $cd) = @_;
+    my $c  = $self->compiler;
+
+    $c->add_ccl($cd, {
+        expr=>1, multi=>1,
+        fmt => "%(modal_verb)s have %s in its field values"});
 }
 
 sub clause_each_index {
@@ -85,9 +94,56 @@ sub clause_keys {
 }
 
 sub clause_re_keys { warn "NOT YET IMPLEMENTED" }
-sub clause_req_keys { warn "NOT YET IMPLEMENTED" }
-sub clause_allowed_keys { warn "NOT YET IMPLEMENTED" }
-sub clause_allowed_keys_re { warn "NOT YET IMPLEMENTED" }
+
+sub clause_req_keys {
+  my ($self, $cd) = @_;
+  my $c  = $self->compiler;
+
+  $c->add_ccl($cd, {
+    fmt   => q[%(modal_verb)s have required fields %s],
+    expr  => 1,
+  });
+}
+
+sub clause_allowed_keys {
+  my ($self, $cd) = @_;
+  my $c  = $self->compiler;
+
+  $c->add_ccl($cd, {
+    fmt   => q[%(modal_verb)s only have these allowed fields %s],
+    expr  => 1,
+  });
+}
+
+sub clause_allowed_keys_re {
+  my ($self, $cd) = @_;
+  my $c  = $self->compiler;
+
+  $c->add_ccl($cd, {
+    fmt   => q[%(modal_verb)s only have fields matching regex pattern %s],
+    expr  => 1,
+  });
+}
+
+sub clause_forbidden_keys {
+  my ($self, $cd) = @_;
+  my $c  = $self->compiler;
+
+  $c->add_ccl($cd, {
+    fmt   => q[%(modal_verb_neg)s have these forbidden fields %s],
+    expr  => 1,
+  });
+}
+
+sub clause_forbidden_keys_re {
+  my ($self, $cd) = @_;
+  my $c  = $self->compiler;
+
+  $c->add_ccl($cd, {
+    fmt   => q[%(modal_verb_neg)s have fields matching regex pattern %s],
+    expr  => 1,
+  });
+}
 
 1;
 # ABSTRACT: human's type handler for type "hash"
@@ -96,15 +152,33 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Data::Sah::Compiler::human::TH::hash - human's type handler for type "hash"
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 =head1 AUTHOR
 

@@ -9,7 +9,7 @@ use Log::Any qw($log);
 use POSIX qw(locale_h);
 use Text::sprintfn;
 
-our $VERSION = '0.18'; # VERSION
+our $VERSION = '0.19'; # VERSION
 
 # every type extension is registered here
 our %typex; # key = type, val = [clause, ...]
@@ -74,7 +74,7 @@ sub literal {
     # one.
     state $cleanser = do {
         require Data::Clean::JSON;
-        Data::Clean::JSON->new;
+        Data::Clean::JSON->get_cleanser;
     };
 
     # XXX for nicer output, perhaps say "empty array" instead of "[]", "empty
@@ -193,6 +193,7 @@ sub add_ccl {
     goto TRANSLATE unless $clause;
 
     my $ie   = $cd->{cl_is_expr};
+    my $im   = $cd->{cl_is_multi};
     my $op   = $cd->{cl_op} // "";
     my $cv   = $cd->{clset}{$clause};
     my $vals = $ccl->{vals} // [$cv];
@@ -210,11 +211,10 @@ sub add_ccl {
 
     # handle .op
 
-    my $im   = $op =~ /^(and|or|none)$/;
     if ($op eq 'not') {
-        ($hvals->{modal_verb}, $hvals->{modal_verbneg}) =
+        ($hvals->{modal_verb}, $hvals->{modal_verb_neg}) =
             ($hvals->{modal_verb_neg}, $hvals->{modal_verb});
-    } elsif ($op eq 'and') {
+    } elsif ($im && $op eq 'and') {
         if (@$cv == 2) {
             $vals = [sprintf($self->_xlt($cd, "%s and %s"),
                              $self->literal($cv->[0]),
@@ -223,7 +223,7 @@ sub add_ccl {
             $vals = [sprintf($self->_xlt($cd, "all of %s"),
                              $self->literal($cv))];
         }
-    } elsif ($op eq 'or') {
+    } elsif ($im && $op eq 'or') {
         if (@$cv == 2) {
             $vals = [sprintf($self->_xlt($cd, "%s or %s"),
                              $self->literal($cv->[0]),
@@ -232,7 +232,7 @@ sub add_ccl {
             $vals = [sprintf($self->_xlt($cd, "one of %s"),
                              $self->literal($cv))];
         }
-    } elsif ($op eq 'none') {
+    } elsif ($im && $op eq 'none') {
         ($hvals->{modal_verb}, $hvals->{modal_verbneg}) =
             ($hvals->{modal_verb_neg}, $hvals->{modal_verb});
         if (@$cv == 2) {
@@ -502,13 +502,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Data::Sah::Compiler::human - Compile Sah schema to human language
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =head1 SYNOPSIS
 
@@ -570,6 +572,22 @@ Keys which contain compilation result:
 =over 4
 
 =back
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 =head1 AUTHOR
 

@@ -25,6 +25,8 @@ lib/Data/Sah/Compiler/human/TH/all.pm
 lib/Data/Sah/Compiler/human/TH/any.pm
 lib/Data/Sah/Compiler/human/TH/array.pm
 lib/Data/Sah/Compiler/human/TH/bool.pm
+lib/Data/Sah/Compiler/human/TH/buf.pm
+lib/Data/Sah/Compiler/human/TH/cistr.pm
 lib/Data/Sah/Compiler/human/TH/code.pm
 lib/Data/Sah/Compiler/human/TH/float.pm
 lib/Data/Sah/Compiler/human/TH/hash.pm
@@ -33,12 +35,15 @@ lib/Data/Sah/Compiler/human/TH/num.pm
 lib/Data/Sah/Compiler/human/TH/obj.pm
 lib/Data/Sah/Compiler/human/TH/re.pm
 lib/Data/Sah/Compiler/human/TH/str.pm
+lib/Data/Sah/Compiler/human/TH/undef.pm
 lib/Data/Sah/Compiler/js.pm
 lib/Data/Sah/Compiler/js/TH.pm
 lib/Data/Sah/Compiler/js/TH/all.pm
 lib/Data/Sah/Compiler/js/TH/any.pm
 lib/Data/Sah/Compiler/js/TH/array.pm
 lib/Data/Sah/Compiler/js/TH/bool.pm
+lib/Data/Sah/Compiler/js/TH/buf.pm
+lib/Data/Sah/Compiler/js/TH/cistr.pm
 lib/Data/Sah/Compiler/js/TH/code.pm
 lib/Data/Sah/Compiler/js/TH/float.pm
 lib/Data/Sah/Compiler/js/TH/hash.pm
@@ -47,12 +52,15 @@ lib/Data/Sah/Compiler/js/TH/num.pm
 lib/Data/Sah/Compiler/js/TH/obj.pm
 lib/Data/Sah/Compiler/js/TH/re.pm
 lib/Data/Sah/Compiler/js/TH/str.pm
+lib/Data/Sah/Compiler/js/TH/undef.pm
 lib/Data/Sah/Compiler/perl.pm
 lib/Data/Sah/Compiler/perl/TH.pm
 lib/Data/Sah/Compiler/perl/TH/all.pm
 lib/Data/Sah/Compiler/perl/TH/any.pm
 lib/Data/Sah/Compiler/perl/TH/array.pm
 lib/Data/Sah/Compiler/perl/TH/bool.pm
+lib/Data/Sah/Compiler/perl/TH/buf.pm
+lib/Data/Sah/Compiler/perl/TH/cistr.pm
 lib/Data/Sah/Compiler/perl/TH/code.pm
 lib/Data/Sah/Compiler/perl/TH/float.pm
 lib/Data/Sah/Compiler/perl/TH/hash.pm
@@ -61,6 +69,9 @@ lib/Data/Sah/Compiler/perl/TH/num.pm
 lib/Data/Sah/Compiler/perl/TH/obj.pm
 lib/Data/Sah/Compiler/perl/TH/re.pm
 lib/Data/Sah/Compiler/perl/TH/str.pm
+lib/Data/Sah/Compiler/perl/TH/undef.pm
+lib/Data/Sah/Human.pm
+lib/Data/Sah/JS.pm
 lib/Data/Sah/Lang.pm
 lib/Data/Sah/Lang/fr_FR.pm
 lib/Data/Sah/Lang/id_ID.pm
@@ -77,6 +88,7 @@ lib/Data/Sah/Type/any.pm
 lib/Data/Sah/Type/array.pm
 lib/Data/Sah/Type/bool.pm
 lib/Data/Sah/Type/buf.pm
+lib/Data/Sah/Type/cistr.pm
 lib/Data/Sah/Type/code.pm
 lib/Data/Sah/Type/float.pm
 lib/Data/Sah/Type/hash.pm
@@ -106,3 +118,4 @@ t/spectest-human.t-
 t/spectest-js.t
 t/spectest-perl.t
 t/testlib.pl
+weaver.ini

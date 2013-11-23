@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Log::Any '$log';
 
-our $VERSION = '0.18'; # VERSION
+our $VERSION = '0.19'; # VERSION
 
 #use Sub::Install qw(install_sub);
 
@@ -27,13 +27,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Data::Sah::Util::Func - Sah utility routines for adding function
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =head1 DESCRIPTION
 
@@ -43,6 +45,22 @@ functions.
 =head1 FUNCTIONS
 
 =head2 add_func($funcset, $func, %opts)
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 =head1 AUTHOR
 

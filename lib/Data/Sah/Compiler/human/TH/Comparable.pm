@@ -5,7 +5,7 @@ use Log::Any '$log';
 use Moo::Role;
 with 'Data::Sah::Type::Comparable';
 
-our $VERSION = '0.18'; # VERSION
+our $VERSION = '0.19'; # VERSION
 
 sub superclause_comparable {
     my ($self, $which, $cd) = @_;
@@ -27,15 +27,33 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Data::Sah::Compiler::human::TH::Comparable - human's type handler for role "Comparable"
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 =head1 AUTHOR
 

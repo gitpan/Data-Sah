@@ -2,7 +2,7 @@ NAME
     Data::Sah - Fast and featureful data structure validation
 
 VERSION
-    version 0.18
+    version 0.19
 
 SYNOPSIS
     Non-OO interface:
@@ -51,8 +51,7 @@ DESCRIPTION
     The generated validator code can run without this module.
 
 STATUS
-    Early implementation, some features are not implemented yet. Below is a
-    list of things that are not yet implemented:
+    Some features are not implemented yet:
 
     *   General
 
@@ -64,24 +63,24 @@ STATUS
 
         *   date/datetime type
 
-        *   obj: methods, attrs properties
+        *   obj: meths, attrs properties
 
         *   .prio, .err_msg, .ok_err_msg attributes
 
         *   .result_var attribute
 
-        *   BaseType: ok, clset, if, prefilters, postfilters, check, prop,
-            check_prop
+        *   BaseType: if, prefilters, postfilters, check, prop, check_prop
+            clauses
 
         *   HasElems: each_elem, each_index, check_each_elem,
-            check_each_index, exists
+            check_each_index, exists clauses
 
         *   HasElems: len, elems, indices properties
 
-        *   hash: re_keys, each_key, each_value, check_each_key,
-            check_each_value, allowed_keys, allowed_keys_re
+        *   hash: re_keys, check_each_key, check_each_value,
+            allowed_keys_re, forbidden_keys_re clauses
 
-        *   array: has, uniq
+        *   array: uniq clauses
 
     *   human compiler
 
@@ -339,6 +338,14 @@ FAQ
         validation code (among others). This is a convenient way to add
         argument validation to an existing subroutine/code.
 
+TODO
+    *   (perl compiler) Replace smartmatch because of its inconsistent
+        behavior
+
+        "<$data ~~ ["x", 1]"> will do string comparison, while "<$data ~~
+        [1, "x"]"> or even "<$data ~~ ["1", "x"]"> will do a numeric
+        comparison.
+
 SEE ALSO
    Other compiled validators
    Other interpreted validators
@@ -349,6 +356,20 @@ SEE ALSO
     Type::Tiny, among others.
 
     Form-oriented: Data::FormValidator, FormValidator::Lite, among others.
+
+HOMEPAGE
+    Please visit the project's homepage at
+    <https://metacpan.org/release/Data-Sah>.
+
+SOURCE
+    Source repository is at <https://github.com/sharyanto/perl-Data-Sah>.
+
+BUGS
+    Please report any bugs or feature requests on the bugtracker website
+    <https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah>
+
+    When submitting a bug or request, please include a test-file or a patch
+    to an existing test-file that illustrates the bug or desired feature.
 
 AUTHOR
     Steven Haryanto <stevenharyanto@gmail.com>

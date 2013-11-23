@@ -1,5 +1,27 @@
 Revision history for Data-Sah
 
+0.19     2013-11-23 (SHARYANTO)
+
+         [ENHANCEMENTS]
+
+         - Implement types 'undef', 'cistr', 'buf'.
+
+         - Implement clauses: 'ok', 'has'.
+
+         - Implement hash clauses: req_keys (thanks Michal Sedlák),
+           allowed_keys, allowed_keys_re, forbidden_keys, forbidden_keys_re.
+
+         - Add modules: Data::Sah::JS, Data::Sah::Human.
+
+         [ETC]
+
+         - Adjust to Sah 0.9.29.
+
+         [BUG FIXES]
+
+         - Fix bug in generating human/error message for "between|".
+
+
 0.18     2013-09-11 (SHARYANTO)
 
          - Add 'use experimental smartmatch' in generated code so that the
@@ -21,14 +43,14 @@ Revision history for Data-Sah
 
 0.15     2013-03-11 (SHARYANTO)
 
-         No functional changes. Avoid perl undef warning in human compiler (e.g.
-         when schema is [int => default => undef]).
+         - No functional changes. Avoid perl undef warning in human compiler
+           (e.g. when schema is [int => default => undef]).
 
 
 0.14     2013-02-07 (SHARYANTO)
 
-         This is the first release that includes a working js compiler. Along
-         with this release are some fixes and refactorings.
+         - This is the first release that includes a working js compiler. Along
+           with this release are some fixes and refactorings.
 
 
 0.13     2013-01-18 (SHARYANTO)
@@ -50,17 +72,17 @@ Revision history for Data-Sah
 
 0.12     2013-01-16 (SHARYANTO)
 
-         No functional changes. Add a human test.
+         - No functional changes. Add a human test.
 
 
 0.11     2013-01-16 (SHARYANTO)
 
-         No functional changes. Minor fixes/adjustments [CT reports].
+         - No functional changes. Minor fixes/adjustments [CT reports].
 
 
 0.10     2013-01-11 (SHARYANTO)
 
-         0.09 was also broken, sorry.
+         - 0.09 was also broken, sorry.
 
          [ENHANCEMENTS]
 
@@ -94,7 +116,7 @@ Revision history for Data-Sah
 
 0.09     2012-11-22 (SHARYANTO)
 
-         0.08 was broken, sorry.
+         - 0.08 was broken, sorry.
 
          [ENHANCEMENTS]
 
@@ -176,14 +198,14 @@ Revision history for Data-Sah
 
 0.04     2012-07-20 (SHARYANTO)
 
-         No functional changes. Rebuild because dzil still included files in
-         lib-disabled/.
+         - No functional changes. Rebuild because dzil still included files in
+           lib-disabled/.
 
 
 0.03     2012-07-20 (SHARYANTO)
 
-         Mostly spec changes (syntax changes, lots of removed clauses to be more
-         orthogonal). Implementation is still grossly incomplete.
+         - Mostly spec changes (syntax changes, lots of removed clauses to be
+           more orthogonal). Implementation is still grossly incomplete.
 
          - (spec) New clause 'cset' to contain a clause set inside a clause.
            This provides a more elegant way to nest clauses, with possibly
@@ -231,54 +253,54 @@ Revision history for Data-Sah
 
 0.02     2012-01-27 (SHARYANTO)
 
-         Mostly spec changes (some major, backward-incompatible). Implementation
-         still minimal/incomplete.
+         - Mostly spec changes (some major, backward-incompatible).
+           Implementation still minimal/incomplete.
 
-         + [INCOMPATIBLE] No more hash form! Now schema is either string or
+         - [INCOMPATIBLE] No more hash form! Now schema is either string or
            array. I've always hated writing the hash form and 99% always used
            the array form. Hash form can be re-added in the future in the
            unlikely event that we need it.
 
-         + [INCOMPATIBLE] Array form now only allows one clause sets. To specify
+         - [INCOMPATIBLE] Array form now only allows one clause sets. To specify
            multiple clause sets, now there is a new clause named 'csets'. This
            is an application of Huffman encoding principle, as specifying
            multiple clause sets is relatively rare. The third element of array
            now can be used for other purposes, it is now an optional hash to
            store future extra stuffs.
 
-         + [INCOMPATIBLE] Change merge prefixes, from the default provided by
+         - [INCOMPATIBLE] Change merge prefixes, from the default provided by
            Data::ModeMerge (!, +, -, ^, et al) to the more verbose ([merge],
            [merge:+], [merge:!], and so on). This is also an application of
            Huffman encoding principle, since merging is relatively rare. The !,
            etc prefixes are going to be reused for other purposes. For example,
            !clause now means setting the .max_ok attribute to 0.
 
-         + [INCOMPATIBLE] Change syntax of attribute, from 'CLAUSE:ATTR' and
+         - [INCOMPATIBLE] Change syntax of attribute, from 'CLAUSE:ATTR' and
            ':ATTR' to 'CLAUSE.ATTR' and '.ATTR'. Using dot is nicer and now
            possible as the first character since we have changed merge prefixes.
 
-         + Introduce shortcuts
+         - Introduce shortcuts
 
-         + [INCOMPATIBLE] String shortcuts are cut back. Now only 'foo*' is
+         - [INCOMPATIBLE] String shortcuts are cut back. Now only 'foo*' is
            supported, to mean [foo => {req=>1}]. I find that this is the only
            shortcut that is commonly used, the rest not so much. Limiting the
            shortcuts feature allows simplifying the schema for Sah itself (no
            grammar needed, only a single regex needed to validate).
 
-         + [INCOMPATIBLE] Sortable types: rename clause {min,max,between}ex ->
+         - [INCOMPATIBLE] Sortable types: rename clause {min,max,between}ex ->
            x{min,max,between}
 
-         + Type now can have namespaces too (e.g. MyCompany::order_id)
+         - Type now can have namespaces too (e.g. MyCompany::order_id)
 
-         + Add new clauses 'name', 'summary', 'description', 'tags'
+         - Add new clauses 'name', 'summary', 'description', 'tags'
 
-         + (Re-)add manuals
+         - (Re-)add manuals
 
 
 0.01     2011-11-23 (SHARYANTO)
 
-         First release, very preliminary, almost nothing is implemented. Changes
-         from old Data::Schema:
+         - First release, very preliminary, almost nothing is implemented.
+           Changes from old Data::Schema:
 
-         + [INCOMPATIBLE] Terminology changes: 'attribute' becomes 'clause', to
+         - [INCOMPATIBLE] Terminology changes: 'attribute' becomes 'clause', to
            make it less ambiguous.

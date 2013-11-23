@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::js::TH';
 with 'Data::Sah::Type::hash';
 
-our $VERSION = '0.18'; # VERSION
+our $VERSION = '0.19'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -30,7 +30,7 @@ sub superclause_comparable {
     } elsif ($which eq 'in') {
         $c->add_ccl(
             $cd,
-            "($ct).map(function(x){return $STR(x)}).indexOf($STR($dt)) > -1");
+            "!($ct).every(function(x){return $STR(x) != $STR($dt) })");
     }
 }
 
@@ -60,14 +60,21 @@ sub superclause_has_elems {
                 $cd, "Object.keys($dt).length >= $cv->[0] && ".
                     "Object.keys($dt).length <= $cv->[1]");
         }
-    #} elsif ($which eq 'has') {
+    } elsif ($which eq 'has') {
+        $c->add_ccl(
+            $cd,
+            "!Object.keys($dt).every(function(x){return $STR(($dt)[x]) != $STR($ct) })");
     } elsif ($which eq 'each_index' || $which eq 'each_elem') {
         $self_th->gen_each($which, $cd, "Object.keys($dt)",
-                           "Object.keys($dt).map(function(_sahv_x){ return $dt\[_sahv_x] })");
-    #} elsif ($which eq 'check_each_index') {
-    #} elsif ($which eq 'check_each_elem') {
-    #} elsif ($which eq 'uniq') {
-    #} elsif ($which eq 'exists') {
+                           "Object.keys($dt).map(function(x){ return $dt\[x] })");
+    } elsif ($which eq 'check_each_index') {
+        $self_th->compiler->_die_unimplemented_clause($cd);
+    } elsif ($which eq 'check_each_elem') {
+        $self_th->compiler->_die_unimplemented_clause($cd);
+    } elsif ($which eq 'uniq') {
+        $self_th->compiler->_die_unimplemented_clause($cd);
+    } elsif ($which eq 'exists') {
+        $self_th->compiler->_die_unimplemented_clause($cd);
     }
 }
 
@@ -91,7 +98,7 @@ sub clause_keys {
             local $cd->{_debug_ccl_note} = "keys.restrict";
             $c->add_ccl(
                 $cd,
-                "Object.keys($dt).every(function(_sahv_x){ return ".$c->literal([keys %$cv]).".indexOf(_sahv_x) > -1 })",
+                "Object.keys($dt).every(function(x){ return ".$c->literal([keys %$cv]).".indexOf(x) > -1 })",
                 {
                     err_msg => 'TMP1',
                     err_expr => join(
@@ -100,7 +107,7 @@ sub clause_keys {
                             $cd, "hash contains ".
                                 "unknown field(s) (%s)")),
                         '.replace("%s", ',
-                        "Object.keys($dt).filter(function(_sahv_x){ ".$c->literal([keys %$cv]).".indexOf(_sahv_x) == -1 }).join(', ')",
+                        "Object.keys($dt).filter(function(x){ ".$c->literal([keys %$cv]).".indexOf(x) == -1 }).join(', ')",
                         ')',
                     ),
                 },
@@ -161,22 +168,136 @@ sub clause_keys {
 
 sub clause_re_keys {
     my ($self, $cd) = @_;
-    $self->_warn_unimplemented;
+    $self->compiler->_die_unimplemented_clause($cd);
 }
 
 sub clause_req_keys {
     my ($self, $cd) = @_;
-    $self->_warn_unimplemented;
+    my $c  = $self->compiler;
+    my $ct = $cd->{cl_term};
+    my $dt = $cd->{data_term};
+
+    $c->add_ccl(
+      $cd,
+      "($ct).every(function(x){ return Object.keys($dt).indexOf(x) > -1 })", # XXX cache Object.keys($dt)
+      {
+        err_msg => 'TMP',
+        err_expr => join(
+            "",
+            $c->literal($c->_xlt(
+                $cd, "hash has missing required field(s) (%s)")),
+            '.replace("%s", ',
+            "Object.keys($dt).filter(function(x){ return ($ct).indexOf(x) == -1 }).join(', ')",
+            ')',
+        ),
+      }
+    );
 }
 
 sub clause_allowed_keys {
     my ($self, $cd) = @_;
-    $self->_warn_unimplemented;
+    my $c  = $self->compiler;
+    my $ct = $cd->{cl_term};
+    my $dt = $cd->{data_term};
+
+    $c->add_ccl(
+      $cd,
+      "Object.keys($dt).every(function(x){ return ($ct).indexOf(x) > -1 })", # XXX cache Object.keys($ct)
+      {
+        err_msg => 'TMP',
+        err_expr => join(
+            "",
+            $c->literal($c->_xlt(
+                $cd, "hash contains non-allowed field(s) (%s)")),
+            '.replace("%s", ',
+            "Object.keys($dt).filter(function(x){ return ($ct).indexOf(x) == -1 }).join(', ')",
+            ')',
+        ),
+      }
+    );
 }
 
 sub clause_allowed_keys_re {
     my ($self, $cd) = @_;
-    $self->_warn_unimplemented;
+    my $c  = $self->compiler;
+    #my $ct = $cd->{cl_term};
+    my $cv = $cd->{cl_value};
+    my $dt = $cd->{data_term};
+
+    if ($cd->{cl_is_expr}) {
+        # i'm lazy atm and does not need expr yet
+        $c->_die_unimplemented_clause($cd, "with expr");
+    }
+
+    my $re = $c->_str2reliteral($cd, $cv);
+    $c->add_ccl(
+      $cd,
+      "Object.keys($dt).every(function(x){ return x.match(RegExp($re)) })",
+      {
+        err_msg => 'TMP',
+        err_expr => join(
+            "",
+            $c->literal($c->_xlt(
+                $cd, "hash contains non-allowed field(s) (%s)")),
+            '.replace("%s", ',
+            "Object.keys($dt).filter(function(x){ return !x.match(RegExp($re)) }).join(', ')",
+            ')',
+        ),
+      }
+    );
+}
+
+sub clause_forbidden_keys {
+    my ($self, $cd) = @_;
+    my $c  = $self->compiler;
+    my $ct = $cd->{cl_term};
+    my $dt = $cd->{data_term};
+
+    $c->add_ccl(
+      $cd,
+      "Object.keys($dt).every(function(x){ return ($ct).indexOf(x) == -1 })", # XXX cache Object.keys($ct)
+      {
+        err_msg => 'TMP',
+        err_expr => join(
+            "",
+            $c->literal($c->_xlt(
+                $cd, "hash contains forbidden field(s) (%s)")),
+            '.replace("%s", ',
+            "Object.keys($dt).filter(function(x){ return ($ct).indexOf(x) > -1 }).join(', ')",
+            ')',
+        ),
+      }
+    );
+}
+
+sub clause_forbidden_keys_re {
+    my ($self, $cd) = @_;
+    my $c  = $self->compiler;
+    #my $ct = $cd->{cl_term};
+    my $cv = $cd->{cl_value};
+    my $dt = $cd->{data_term};
+
+    if ($cd->{cl_is_expr}) {
+        # i'm lazy atm and does not need expr yet
+        $c->_die_unimplemented_clause($cd, "with expr");
+    }
+
+    my $re = $c->_str2reliteral($cd, $cv);
+    $c->add_ccl(
+      $cd,
+      "Object.keys($dt).every(function(x){ return !x.match(RegExp($re)) })",
+      {
+        err_msg => 'TMP',
+        err_expr => join(
+            "",
+            $c->literal($c->_xlt(
+                $cd, "hash contains forbidden field(s) (%s)")),
+            '.replace("%s", ',
+            "Object.keys($dt).filter(function(x){ return x.match(RegExp($re)) }).join(', ')",
+            ')',
+        ),
+      }
+    );
 }
 
 1;
@@ -186,15 +307,33 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Data::Sah::Compiler::js::TH::hash - js's type handler for type "hash"
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 =head1 AUTHOR
 

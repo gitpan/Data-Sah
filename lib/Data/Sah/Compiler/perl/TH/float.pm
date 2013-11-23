@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH::num';
 with 'Data::Sah::Type::float';
 
-our $VERSION = '0.18'; # VERSION
+our $VERSION = '0.19'; # VERSION
 
 my $LLN = "Scalar::Util::looks_like_number";
 
@@ -105,15 +105,33 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Data::Sah::Compiler::perl::TH::float - perl's type handler for type "float"
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =for Pod::Coverage ^(compiler|clause_.+|handle_.+)$
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 =head1 AUTHOR
 

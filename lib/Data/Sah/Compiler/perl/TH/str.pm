@@ -7,7 +7,7 @@ use experimental 'smartmatch';
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::str';
 
-our $VERSION = '0.18'; # VERSION
+our $VERSION = '0.19'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -89,14 +89,19 @@ sub superclause_has_elems {
                 $cd, "length($dt) >= $cv->[0] && ".
                     "length($dt) <= $cv->[1]");
         }
-    #} elsif ($which eq 'has') {
+    } elsif ($which eq 'has') {
+        $c->add_ccl($cd, "index($dt, $ct) >= 0");
     } elsif ($which eq 'each_index' || $which eq 'each_elem') {
         $self_th->gen_each($which, $cd,
                            "0..length($dt)-1", "split('', $dt)");
-    #} elsif ($which eq 'check_each_index') {
-    #} elsif ($which eq 'check_each_elem') {
-    #} elsif ($which eq 'uniq') {
-    #} elsif ($which eq 'exists') {
+    } elsif ($which eq 'check_each_index') {
+        $self_th->compiler->_die_unimplemented_clause($cd);
+    } elsif ($which eq 'check_each_elem') {
+        $self_th->compiler->_die_unimplemented_clause($cd);
+    } elsif ($which eq 'uniq') {
+        $self_th->compiler->_die_unimplemented_clause($cd);
+    } elsif ($which eq 'exists') {
+        $self_th->compiler->_die_unimplemented_clause($cd);
     }
 }
 
@@ -116,18 +121,7 @@ sub clause_match {
         ));
     } else {
         # simplify code and we can check regex at compile time
-        my $re;
-        if (ref($cv) eq 'Regexp') {
-            $re = $cv;
-        } else {
-            eval { $re = qr/$cv/ };
-            $self->_die($cd, "Invalid regex $cv: $@") if $@;
-        }
-
-        # i don't know if this is safe?
-        $re = "$re";
-        $re =~ s!/!\\/!g;
-
+        my $re = $c->_str2reliteral($cd, $cv);
         $c->add_ccl($cd, "$dt =~ /$re/");
     }
 }
@@ -163,15 +157,33 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Data::Sah::Compiler::perl::TH::str - perl's type handler for type "str"
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 =head1 AUTHOR
 

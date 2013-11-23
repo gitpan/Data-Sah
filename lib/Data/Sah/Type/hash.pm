@@ -6,7 +6,7 @@ with 'Data::Sah::Type::BaseType';
 with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::HasElems';
 
-our $VERSION = '0.18'; # VERSION
+our $VERSION = '0.19'; # VERSION
 
 has_clause_alias each_elem => 'of';
 
@@ -53,6 +53,17 @@ has_clause "allowed_keys_re",
     arg        => 're*',
     allow_expr => 1,
     ;
+has_clause "forbidden_keys",
+    tags       => ['constraint'],
+    arg        => ['array*'],
+    allow_expr => 1,
+    ;
+has_clause "forbidden_keys_re",
+    prio       => 51,
+    tags       => ['constraint'],
+    arg        => 're*',
+    allow_expr => 1,
+    ;
 has_clause_alias each_index => 'each_key';
 has_clause_alias each_elem => 'each_value';
 has_clause_alias check_each_index => 'check_each_key';
@@ -69,15 +80,33 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Data::Sah::Type::hash - hash type
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 =head1 AUTHOR
 

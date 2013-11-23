@@ -8,7 +8,7 @@ use Moo::Role;
 #use Data::Sah::Schema::sah;
 use Data::Sah::Util::Role 'has_clause';
 
-our $VERSION = '0.18'; # VERSION
+our $VERSION = '0.19'; # VERSION
 
 requires 'handle_type';
 
@@ -22,6 +22,12 @@ has_clause 'v',
 
 #has_clause 'base_v';
 
+has_clause 'ok',
+    tags       => ['constraint'],
+    prio       => 1,
+    arg        => 'any',
+    allow_expr => 1,
+    ;
 has_clause 'default',
     prio       => 1,
     tags       => [],
@@ -80,11 +86,6 @@ has_clause 'forbidden',
     arg        => 'bool',
     allow_expr => 1,
     ;
-has_clause 'ok',
-    tags       => ['constraint'],
-    prio       => 50,
-    arg        => 'any',
-    ;
 #has_clause 'if', tags=>['constraint'];
 
 #has_clause 'each', tags=>['constraint'];
@@ -123,15 +124,33 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Data::Sah::Type::BaseType - Base type
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 =head1 AUTHOR
 

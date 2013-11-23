@@ -7,7 +7,7 @@ extends 'Data::Sah::Compiler::Prog';
 
 use SHARYANTO::String::Util;
 
-our $VERSION = '0.18'; # VERSION
+our $VERSION = '0.19'; # VERSION
 
 sub BUILD {
     my ($self, $args) = @_;
@@ -80,6 +80,8 @@ sub init_cd {
 }
 
 sub true { "1" }
+
+sub false { "''" }
 
 sub add_use {
     my ($self, $cd, $name, $imports) = @_;
@@ -261,6 +263,23 @@ sub expr_validator_sub {
     $self->SUPER::expr_validator_sub(%args);
 }
 
+sub _str2reliteral {
+    my ($self, $cd, $str) = @_;
+
+    my $re;
+    if (ref($str) eq 'Regexp') {
+        $re = $str;
+    } else {
+        eval { $re = qr/$str/ };
+        $self->_die($cd, "Invalid regex $str: $@") if $@;
+    }
+
+    # i don't know if this is safe?
+    $re = "$re";
+    $re =~ s!/!\\/!g;
+    $re;
+}
+
 1;
 # ABSTRACT: Compile Sah schema to Perl code
 
@@ -268,13 +287,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Data::Sah::Compiler::perl - Compile Sah schema to Perl code
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =head1 SYNOPSIS
 
@@ -284,7 +305,7 @@ version 0.18
 
 Derived from L<Data::Sah::Compiler::Prog>.
 
-=for Pod::Coverage BUILD ^(after_.+|before_.+|name|expr|true|literal|expr_.+|stmt_.+|block_uses_sub)$
+=for Pod::Coverage BUILD ^(after_.+|before_.+|name|expr|true|false|literal|expr_.+|stmt_.+|block_uses_sub)$
 
 =head1 METHODS
 
@@ -377,6 +398,22 @@ See also: C<add_use()>.
 Equivalent to:
 
  $c->add_use($cd, 'experimental', ["'smartmatch'"]);
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 =head1 AUTHOR
 

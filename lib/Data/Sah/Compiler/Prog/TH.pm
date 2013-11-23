@@ -4,7 +4,7 @@ use Log::Any '$log';
 use Moo;
 extends 'Data::Sah::Compiler::TH';
 
-our $VERSION = '0.18'; # VERSION
+our $VERSION = '0.19'; # VERSION
 
 # handled in compiler's before_all_clauses()
 
@@ -43,6 +43,16 @@ sub clause_tags {
     $self->compiler->_ignore_clause($cd);
 }
 
+sub clause_defhash_v {
+    my ($self, $cd) = @_;
+    $self->compiler->_ignore_clause($cd);
+}
+
+sub clause_v {
+    my ($self, $cd) = @_;
+    $self->compiler->_ignore_clause($cd);
+}
+
 # temporarily use temporary variable for referring to data (e.g. when converting
 # non-number to number for checking in clauses, or prefiltering)
 sub set_tmp_data_term {
@@ -71,15 +81,6 @@ sub restore_data_term {
         $cd->{data_term} = delete($cd->{_save_data_term});
         $c->add_ccl($cd, "(".$c->expr_pop($tdt). ", ".$c->true.")");
     }
-}
-
-# tmp
-sub _warn_unimplemented {
-    my ($self, $cd) = @_;
-    my $c = $self->compiler;
-
-    warn "NOTICE: clause '$cd->{clause}' for type '$cd->{type}' ".
-        "is currently unimplemented\n";
 }
 
 sub gen_any_or_all_of {
@@ -123,15 +124,33 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Data::Sah::Compiler::Prog::TH - Base class for programming-language emiting compiler's type handlers
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =for Pod::Coverage ^(compiler|clause_.+|handle_.+|gen_.+|set_tmp_data_term|restore_data_term)$
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 =head1 AUTHOR
 

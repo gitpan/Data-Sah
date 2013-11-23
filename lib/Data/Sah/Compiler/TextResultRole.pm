@@ -5,7 +5,7 @@ use Moo::Role;
 
 use SHARYANTO::String::Util;
 
-our $VERSION = '0.18'; # VERSION
+our $VERSION = '0.19'; # VERSION
 
 # can be changed to tab, for example
 has indent_character => (is => 'rw', default => sub {''});
@@ -48,13 +48,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Data::Sah::Compiler::TextResultRole - Role for compilers that produce text result (array of lines)
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =head1 ATTRIBUTES
 
@@ -84,6 +86,22 @@ Shortcut for C<< $c->indent_character x $cd->{indent_level} >>.
 =head2 $c->indent($cd, $str) => STR
 
 Indent each line in $str with indent_str and return the result.
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 =head1 AUTHOR
 

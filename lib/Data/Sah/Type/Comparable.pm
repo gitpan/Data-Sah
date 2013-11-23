@@ -3,7 +3,7 @@ package Data::Sah::Type::Comparable;
 use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 
-our $VERSION = '0.18'; # VERSION
+our $VERSION = '0.19'; # VERSION
 
 requires 'superclause_comparable';
 
@@ -31,13 +31,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Data::Sah::Type::Comparable - Comparable type role
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =head1 DESCRIPTION
 
@@ -46,6 +48,22 @@ normal C<%args> given to clause methods, but with extra key C<-which> (either
 C<in>, C<is>).
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 =head1 AUTHOR
 

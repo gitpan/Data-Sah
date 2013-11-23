@@ -10,7 +10,7 @@ with 'Data::Sah::Compiler::TextResultRole';
 
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.18'; # VERSION
+our $VERSION = '0.19'; # VERSION
 
 has main => (is => 'rw');
 
@@ -164,7 +164,7 @@ sub _get_clauses_from_clsets {
         };
         if ($@) {
             for ($cd->{args}{on_unhandled_clause}) {
-                my $msg = "Unhandled clause for type $tn: $ca";
+                my $msg = "Unhandled clause for type $tn: $ca ($@)";
                 next if $_ eq 'ignore';
                 next if $_ eq 'warn'; # don't produce multiple warnings
                 $self->_die($cd, $msg);
@@ -247,6 +247,7 @@ sub get_th {
         my $obj = $module->new(compiler=>$self);
         $th_map->{$name} = $obj;
     }
+    use experimental 'smartmatch';
 
     return $th_map->{$name};
 }
@@ -273,6 +274,7 @@ sub get_fsh {
         my $obj = $module->new();
         $fsh_table->{$name} = $obj;
     }
+    use experimental 'smartmatch';
 
     return $fsh_table->{$name};
 }
@@ -343,7 +345,7 @@ sub _process_clause {
     local $cd->{clset_num}   = $clset_num;
     local $cd->{uclset}      = $cd->{uclsets}[$clset_num];
     local $cd->{clset_dlang} = $cd->{_clset_dlangs}[$clset_num];
-    #$log->tracef("Processing clause %s: %s", $clause);
+    #$log->tracef("Processing clause %s", $clause);
 
     delete $cd->{uclset}{$clause};
     delete $cd->{uclset}{"$clause.prio"};
@@ -648,6 +650,14 @@ sub _ignore_clause_and_attrs {
     delete $cd->{uclset}{$_} for grep /\A\Q$cl\E\./, keys %{$cd->{uclset}};
 }
 
+sub _die_unimplemented_clause {
+    my ($self, $cd, $note) = @_;
+
+    $self->_die($cd, "Clause '$cd->{clause}' for type '$cd->{type}' ".
+                    ($note ? "($note) " : "") .
+                        "is currently unimplemented");
+}
+
 1;
 # ABSTRACT: Base class for Sah compilers (Data::Sah::Compiler::*)
 
@@ -655,13 +665,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Data::Sah::Compiler - Base class for Sah compilers (Data::Sah::Compiler::*)
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =for Pod::Coverage ^(check_compile_args|def|expr|init_cd|literal|name)$
 
@@ -1058,6 +1070,22 @@ Called at the very end before compiling process end.
 =head2 $c->get_th
 
 =head2 $c->get_fsh
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 =head1 AUTHOR
 

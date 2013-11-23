@@ -6,7 +6,7 @@ use experimental 'smartmatch';
 extends 'Data::Sah::Compiler';
 use Log::Any qw($log);
 
-our $VERSION = '0.18'; # VERSION
+our $VERSION = '0.19'; # VERSION
 
 #use Digest::MD5 qw(md5_hex);
 
@@ -527,10 +527,30 @@ sub before_handle_type {
 sub before_all_clauses {
     my ($self, $cd) = @_;
 
-    # handle default/prefilters/req/forbidden clauses
+    # handle ok/default/prefilters/req/forbidden clauses
 
     my $dt     = $cd->{data_term};
     my $clsets = $cd->{clsets};
+
+    # handle ok, this is very high priority because !ok=>1 should fail undef
+    # too. we need to handle its .op=not here.
+    for my $i (0..@$clsets-1) {
+        my $clset  = $clsets->[$i];
+        next unless exists $clset->{ok};
+        my $op = $clset->{"ok.op"} // "";
+        if ($op && $op ne 'not') {
+            $self->_die($cd, "ok can only be combined with .op=not");
+        }
+        if ($op eq 'not') {
+            local $cd->{_debug_ccl_note} = "!ok #$i";
+            $self->add_ccl($cd, $self->false);
+        } else {
+            local $cd->{_debug_ccl_note} = "ok #$i";
+            $self->add_ccl($cd, $self->true);
+        }
+        delete $cd->{uclsets}[$i]{"ok"};
+        delete $cd->{uclsets}[$i]{"ok.is_expr"};
+    }
 
     # handle default
     for my $i (0..@$clsets-1) {
@@ -734,13 +754,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Data::Sah::Compiler::Prog - Base class for programming language compilers
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =head1 SYNOPSIS
 
@@ -1017,6 +1039,22 @@ value. See C<Data::Sah::Compiler::js::TH::hash> for an example.
 Usually used as temporary variable in short, anonymous functions.
 
 =back
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 =head1 AUTHOR
 

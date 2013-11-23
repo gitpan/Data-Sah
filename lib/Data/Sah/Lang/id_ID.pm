@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Tie::IxHash;
 
-our $VERSION = '0.18'; # VERSION
+our $VERSION = '0.19'; # VERSION
 
 sub ordinate {
     my ($n, $noun) = @_;
@@ -117,6 +117,9 @@ tie %translations, 'Tie::IxHash', (
     q[length %(modal_verb)s be between %s and %s],
     q[panjang %(modal_verb)s antara %s dan %s],
 
+    q[%(modal_verb)s have %s in its elements],
+    q[%(modal_verb)s mengandung %s di elemennya],
+
     # type: Sortable
 
     q[%(modal_verb)s be at least %s],
@@ -136,6 +139,14 @@ tie %translations, 'Tie::IxHash', (
 
     q[%(modal_verb)s be larger than %s and smaller than %s],
     q[%(modal_verb)s lebih besar dari %s dan lebih kecil dari %s],
+
+    # type: undef
+
+    q[undefined value],
+    q[nilai tak terdefinisi],
+
+    q[undefined values],
+    q[nilai tak terdefinisi],
 
     # type: all
 
@@ -256,6 +267,36 @@ tie %translations, 'Tie::IxHash', (
     q[hash contains unknown field(s) (%s)],
     q[hash mengandung field yang tidak dikenali (%s)],
 
+    q[hash contains unknown field(s) (%s)],
+    q[hash mengandung field yang tidak dikenali (%s)],
+
+    q[%(modal_verb)s have required fields %s],
+    q[%(modal_verb)s mengandung field wajib %s],
+
+    q[hash has missing required field(s) (%s)],
+    q[hash kekurangan field wajib (%s)],
+
+    q[%(modal_verb)s have %s in its field values],
+    q[%(modal_verb)s mengandung %s di nilai field],
+
+    q[%(modal_verb)s only have these allowed fields %s],
+    q[%(modal_verb)s hanya mengandung field yang diizinkan %s],
+
+    q[%(modal_verb)s only have fields matching regex pattern %s],
+    q[%(modal_verb)s hanya mengandung field yang namanya mengikuti pola regex %s],
+
+    q[%(modal_verb_neg)s have these forbidden fields %s],
+    q[%(modal_verb_neg)s mengandung field yang dilarang %s],
+
+    q[%(modal_verb_neg)s have fields matching regex pattern %s],
+    q[%(modal_verb_neg)s mengandung field yang namanya mengikuti pola regex %s],
+
+    q[hash contains non-allowed field(s) (%s)],
+    q[hash mengandung field yang tidak diizinkan (%s)],
+
+    q[hash contains forbidden field(s) (%s)],
+    q[hash mengandung field yang dilarang (%s)],
+
     # type: int
 
     q[integer],
@@ -314,7 +355,7 @@ tie %translations, 'Tie::IxHash', (
     q[%(modal_verb)s be a regex pattern],
     q[%(modal_verb)s pola regex],
 
-    q[each subscript of the text %(modal_verb)s be],
+    q[each subscript of text %(modal_verb)s be],
     q[setiap subskrip dari teks %(modal_verb)s],
 
     q[each character of the text %(modal_verb)s be],
@@ -322,6 +363,16 @@ tie %translations, 'Tie::IxHash', (
 
     q[character],
     q[karakter],
+
+    # type: cistr
+
+    # type: buf
+
+    q[buffer],
+    q[buffer],
+
+    q[buffers],
+    q[buffer],
 
     # messages for compiler
 
@@ -349,15 +400,33 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Data::Sah::Lang::id_ID - id_ID locale
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =for Pod::Coverage .+
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 =head1 AUTHOR
 

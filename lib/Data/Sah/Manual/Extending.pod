@@ -1,13 +1,11 @@
-package Data::Sah::Manual::Extending; # just to make PodWeaver happy
-
-# VERSION
-
-1;
 # ABSTRACT: Extending Data::Sah
+# PODNAME: Data::Sah::Manual::Extending
 
 __END__
 
 =pod
+
+=encoding UTF-8
 
 =head1 NAME
 
@@ -15,7 +13,7 @@ Data::Sah::Manual::Extending - Extending Data::Sah
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =head1 DESCRIPTION
 
@@ -118,6 +116,22 @@ XXX
 
 Take a look at one of the existing compilers like L<Data::Sah::Compiler::perl>
 or L<Data::Sah::Compiler::human>.
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 =head1 AUTHOR
 

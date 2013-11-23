@@ -4,7 +4,7 @@ use 5.010001;
 use Moo;
 use Log::Any qw($log);
 
-our $VERSION = '0.18'; # VERSION
+our $VERSION = '0.19'; # VERSION
 
 our $Log_Validator_Code = $ENV{LOG_SAH_VALIDATOR_CODE} // 0;
 
@@ -292,13 +292,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Data::Sah - Fast and featureful data structure validation
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =head1 SYNOPSIS
 
@@ -350,8 +352,7 @@ The generated validator code can run without this module.
 
 =head1 STATUS
 
-Early implementation, some features are not implemented yet. Below is a list of
-things that are not yet implemented:
+Some features are not implemented yet:
 
 =over
 
@@ -367,21 +368,21 @@ things that are not yet implemented:
 
 =item * date/datetime type
 
-=item * obj: methods, attrs properties
+=item * obj: meths, attrs properties
 
 =item * .prio, .err_msg, .ok_err_msg attributes
 
 =item * .result_var attribute
 
-=item * BaseType: ok, clset, if, prefilters, postfilters, check, prop, check_prop
+=item * BaseType: if, prefilters, postfilters, check, prop, check_prop clauses
 
-=item * HasElems: each_elem, each_index, check_each_elem, check_each_index, exists
+=item * HasElems: each_elem, each_index, check_each_elem, check_each_index, exists clauses
 
 =item * HasElems: len, elems, indices properties
 
-=item * hash: re_keys, each_key, each_value, check_each_key, check_each_value, allowed_keys, allowed_keys_re
+=item * hash: re_keys, check_each_key, check_each_value, allowed_keys_re, forbidden_keys_re clauses
 
-=item * array: has, uniq
+=item * array: uniq clauses
 
 =back
 
@@ -673,6 +674,17 @@ subroutine/code.
 
 =back
 
+=head1 TODO
+
+=over
+
+=item * (perl compiler) Replace smartmatch because of its inconsistent behavior
+
+C<<$data ~~ ["x", 1]>> will do string comparison, while C<<$data ~~ [1, "x"]>>
+or even C<<$data ~~ ["1", "x"]>> will do a numeric comparison.
+
+=back
+
 =head1 SEE ALSO
 
 =head3 Other compiled validators
@@ -686,6 +698,22 @@ For Moo/Mouse/Moose stuffs: L<Moose> type system, L<MooseX::Params::Validate>,
 L<Type::Tiny>, among others.
 
 Form-oriented: L<Data::FormValidator>, L<FormValidator::Lite>, among others.
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 =head1 AUTHOR
 

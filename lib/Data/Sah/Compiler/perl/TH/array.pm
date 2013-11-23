@@ -7,7 +7,7 @@ use experimental 'smartmatch';
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::array';
 
-our $VERSION = '0.18'; # VERSION
+our $VERSION = '0.19'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -59,13 +59,23 @@ sub superclause_has_elems {
             $c->add_ccl(
                 $cd, "\@{$dt} >= $cv->[0] && \@{$dt} <= $cv->[1]");
         }
-        #} elsif ($which eq 'has') {
+    } elsif ($which eq 'has') {
+        $c->add_smartmatch_pragma($cd);
+        #$c->add_ccl($cd, "$FRZ($ct) ~~ [map {$FRZ(\$_)} \@{ $dt }]");
+
+        # XXX currently we choose below for speed, but only works for array of
+        # scalars
+        $c->add_ccl($cd, "$ct ~~ $dt");
     } elsif ($which eq 'each_index' || $which eq 'each_elem') {
         $self_th->gen_each($which, $cd, "0..\@{$dt}-1", "\@{$dt}");
-    #} elsif ($which eq 'check_each_index') {
-    #} elsif ($which eq 'check_each_elem') {
-    #} elsif ($which eq 'uniq') {
-    #} elsif ($which eq 'exists') {
+    } elsif ($which eq 'check_each_index') {
+        $self_th->compiler->_die_unimplemented_clause($cd);
+    } elsif ($which eq 'check_each_elem') {
+        $self_th->compiler->_die_unimplemented_clause($cd);
+    } elsif ($which eq 'uniq') {
+        $self_th->compiler->_die_unimplemented_clause($cd);
+    } elsif ($which eq 'exists') {
+        $self_th->compiler->_die_unimplemented_clause($cd);
     }
 }
 
@@ -123,15 +133,33 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Data::Sah::Compiler::perl::TH::array - perl's type handler for type "array"
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 =head1 AUTHOR
 
