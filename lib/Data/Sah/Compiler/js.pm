@@ -7,7 +7,7 @@ use Log::Any qw($log);
 
 use SHARYANTO::String::Util;
 
-our $VERSION = '0.19'; # VERSION
+our $VERSION = '0.20'; # VERSION
 
 sub BUILD {
     my ($self, $args) = @_;
@@ -257,7 +257,7 @@ Data::Sah::Compiler::js - Compile Sah schema to JavaScript code
 
 =head1 VERSION
 
-version 0.19
+version 0.20
 
 =head1 SYNOPSIS
 
@@ -280,6 +280,19 @@ Aside from Prog's arguments, this class supports these arguments:
 =over
 
 =back
+
+=head1 DEVELOPER NOTES
+
+To generate expression code that says "all subexpression must be true", you can
+do:
+
+ ARRAY.every(function(x) { return blah(x) })
+
+which shortcuts to false after the first item failure.
+
+To say "at least one subexpression must be true":
+
+ !ARRAY.every(function(x) { return !blah(x) })
 
 =head1 HOMEPAGE
 

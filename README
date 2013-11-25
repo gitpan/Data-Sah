@@ -2,7 +2,7 @@ NAME
     Data::Sah - Fast and featureful data structure validation
 
 VERSION
-    version 0.19
+    version 0.20
 
 SYNOPSIS
     Non-OO interface:

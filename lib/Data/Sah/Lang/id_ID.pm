@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Tie::IxHash;
 
-our $VERSION = '0.19'; # VERSION
+our $VERSION = '0.20'; # VERSION
 
 sub ordinate {
     my ($n, $noun) = @_;
@@ -297,6 +297,9 @@ tie %translations, 'Tie::IxHash', (
     q[hash contains forbidden field(s) (%s)],
     q[hash mengandung field yang dilarang (%s)],
 
+    q[fields whose names match regex pattern %s %(modal_verb)s be],
+    q[field yang namanya cocok dengan pola regex %s %(modal_verb)s],
+
     # type: int
 
     q[integer],
@@ -408,7 +411,7 @@ Data::Sah::Lang::id_ID - id_ID locale
 
 =head1 VERSION
 
-version 0.19
+version 0.20
 
 =for Pod::Coverage .+
 

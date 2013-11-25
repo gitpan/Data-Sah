@@ -61,7 +61,7 @@
             "File::chdir" : "0",
             "IO::Handle" : "0",
             "IPC::Open3" : "0",
-            "Sah" : "v0.9.29",
+            "Sah" : "v0.9.30",
             "Test::Exception" : "0",
             "Test::More" : "0.98",
             "Test::Warn" : "0"
@@ -80,7 +80,7 @@
          "web" : "https://github.com/sharyanto/perl-Data-Sah"
       }
    },
-   "version" : "0.19",
+   "version" : "0.20",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.010001"

@@ -6,7 +6,7 @@ with 'Data::Sah::Type::BaseType';
 with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::Sortable';
 
-our $VERSION = '0.19'; # VERSION
+our $VERSION = '0.20'; # VERSION
 
 has_clause 'is_true',
     tags       => ['constraint'],
@@ -29,7 +29,7 @@ Data::Sah::Type::bool - bool type
 
 =head1 VERSION
 
-version 0.19
+version 0.20
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

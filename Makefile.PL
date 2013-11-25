@@ -49,12 +49,12 @@ my %WriteMakefileArgs = (
     "File::chdir" => 0,
     "IO::Handle" => 0,
     "IPC::Open3" => 0,
-    "Sah" => "v0.9.29",
+    "Sah" => "v0.9.30",
     "Test::Exception" => 0,
     "Test::More" => "0.98",
     "Test::Warn" => 0
   },
-  "VERSION" => "0.19",
+  "VERSION" => "0.20",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -85,7 +85,7 @@ my %FallbackPrereqs = (
   "Moo::Role" => 0,
   "SHARYANTO::String::Util" => 0,
   "SHARYANTO::Version::Util" => "0.64",
-  "Sah" => "v0.9.29",
+  "Sah" => "v0.9.30",
   "Sub::Install" => 0,
   "Test::Exception" => 0,
   "Test::More" => "0.98",

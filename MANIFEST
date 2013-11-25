@@ -76,6 +76,7 @@ lib/Data/Sah/Lang.pm
 lib/Data/Sah/Lang/fr_FR.pm
 lib/Data/Sah/Lang/id_ID.pm
 lib/Data/Sah/Lang/zh_CN.pm
+lib/Data/Sah/Manual/Contributing.pod
 lib/Data/Sah/Manual/Extending.pod
 lib/Data/Sah/Schema/Common.pm
 lib/Data/Sah/Schema/sah.pm

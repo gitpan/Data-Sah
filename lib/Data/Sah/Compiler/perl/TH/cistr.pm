@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH::str';
 with 'Data::Sah::Type::cistr';
 
-our $VERSION = '0.19'; # VERSION
+our $VERSION = '0.20'; # VERSION
 
 # XXX cache lc() result so it's not done on every clause
 
@@ -77,10 +77,16 @@ sub superclause_has_elems {
 # turn "(?-xism:blah)" to "(?i-xsm:blah)"
 sub __change_re_str_switch {
     my $re = shift;
-    state $subl = sub { my $s = shift; $s =~ /i/ ? $s : "i$s" };
-    state $subr = sub { my $s = shift; $s =~ s/i//; $s };
-    $re =~ s/\A\(\?(\w*)-(\w*):/"(?" . $subl->($1) . "-" . $subr->($2) . ":"/e;
-    $re;
+
+    if ($^V ge v5.14.0) {
+        state $sub = sub { my $s = shift; $s =~ /i/ ? $s : "i$s" };
+        $re =~ s/\A\(\?\^(\w*):/"(?".$sub->($1).":"/e;
+    } else {
+        state $subl = sub { my $s = shift; $s =~ /i/ ? $s : "i$s" };
+        state $subr = sub { my $s = shift; $s =~ s/i//; $s };
+        $re =~ s/\A\(\?(\w*)-(\w*):/"(?".$subl->($1)."-".$subr->($2).":"/e;
+    }
+    return $re;
 }
 
 sub clause_match {
@@ -120,7 +126,7 @@ Data::Sah::Compiler::perl::TH::cistr - perl's type handler for type "cistr"
 
 =head1 VERSION
 
-version 0.19
+version 0.20
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

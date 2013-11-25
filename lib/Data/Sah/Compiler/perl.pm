@@ -7,7 +7,7 @@ extends 'Data::Sah::Compiler::Prog';
 
 use SHARYANTO::String::Util;
 
-our $VERSION = '0.19'; # VERSION
+our $VERSION = '0.20'; # VERSION
 
 sub BUILD {
     my ($self, $args) = @_;
@@ -295,7 +295,7 @@ Data::Sah::Compiler::perl - Compile Sah schema to Perl code
 
 =head1 VERSION
 
-version 0.19
+version 0.20
 
 =head1 SYNOPSIS
 
@@ -398,6 +398,27 @@ See also: C<add_use()>.
 Equivalent to:
 
  $c->add_use($cd, 'experimental', ["'smartmatch'"]);
+
+=head1 DEVELOPER NOTES
+
+To generate expression code that says "all subexpression must be true", you can
+do:
+
+ !defined(List::Util::first(sub { blah($_) }, "value", ...))
+
+This is a bit harder to read than:
+
+ !grep { !blah($_) } "value", ...
+
+but has the advantage of the ability to shortcut on the first item that fails.
+
+Similarly, to say "at least one subexpression must be true":
+
+ defined(List::Util::first(sub { blah($_) }, "value", ...))
+
+which can shortcut in contrast to:
+
+ grep { blah($_) } "value", ...
 
 =head1 HOMEPAGE
 

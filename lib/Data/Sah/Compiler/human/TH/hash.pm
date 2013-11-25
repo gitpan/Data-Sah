@@ -8,7 +8,7 @@ with 'Data::Sah::Compiler::human::TH::Comparable';
 with 'Data::Sah::Compiler::human::TH::HasElems';
 with 'Data::Sah::Type::hash';
 
-our $VERSION = '0.19'; # VERSION
+our $VERSION = '0.20'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -93,7 +93,27 @@ sub clause_keys {
     }
 }
 
-sub clause_re_keys { warn "NOT YET IMPLEMENTED" }
+sub clause_re_keys {
+    my ($self, $cd) = @_;
+    my $c  = $self->compiler;
+    my $cv = $cd->{cl_value};
+
+    for my $k (sort keys %$cv) {
+        local $cd->{spath} = [@{$cd->{spath}}, $k];
+        my $v = $cv->{$k};
+        my %iargs = %{$cd->{args}};
+        $iargs{outer_cd}             = $cd;
+        $iargs{schema}               = $v;
+        $iargs{schema_is_normalized} = 0;
+        my $icd = $c->compile(%iargs);
+        $c->add_ccl($cd, {
+            type  => 'list',
+            fmt   => 'fields whose names match regex pattern %s %(modal_verb)s be',
+            vals  => [$k],
+            items => [ $icd->{ccls} ],
+        });
+    }
+}
 
 sub clause_req_keys {
   my ($self, $cd) = @_;
@@ -160,7 +180,7 @@ Data::Sah::Compiler::human::TH::hash - human's type handler for type "hash"
 
 =head1 VERSION
 
-version 0.19
+version 0.20
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 
