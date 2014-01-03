@@ -1,10 +1,10 @@
-package Data::Sah::Schemas::sah;
+package Data::Sah::Schema::sah;
 
 use 5.010;
 use strict;
 use warnings;
 
-our $VERSION = '0.20'; # VERSION
+our $VERSION = '0.21'; # VERSION
 
 # commented temporarily, unfinished refactoring
 1;
@@ -16,11 +16,11 @@ our $VERSION = '0.20'; # VERSION
 
 =head1 NAME
 
-Data::Sah::Schemas::sah - Collection of schemas related to Sah
+Data::Sah::Schema::sah - Collection of schemas related to Sah
 
 =head1 VERSION
 
-version 0.20
+version 0.21
 
 =head1 DESCRIPTION
 
@@ -59,7 +59,7 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Steven Haryanto.
+This software is copyright (c) 2014 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
@@ -183,5 +183,4 @@ sub schemas {
 }
 
 1;
-
 

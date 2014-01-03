@@ -7,7 +7,7 @@ use experimental 'smartmatch';
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::bool';
 
-our $VERSION = '0.20'; # VERSION
+our $VERSION = '0.21'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -91,7 +91,7 @@ Data::Sah::Compiler::perl::TH::bool - perl's type handler for type "bool"
 
 =head1 VERSION
 
-version 0.20
+version 0.21
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 
@@ -117,7 +117,7 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Steven Haryanto.
+This software is copyright (c) 2014 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

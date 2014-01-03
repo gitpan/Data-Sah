@@ -7,7 +7,7 @@ with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::Sortable';
 with 'Data::Sah::Type::HasElems';
 
-our $VERSION = '0.20'; # VERSION
+our $VERSION = '0.21'; # VERSION
 
 my $t_re = 'regex*|{*=>regex*}';
 
@@ -37,7 +37,7 @@ Data::Sah::Type::str - str type
 
 =head1 VERSION
 
-version 0.20
+version 0.21
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 
@@ -63,7 +63,7 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Steven Haryanto.
+This software is copyright (c) 2014 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

@@ -104,6 +104,7 @@ lib/Data/Sah/Util/Role.pm
 lib/Data/Sah/Util/TypeX.pm
 t/00-compile.t
 t/01-basics.t
+t/99-various.t
 t/human-en_US.t
 t/human-id_ID.t
 t/perl-type-bool.t
