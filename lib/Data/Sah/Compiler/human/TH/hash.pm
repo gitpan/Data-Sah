@@ -8,7 +8,7 @@ with 'Data::Sah::Compiler::human::TH::Comparable';
 with 'Data::Sah::Compiler::human::TH::HasElems';
 with 'Data::Sah::Type::hash';
 
-our $VERSION = '0.21'; # VERSION
+our $VERSION = '0.22'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -180,7 +180,7 @@ Data::Sah::Compiler::human::TH::hash - human's type handler for type "hash"
 
 =head1 VERSION
 
-version 0.21
+version 0.22
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

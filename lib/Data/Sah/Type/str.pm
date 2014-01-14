@@ -7,7 +7,7 @@ with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::Sortable';
 with 'Data::Sah::Type::HasElems';
 
-our $VERSION = '0.21'; # VERSION
+our $VERSION = '0.22'; # VERSION
 
 my $t_re = 'regex*|{*=>regex*}';
 
@@ -37,7 +37,7 @@ Data::Sah::Type::str - str type
 
 =head1 VERSION
 
-version 0.21
+version 0.22
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

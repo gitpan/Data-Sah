@@ -7,7 +7,7 @@ use experimental 'smartmatch';
 extends 'Data::Sah::Compiler::perl::TH::str';
 with 'Data::Sah::Type::buf';
 
-our $VERSION = '0.21'; # VERSION
+our $VERSION = '0.22'; # VERSION
 
 1;
 # ABSTRACT: perl's type handler for type "buf"
@@ -24,7 +24,7 @@ Data::Sah::Compiler::perl::TH::buf - perl's type handler for type "buf"
 
 =head1 VERSION
 
-version 0.21
+version 0.22
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

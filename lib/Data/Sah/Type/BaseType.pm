@@ -8,7 +8,7 @@ use Moo::Role;
 #use Data::Sah::Schema::sah;
 use Data::Sah::Util::Role 'has_clause';
 
-our $VERSION = '0.21'; # VERSION
+our $VERSION = '0.22'; # VERSION
 
 requires 'handle_type';
 
@@ -132,7 +132,7 @@ Data::Sah::Type::BaseType - Base type
 
 =head1 VERSION
 
-version 0.21
+version 0.22
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

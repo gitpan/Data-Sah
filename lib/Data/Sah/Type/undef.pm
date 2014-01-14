@@ -3,7 +3,7 @@ package Data::Sah::Type::undef;
 use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 
-our $VERSION = '0.21'; # VERSION
+our $VERSION = '0.22'; # VERSION
 
 1;
 # ABSTRACT: undef type
@@ -20,7 +20,7 @@ Data::Sah::Type::undef - undef type
 
 =head1 VERSION
 
-version 0.21
+version 0.22
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

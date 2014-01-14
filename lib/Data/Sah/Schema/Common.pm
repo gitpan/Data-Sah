@@ -4,7 +4,7 @@ use 5.010;
 use strict;
 use warnings;
 
-our $VERSION = '0.21'; # VERSION
+our $VERSION = '0.22'; # VERSION
 
 sub schemas {
     {
@@ -58,7 +58,7 @@ Data::Sah::Schema::Common - Collection of common schemas
 
 =head1 VERSION
 
-version 0.21
+version 0.22
 
 =head1 HOMEPAGE
 

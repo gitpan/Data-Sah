@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Log::Any qw($log);
 
-our $VERSION = '0.21'; # VERSION
+our $VERSION = '0.22'; # VERSION
 
 our $Log_Validator_Code = $ENV{LOG_SAH_VALIDATOR_CODE} // 0;
 
@@ -94,7 +94,7 @@ Data::Sah::JS - Some functions to use JavaScript Sah validator code from Perl
 
 =head1 VERSION
 
-version 0.21
+version 0.22
 
 =head1 SYNOPSIS
 

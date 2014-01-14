@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::js::TH';
 with 'Data::Sah::Type::hash';
 
-our $VERSION = '0.21'; # VERSION
+our $VERSION = '0.22'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -220,7 +220,7 @@ sub clause_req_keys {
             $c->literal($c->_xlt(
                 $cd, "hash has missing required field(s) (%s)")),
             '.replace("%s", ',
-            "Object.keys($dt).filter(function(x){ return ($ct).indexOf(x) == -1 }).join(', ')",
+            "($ct).filter(function(x){ return Object.keys($dt).indexOf(x) == -1 }).join(', ')",
             ')',
         ),
       }
@@ -348,7 +348,7 @@ Data::Sah::Compiler::js::TH::hash - js's type handler for type "hash"
 
 =head1 VERSION
 
-version 0.21
+version 0.22
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

@@ -6,7 +6,7 @@ use experimental 'smartmatch';
 extends 'Data::Sah::Compiler';
 use Log::Any qw($log);
 
-our $VERSION = '0.21'; # VERSION
+our $VERSION = '0.22'; # VERSION
 
 #use Digest::MD5 qw(md5_hex);
 
@@ -175,7 +175,7 @@ sub expr_validator_sub {
     my $log_result = delete $args{log_result};
     my $dt         = $args{data_term};
     my $vt         = delete($args{var_term}) // $dt;
-    my $do_log     = $args{debug_log} || $args{debug};
+    my $do_log     = $args{debug_log} // $args{debug};
     my $rt         = $args{return_type} // 'bool';
 
     $args{indent_level} = 1;
@@ -248,7 +248,8 @@ sub expr_validator_sub {
 # - err_level (str, the default will be taken from current clause's .err_level
 # if not specified),
 #
-# - err_expr,
+# - err_expr (str, a string expression in the target language that evaluates to
+# an error message, the more general and dynamic alternative to err_msg.
 #
 # - err_msg (str, the default will be produced by human compiler if not
 # supplied, or taken from current clause's .err_msg),
@@ -275,7 +276,8 @@ sub add_ccl {
     my $err_msg  = $opts->{err_msg};
 
     if (defined $err_expr) {
-        #
+        $self->add_var($cd, '_sahv_dpath', []) if $use_dpath;
+        $err_expr = $self->expr_prefix_dpath($err_expr) if $use_dpath;
     } else {
         unless (defined $err_msg) { $err_msg = $cd->{clset}{"$clause.err_msg"} }
         unless (defined $err_msg) {
@@ -296,7 +298,7 @@ sub add_ccl {
                     local $hcd->{args}{format} = 'inline_err_text';
                     $err_msg = $hc->format_ccls($hcd, $ccls);
                     # show path when debugging
-                    $err_msg = "[msgpath=$msgpath]$err_msg"
+                    $err_msg = "(msgpath=$msgpath) $err_msg"
                         if $cd->{args}{debug};
                     last;
                 }
@@ -311,11 +313,6 @@ sub add_ccl {
             $self->add_var($cd, '_sahv_dpath', []) if $use_dpath;
             $err_expr = $self->literal($err_msg);
             $err_expr = $self->expr_prefix_dpath($err_expr) if $use_dpath;
-            # show schema path, when debugging only
-            $err_expr = $self->expr_concat(
-                $self->literal("[spath=".join("/",@{$cd->{spath}}."]")),
-                $err_expr
-            ) if $cd->{args}{debug};
         }
     }
 
@@ -390,8 +387,9 @@ sub join_ccls {
         my $res = "";
 
         if ($ccl->{_debug_ccl_note}) {
-            if ($cd->{args}{debug_log_clause} // $cd->{args}{debug}) {
-                $res .= $self->expr_log($cd, $ccl) . " $aop\n";
+            if ($cd->{args}{debug_log} // $cd->{args}{debug}) {
+                $res .= $self->expr_log(
+                    $cd, $self->literal($ccl->{_debug_ccl_note})) . " $aop\n";
             } else {
                 $res .= $self->comment($cd, $ccl->{_debug_ccl_note});
             }
@@ -762,7 +760,7 @@ Data::Sah::Compiler::Prog - Base class for programming language compilers
 
 =head1 VERSION
 
-version 0.21
+version 0.22
 
 =head1 SYNOPSIS
 
@@ -948,9 +946,24 @@ This is a general debugging option which should turn on all debugging-related
 options, e.g. produce more comments in the generated code, etc. Each compiler
 might have more specific debugging options.
 
+If turned on, specific debugging options can be explicitly turned off
+afterwards, e.g. C<< debug=>1, debug_log=>0 >> will turn on all debugging
+options but turn off the C<debug_log> setting.
+
+Currently turning on C<debug> means:
+
+=over
+
+=item - Turning on the other debug_* options, like debug_log
+
+=item - Prefixing error message with msgpath
+
+=back
+
 =item * debug_log => BOOL (default: 0)
 
-Whether to add logging to generated code.
+Whether to add logging to generated code. This aids in debugging generated code
+specially for more complex validation.
 
 =item * comment => BOOL (default: 1)
 

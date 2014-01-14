@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Tie::IxHash;
 
-our $VERSION = '0.21'; # VERSION
+our $VERSION = '0.22'; # VERSION
 
 # currently incomplete
 
@@ -110,7 +110,7 @@ Data::Sah::Lang::fr_FR - fr_FR locale
 
 =head1 VERSION
 
-version 0.21
+version 0.22
 
 =for Pod::Coverage .+
 

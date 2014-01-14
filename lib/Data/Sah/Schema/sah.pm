@@ -4,7 +4,7 @@ use 5.010;
 use strict;
 use warnings;
 
-our $VERSION = '0.21'; # VERSION
+our $VERSION = '0.22'; # VERSION
 
 # commented temporarily, unfinished refactoring
 1;
@@ -20,7 +20,7 @@ Data::Sah::Schema::sah - Collection of schemas related to Sah
 
 =head1 VERSION
 
-version 0.21
+version 0.22
 
 =head1 DESCRIPTION
 

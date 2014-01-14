@@ -4,7 +4,7 @@ use 5.010;
 use strict;
 use warnings;
 
-our $VERSION = '0.21'; # VERSION
+our $VERSION = '0.22'; # VERSION
 
 our @ISA    = qw(Exporter);
 our @EXPORT = qw(add_translations);
@@ -31,7 +31,7 @@ Data::Sah::Lang - Language routines
 
 =head1 VERSION
 
-version 0.21
+version 0.22
 
 =for Pod::Coverage add_translations
 

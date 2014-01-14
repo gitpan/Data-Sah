@@ -4,7 +4,7 @@ use 5.010001;
 use Moo;
 use Log::Any qw($log);
 
-our $VERSION = '0.21'; # VERSION
+our $VERSION = '0.22'; # VERSION
 
 our $Log_Validator_Code = $ENV{LOG_SAH_VALIDATOR_CODE} // 0;
 
@@ -300,7 +300,7 @@ Data::Sah - Fast and featureful data structure validation
 
 =head1 VERSION
 
-version 0.21
+version 0.22
 
 =head1 SYNOPSIS
 
@@ -380,7 +380,7 @@ Some features are not implemented yet:
 
 =item * HasElems: len, elems, indices properties
 
-=item * hash: re_keys, check_each_key, check_each_value, allowed_keys_re, forbidden_keys_re clauses
+=item * hash: check_each_key, check_each_value, allowed_keys_re, forbidden_keys_re clauses
 
 =item * array: uniq clauses
 
@@ -637,6 +637,67 @@ Sample output:
      |
    23|        return($_sahv_res);
    24|    }}
+
+=head2 How to show the validation error message? The validator only returns true/false!
+
+Pass the C<<return_type=>"str">> to get an error message string on error, or
+C<<return_type=>"full">> to get a hash of detailed error messages. Note also
+that the error messages are translateable (e.g. use C<LANG> or C<< lang=>... >>
+option. For example:
+
+ my $v = gen_validator([int => between => [1,10]], {return_type=>"str"});
+ say "$_: ", $v->($_) for 1, "x", 12;
+
+will output:
+
+ 1:
+ "x": Input is not of type integer
+ 12: Must be between 1 and 10
+
+=head2 What does the C<@...> prefix that is sometimes shown on the error message mean?
+
+It shows the path to data item that fails the validation, e.g.:
+
+ my $v = gen_validator([array => of => [int=>min=>5], {return_type=>"str"});
+ say $v->([10, 5, "x"]);
+
+prints:
+
+ @2: Input is not of type integer
+
+which means that the third element (subscript 2) of the array fails the
+validation. Another example:
+
+ my $v = gen_validator([array => of => [hash=>keys=>{a=>"int"}]]);
+ say $v->([{}, {a=>1.1}]);
+
+prints:
+
+ @1/a: Input is not of type integer
+
+=head2 How to show the process of validation by the compiled code?
+
+If you are generating Perl code from schema, you can pass C<< debug=>1 >> option
+so the code contains logging (L<Log::Any>-based) and other debugging
+information, which you can display. For example:
+
+ % TRACE=1 perl -MLog::Any::App -MData::Sah=gen_validator -E'
+   $v = gen_validator([array => of => [hash => {req_keys=>["a"]}]],
+                      {return_type=>"str", debug=>1});
+   say "Validation result: ", $v->([{a=>1}, "x"]);'
+
+will output:
+
+ ...
+ [spath=[]]skip if undef ...
+ [spath=[]]check type 'array' ...
+ [spath=['of']]clause: {"of":["hash",{"req_keys":["a"]}]} ...
+ [spath=['of']]skip if undef ...
+ [spath=['of']]check type 'hash' ...
+ [spath=['of','req_keys']]clause: {"req_keys":["a"]} ...
+ [spath=['of']]skip if undef ...
+ [spath=['of']]check type 'hash' ...
+ Validation result: [spath=of]@1: Input is not of type hash
 
 =head2 What else can I do with the compiled code?
 
