@@ -7,7 +7,7 @@ use experimental 'smartmatch';
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::hash';
 
-our $VERSION = '0.23'; # VERSION
+our $VERSION = '0.24'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -347,7 +347,7 @@ Data::Sah::Compiler::perl::TH::hash - perl's type handler for type "hash"
 
 =head1 VERSION
 
-version 0.23
+version 0.24
 
 =head1 RELEASE DATE
 

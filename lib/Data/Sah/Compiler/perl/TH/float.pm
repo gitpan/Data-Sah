@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH::num';
 with 'Data::Sah::Type::float';
 
-our $VERSION = '0.23'; # VERSION
+our $VERSION = '0.24'; # VERSION
 
 my $LLN = "Scalar::Util::looks_like_number";
 
@@ -113,7 +113,7 @@ Data::Sah::Compiler::perl::TH::float - perl's type handler for type "float"
 
 =head1 VERSION
 
-version 0.23
+version 0.24
 
 =head1 RELEASE DATE
 

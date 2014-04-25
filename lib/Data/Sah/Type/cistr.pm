@@ -4,7 +4,7 @@ use Moo::Role;
 
 with 'Data::Sah::Type::str';
 
-our $VERSION = '0.23'; # VERSION
+our $VERSION = '0.24'; # VERSION
 
 1;
 # ABSTRACT: cistr type
@@ -21,7 +21,7 @@ Data::Sah::Type::cistr - cistr type
 
 =head1 VERSION
 
-version 0.23
+version 0.24
 
 =head1 RELEASE DATE
 

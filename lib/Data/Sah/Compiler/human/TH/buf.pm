@@ -5,7 +5,7 @@ use Log::Any '$log';
 use Moo;
 extends 'Data::Sah::Compiler::human::TH::str';
 
-our $VERSION = '0.23'; # VERSION
+our $VERSION = '0.24'; # VERSION
 
 sub name { "buffer" }
 
@@ -34,7 +34,7 @@ Data::Sah::Compiler::human::TH::buf - perl's type handler for type "buf"
 
 =head1 VERSION
 
-version 0.23
+version 0.24
 
 =head1 RELEASE DATE
 

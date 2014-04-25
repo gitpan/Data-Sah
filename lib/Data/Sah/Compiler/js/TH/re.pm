@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::js::TH';
 with 'Data::Sah::Type::re';
 
-our $VERSION = '0.23'; # VERSION
+our $VERSION = '0.24'; # VERSION
 
 # XXX prefilter to convert string to regex object
 
@@ -33,7 +33,7 @@ Data::Sah::Compiler::js::TH::re - js's type handler for type "re"
 
 =head1 VERSION
 
-version 0.23
+version 0.24
 
 =head1 RELEASE DATE
 

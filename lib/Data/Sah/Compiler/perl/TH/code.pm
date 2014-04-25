@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::code';
 
-our $VERSION = '0.23'; # VERSION
+our $VERSION = '0.24'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -31,7 +31,7 @@ Data::Sah::Compiler::perl::TH::code - perl's type handler for type "code"
 
 =head1 VERSION
 
-version 0.23
+version 0.24
 
 =head1 RELEASE DATE
 

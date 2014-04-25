@@ -5,7 +5,7 @@ use Log::Any '$log';
 use Moo;
 extends 'Data::Sah::Compiler::human::TH::str';
 
-our $VERSION = '0.23'; # VERSION
+our $VERSION = '0.24'; # VERSION
 
 1;
 # ABSTRACT: perl's type handler for type "cistr"
@@ -22,7 +22,7 @@ Data::Sah::Compiler::human::TH::cistr - perl's type handler for type "cistr"
 
 =head1 VERSION
 
-version 0.23
+version 0.24
 
 =head1 RELEASE DATE
 

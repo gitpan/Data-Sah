@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::human::TH::num';
 with 'Data::Sah::Type::int';
 
-our $VERSION = '0.23'; # VERSION
+our $VERSION = '0.24'; # VERSION
 
 sub name { "integer" }
 
@@ -80,7 +80,7 @@ Data::Sah::Compiler::human::TH::int - human's type handler for type "int"
 
 =head1 VERSION
 
-version 0.23
+version 0.24
 
 =head1 RELEASE DATE
 

@@ -81,10 +81,10 @@
          "web" : "https://github.com/sharyanto/perl-Data-Sah"
       }
    },
-   "version" : "0.23",
+   "version" : "0.24",
    "x_Dist_Zilla" : {
       "perl" : {
-         "version" : "5.018001"
+         "version" : "5.018002"
       },
       "plugins" : [
          {
@@ -351,7 +351,7 @@
                }
             },
             "name" : "@Author::SHARYANTO/Test::Compile",
-            "version" : "2.039"
+            "version" : "2.040"
          },
          {
             "class" : "Dist::Zilla::Plugin::Test::Rinci",

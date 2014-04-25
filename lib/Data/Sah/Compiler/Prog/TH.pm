@@ -4,7 +4,7 @@ use Log::Any '$log';
 use Moo;
 extends 'Data::Sah::Compiler::TH';
 
-our $VERSION = '0.23'; # VERSION
+our $VERSION = '0.24'; # VERSION
 
 # handled in compiler's before_all_clauses()
 
@@ -132,7 +132,7 @@ Data::Sah::Compiler::Prog::TH - Base class for programming-language emiting comp
 
 =head1 VERSION
 
-version 0.23
+version 0.24
 
 =head1 RELEASE DATE
 

@@ -5,7 +5,7 @@ use Log::Any '$log';
 use Moo;
 extends 'Data::Sah::Compiler::TH';
 
-our $VERSION = '0.23'; # VERSION
+our $VERSION = '0.24'; # VERSION
 
 sub name { undef }
 
@@ -75,7 +75,7 @@ Data::Sah::Compiler::human::TH - Base class for human type handlers
 
 =head1 VERSION
 
-version 0.23
+version 0.24
 
 =head1 RELEASE DATE
 

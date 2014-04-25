@@ -8,7 +8,7 @@ with 'Data::Sah::Compiler::human::TH::Comparable';
 with 'Data::Sah::Compiler::human::TH::Sortable';
 with 'Data::Sah::Type::num';
 
-our $VERSION = '0.23'; # VERSION
+our $VERSION = '0.24'; # VERSION
 
 sub name { "number" }
 
@@ -34,7 +34,7 @@ Data::Sah::Compiler::human::TH::num - human's type handler for type "num"
 
 =head1 VERSION
 
-version 0.23
+version 0.24
 
 =head1 RELEASE DATE
 

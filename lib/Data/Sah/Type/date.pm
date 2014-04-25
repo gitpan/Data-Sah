@@ -6,7 +6,7 @@ with 'Data::Sah::Type::BaseType';
 with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::Sortable';
 
-our $VERSION = '0.23'; # VERSION
+our $VERSION = '0.24'; # VERSION
 our $DATE = '2014-04-25'; # DATE
 
 # XXX prop: year
@@ -46,7 +46,7 @@ Data::Sah::Type::date - date type
 
 =head1 VERSION
 
-version 0.23
+version 0.24
 
 =head1 RELEASE DATE
 

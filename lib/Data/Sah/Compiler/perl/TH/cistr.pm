@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH::str';
 with 'Data::Sah::Type::cistr';
 
-our $VERSION = '0.23'; # VERSION
+our $VERSION = '0.24'; # VERSION
 our $DATE = '2014-04-25'; # DATE
 
 sub before_all_clauses {
@@ -144,7 +144,7 @@ Data::Sah::Compiler::perl::TH::cistr - perl's type handler for type "cistr"
 
 =head1 VERSION
 
-version 0.23
+version 0.24
 
 =head1 RELEASE DATE
 

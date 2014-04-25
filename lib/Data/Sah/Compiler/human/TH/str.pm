@@ -9,7 +9,7 @@ with 'Data::Sah::Compiler::human::TH::Comparable';
 with 'Data::Sah::Compiler::human::TH::HasElems';
 with 'Data::Sah::Type::str';
 
-our $VERSION = '0.23'; # VERSION
+our $VERSION = '0.24'; # VERSION
 
 sub name { "text" }
 
@@ -101,7 +101,7 @@ Data::Sah::Compiler::human::TH::str - perl's type handler for type "str"
 
 =head1 VERSION
 
-version 0.23
+version 0.24
 
 =head1 RELEASE DATE
 
