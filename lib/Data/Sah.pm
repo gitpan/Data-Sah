@@ -4,7 +4,7 @@ use 5.010001;
 use Moo;
 use Log::Any qw($log);
 
-our $VERSION = '0.24'; # VERSION
+our $VERSION = '0.25'; # VERSION
 
 our $Log_Validator_Code = $ENV{LOG_SAH_VALIDATOR_CODE} // 0;
 
@@ -328,7 +328,7 @@ Data::Sah - Fast and featureful data structure validation
 
 =head1 VERSION
 
-version 0.24
+version 0.25
 
 =head1 RELEASE DATE
 

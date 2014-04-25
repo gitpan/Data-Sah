@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Tie::IxHash;
 
-our $VERSION = '0.24'; # VERSION
+our $VERSION = '0.25'; # VERSION
 
 sub ordinate {
     my ($n, $noun) = @_;
@@ -411,7 +411,7 @@ Data::Sah::Lang::id_ID - id_ID locale
 
 =head1 VERSION
 
-version 0.24
+version 0.25
 
 =head1 RELEASE DATE
 

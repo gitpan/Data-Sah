@@ -3,7 +3,7 @@ package Data::Sah::Type::buf;
 use Moo::Role;
 with 'Data::Sah::Type::str';
 
-our $VERSION = '0.24'; # VERSION
+our $VERSION = '0.25'; # VERSION
 
 1;
 # ABSTRACT: buf type
@@ -20,7 +20,7 @@ Data::Sah::Type::buf - buf type
 
 =head1 VERSION
 
-version 0.24
+version 0.25
 
 =head1 RELEASE DATE
 

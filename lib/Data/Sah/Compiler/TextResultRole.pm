@@ -5,7 +5,7 @@ use Moo::Role;
 
 use SHARYANTO::String::Util;
 
-our $VERSION = '0.24'; # VERSION
+our $VERSION = '0.25'; # VERSION
 
 # can be changed to tab, for example
 has indent_character => (is => 'rw', default => sub {''});
@@ -56,7 +56,7 @@ Data::Sah::Compiler::TextResultRole - Role for compilers that produce text resul
 
 =head1 VERSION
 
-version 0.24
+version 0.25
 
 =head1 RELEASE DATE
 

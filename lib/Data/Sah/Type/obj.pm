@@ -4,7 +4,7 @@ use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 with 'Data::Sah::Type::BaseType';
 
-our $VERSION = '0.24'; # VERSION
+our $VERSION = '0.25'; # VERSION
 
 has_clause 'can',
     tags       => ['constraint'],
@@ -32,7 +32,7 @@ Data::Sah::Type::obj - obj type
 
 =head1 VERSION
 
-version 0.24
+version 0.25
 
 =head1 RELEASE DATE
 

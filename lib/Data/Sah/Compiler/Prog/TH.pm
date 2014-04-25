@@ -4,7 +4,7 @@ use Log::Any '$log';
 use Moo;
 extends 'Data::Sah::Compiler::TH';
 
-our $VERSION = '0.24'; # VERSION
+our $VERSION = '0.25'; # VERSION
 
 # handled in compiler's before_all_clauses()
 
@@ -68,6 +68,7 @@ sub set_tmp_data_term {
         $cd->{_save_data_term} = $cd->{data_term};
         $cd->{data_term} = $t;
     }
+    local $cd->{_debug_ccl_note} = 'set temporary data term';
     $c->add_ccl($cd, "(".$c->expr_assign($t, $expr). ", ".$c->true.")");
 }
 
@@ -79,6 +80,7 @@ sub restore_data_term {
     my $tdt = $cd->{args}{tmp_data_term};
     if ($cd->{_save_data_term}) {
         $cd->{data_term} = delete($cd->{_save_data_term});
+        local $cd->{_debug_ccl_note} = 'restore original data term';
         $c->add_ccl($cd, "(".$c->expr_pop($tdt). ", ".$c->true.")");
     }
 }
@@ -132,7 +134,7 @@ Data::Sah::Compiler::Prog::TH - Base class for programming-language emiting comp
 
 =head1 VERSION
 
-version 0.24
+version 0.25
 
 =head1 RELEASE DATE
 

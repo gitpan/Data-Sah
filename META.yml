@@ -50,7 +50,7 @@ resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah
   homepage: https://metacpan.org/release/Data-Sah
   repository: git://github.com/sharyanto/perl-Data-Sah.git
-version: '0.24'
+version: '0.25'
 x_Dist_Zilla:
   perl:
     version: '5.018002'

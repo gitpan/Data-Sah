@@ -3,7 +3,7 @@ package Data::Sah::Type::undef;
 use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 
-our $VERSION = '0.24'; # VERSION
+our $VERSION = '0.25'; # VERSION
 
 1;
 # ABSTRACT: undef type
@@ -20,7 +20,7 @@ Data::Sah::Type::undef - undef type
 
 =head1 VERSION
 
-version 0.24
+version 0.25
 
 =head1 RELEASE DATE
 

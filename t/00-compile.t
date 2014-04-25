@@ -4,7 +4,7 @@ use warnings;
 
 # this test was generated with Dist::Zilla::Plugin::Test::Compile 2.040
 
-use Test::More  tests => 96 + ($ENV{AUTHOR_TESTING} ? 1 : 0);
+use Test::More  tests => 97 + ($ENV{AUTHOR_TESTING} ? 1 : 0);
 
 
 
@@ -104,6 +104,7 @@ my @module_files = (
     'Data/Sah/Type/undef.pm',
     'Data/Sah/Util/Func.pm',
     'Data/Sah/Util/Role.pm',
+    'Data/Sah/Util/Type.pm',
     'Data/Sah/Util/TypeX.pm'
 );
 

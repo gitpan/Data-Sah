@@ -8,7 +8,7 @@ with 'Data::Sah::Type::date';
 
 use Scalar::Util qw(blessed looks_like_number);
 
-our $VERSION = '0.24'; # VERSION
+our $VERSION = '0.25'; # VERSION
 our $DATE = '2014-04-25'; # DATE
 
 my $epoch_low  = 10**8;
@@ -73,9 +73,11 @@ sub handle_type {
     my $dt = $cd->{data_term};
     $cd->{_ccl_check_type} = join(
         '',
+        "(",
         "typeof($dt)=='number' ? ($dt >= $epoch_low && $dt <= $epoch_high) : ",
         "parseFloat($dt)==$dt ? (parseFloat($dt) >= $epoch_low && parseFloat($dt) <= $epoch_high) : ",
         "!isNaN((new Date($dt)).getYear())",
+        ")",
     );
 }
 
@@ -167,7 +169,7 @@ Data::Sah::Compiler::js::TH::date - js's type handler for type "date"
 
 =head1 VERSION
 
-version 0.24
+version 0.25
 
 =head1 RELEASE DATE
 

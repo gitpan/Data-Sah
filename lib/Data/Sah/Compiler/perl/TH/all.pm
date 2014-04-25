@@ -7,7 +7,7 @@ extends
     'Data::Sah::Compiler::perl::TH',
     'Data::Sah::Compiler::Prog::TH::all';
 
-our $VERSION = '0.24'; # VERSION
+our $VERSION = '0.25'; # VERSION
 
 1;
 # ABSTRACT: perl's type handler for type "all"
@@ -24,7 +24,7 @@ Data::Sah::Compiler::perl::TH::all - perl's type handler for type "all"
 
 =head1 VERSION
 
-version 0.24
+version 0.25
 
 =head1 RELEASE DATE
 

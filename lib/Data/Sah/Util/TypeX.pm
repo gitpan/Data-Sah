@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Log::Any '$log';
 
-our $VERSION = '0.24'; # VERSION
+our $VERSION = '0.25'; # VERSION
 
 #use Sub::Install qw(install_sub);
 
@@ -41,7 +41,7 @@ Data::Sah::Util::TypeX - Sah utility routines for type extensions
 
 =head1 VERSION
 
-version 0.24
+version 0.25
 
 =head1 RELEASE DATE
 
