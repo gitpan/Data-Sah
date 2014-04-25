@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::js::TH::str';
 with 'Data::Sah::Type::cistr';
 
-our $VERSION = '0.22'; # VERSION
+our $VERSION = '0.23'; # VERSION
 
 sub before_all_clauses {
     my ($self, $cd) = @_;
@@ -131,7 +131,11 @@ Data::Sah::Compiler::js::TH::cistr - js's type handler for type "cistr"
 
 =head1 VERSION
 
-version 0.22
+version 0.23
+
+=head1 RELEASE DATE
+
+2014-04-25
 
 =for Pod::Coverage ^(clause_.+|superclause_.+|handle_.+|before_.+|after_.+)$
 

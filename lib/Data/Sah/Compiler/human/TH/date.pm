@@ -1,42 +1,26 @@
-package Data::Sah::Compiler::perl::TH::obj;
+package Data::Sah::Compiler::human::TH::date;
 
 use 5.010;
 use Log::Any '$log';
 use Moo;
-extends 'Data::Sah::Compiler::perl::TH';
-with 'Data::Sah::Type::obj';
+extends 'Data::Sah::Compiler::human::TH';
+with 'Data::Sah::Compiler::human::TH::Comparable';
+with 'Data::Sah::Compiler::human::TH::Sortable';
+with 'Data::Sah::Type::date';
 
 our $VERSION = '0.23'; # VERSION
+
+sub name { "date" }
 
 sub handle_type {
     my ($self, $cd) = @_;
     my $c = $self->compiler;
 
-    my $dt = $cd->{data_term};
-    $c->add_module($cd, 'Scalar::Util');
-    $cd->{_ccl_check_type} = "Scalar::Util::blessed($dt)";
-}
-
-sub clause_can {
-    my ($self, $cd) = @_;
-    my $c  = $self->compiler;
-    my $ct = $cd->{cl_term};
-    my $dt = $cd->{data_term};
-
-    $c->add_ccl($cd, "$dt->can($ct)");
-}
-
-sub clause_isa {
-    my ($self, $cd) = @_;
-    my $c  = $self->compiler;
-    my $ct = $cd->{cl_term};
-    my $dt = $cd->{data_term};
-
-    $c->add_ccl($cd, "$dt->isa($ct)");
+    $c->add_ccl($cd, {type=>'noun', fmt => ["date", "dates"]});
 }
 
 1;
-# ABSTRACT: perl's type handler for type "obj"
+# ABSTRACT: human's type handler for type "date"
 
 __END__
 
@@ -46,7 +30,7 @@ __END__
 
 =head1 NAME
 
-Data::Sah::Compiler::perl::TH::obj - perl's type handler for type "obj"
+Data::Sah::Compiler::human::TH::date - human's type handler for type "date"
 
 =head1 VERSION
 
@@ -56,7 +40,7 @@ version 0.23
 
 2014-04-25
 
-=for Pod::Coverage ^(clause_.+|superclause_.+)$
+=for Pod::Coverage ^(name|clause_.+|superclause_.+|before_.+|after_.+)$
 
 =head1 HOMEPAGE
 

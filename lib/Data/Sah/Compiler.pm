@@ -10,7 +10,7 @@ with 'Data::Sah::Compiler::TextResultRole';
 
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.22'; # VERSION
+our $VERSION = '0.23'; # VERSION
 
 has main => (is => 'rw');
 
@@ -315,6 +315,8 @@ sub init_cd {
 
 sub check_compile_args {
     my ($self, $args) = @_;
+
+    return if $args->{_args_checked}++;
 
     $args->{data_name} //= 'data';
     $args->{data_name} =~ /\A[A-Za-z_]\w*\z/ or $self->_die(
@@ -673,7 +675,11 @@ Data::Sah::Compiler - Base class for Sah compilers (Data::Sah::Compiler::*)
 
 =head1 VERSION
 
-version 0.22
+version 0.23
+
+=head1 RELEASE DATE
+
+2014-04-25
 
 =for Pod::Coverage ^(check_compile_args|def|expr|init_cd|literal|name)$
 

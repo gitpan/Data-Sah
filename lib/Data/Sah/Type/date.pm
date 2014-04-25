@@ -1,42 +1,38 @@
-package Data::Sah::Compiler::perl::TH::obj;
+package Data::Sah::Type::date;
 
-use 5.010;
-use Log::Any '$log';
-use Moo;
-extends 'Data::Sah::Compiler::perl::TH';
-with 'Data::Sah::Type::obj';
+use Moo::Role;
+use Data::Sah::Util::Role 'has_clause';
+with 'Data::Sah::Type::BaseType';
+with 'Data::Sah::Type::Comparable';
+with 'Data::Sah::Type::Sortable';
 
 our $VERSION = '0.23'; # VERSION
+our $DATE = '2014-04-25'; # DATE
 
-sub handle_type {
-    my ($self, $cd) = @_;
-    my $c = $self->compiler;
-
-    my $dt = $cd->{data_term};
-    $c->add_module($cd, 'Scalar::Util');
-    $cd->{_ccl_check_type} = "Scalar::Util::blessed($dt)";
-}
-
-sub clause_can {
-    my ($self, $cd) = @_;
-    my $c  = $self->compiler;
-    my $ct = $cd->{cl_term};
-    my $dt = $cd->{data_term};
-
-    $c->add_ccl($cd, "$dt->can($ct)");
-}
-
-sub clause_isa {
-    my ($self, $cd) = @_;
-    my $c  = $self->compiler;
-    my $ct = $cd->{cl_term};
-    my $dt = $cd->{data_term};
-
-    $c->add_ccl($cd, "$dt->isa($ct)");
-}
+# XXX prop: year
+# XXX prop: quarter (1-4)
+# XXX prop: month
+# XXX prop: day
+# XXX prop: day_of_month
+# XXX prop: hour
+# XXX prop: minute
+# XXX prop: second
+# XXX prop: millisecond
+# XXX prop: microsecond
+# XXX prop: nanosecond
+# XXX prop: day_of_week
+# XXX prop: day_of_quarter
+# XXX prop: day_of_year
+# XXX prop: week_of_month
+# XXX prop: week_of_year
+# XXX prop: date?
+# XXX prop: time?
+# XXX prop: time_zone_long_name
+# XXX prop: time_zone_offset
+# XXX prop: is_leap_year
 
 1;
-# ABSTRACT: perl's type handler for type "obj"
+# ABSTRACT: date type
 
 __END__
 
@@ -46,7 +42,7 @@ __END__
 
 =head1 NAME
 
-Data::Sah::Compiler::perl::TH::obj - perl's type handler for type "obj"
+Data::Sah::Type::date - date type
 
 =head1 VERSION
 
@@ -56,7 +52,7 @@ version 0.23
 
 2014-04-25
 
-=for Pod::Coverage ^(clause_.+|superclause_.+)$
+=for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 
 =head1 HOMEPAGE
 

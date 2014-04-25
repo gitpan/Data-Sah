@@ -7,7 +7,7 @@ use experimental 'smartmatch';
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::num';
 
-our $VERSION = '0.22'; # VERSION
+our $VERSION = '0.23'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -79,7 +79,11 @@ Data::Sah::Compiler::perl::TH::num - perl's type handler for type "num"
 
 =head1 VERSION
 
-version 0.22
+version 0.23
+
+=head1 RELEASE DATE
+
+2014-04-25
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

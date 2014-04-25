@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::js::TH::num';
 with 'Data::Sah::Type::float';
 
-our $VERSION = '0.22'; # VERSION
+our $VERSION = '0.23'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -27,15 +27,15 @@ sub clause_is_nan {
             $cd,
             join(
                 "",
-                "$ct ? $dt == NaN : ",
-                $self->expr_defined($ct), " ? $dt != NaN : true",
+                "$ct ? isNaN($dt) : ",
+                $self->expr_defined($ct), " ? !isNaN($dt) : true",
             )
         );
     } else {
         if ($cd->{cl_value}) {
-            $c->add_ccl($cd, "$dt == NaN");
+            $c->add_ccl($cd, "isNaN($dt)");
         } elsif (defined $cd->{cl_value}) {
-            $c->add_ccl($cd, "$dt != NaN");
+            $c->add_ccl($cd, "!isNaN($dt)");
         }
     }
 }
@@ -127,7 +127,11 @@ Data::Sah::Compiler::js::TH::float - js's type handler for type "float"
 
 =head1 VERSION
 
-version 0.22
+version 0.23
+
+=head1 RELEASE DATE
+
+2014-04-25
 
 =for Pod::Coverage ^(compiler|clause_.+|handle_.+)$
 

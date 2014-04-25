@@ -6,7 +6,7 @@ use experimental 'smartmatch';
 extends 'Data::Sah::Compiler';
 use Log::Any qw($log);
 
-our $VERSION = '0.22'; # VERSION
+our $VERSION = '0.23'; # VERSION
 
 #use Digest::MD5 qw(md5_hex);
 
@@ -56,6 +56,8 @@ sub init_cd {
 
 sub check_compile_args {
     my ($self, $args) = @_;
+
+    return if $args->{_args_checked_Prog}++;
 
     $self->SUPER::check_compile_args($args);
 
@@ -760,7 +762,11 @@ Data::Sah::Compiler::Prog - Base class for programming language compilers
 
 =head1 VERSION
 
-version 0.22
+version 0.23
+
+=head1 RELEASE DATE
+
+2014-04-25
 
 =head1 SYNOPSIS
 

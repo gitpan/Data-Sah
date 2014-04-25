@@ -1,9 +1,10 @@
+use 5.006;
 use strict;
 use warnings;
 
-# this test was generated with Dist::Zilla::Plugin::Test::Compile 2.037
+# this test was generated with Dist::Zilla::Plugin::Test::Compile 2.039
 
-use Test::More  tests => 92 + ($ENV{AUTHOR_TESTING} ? 1 : 0);
+use Test::More  tests => 96 + ($ENV{AUTHOR_TESTING} ? 1 : 0);
 
 
 
@@ -28,6 +29,7 @@ my @module_files = (
     'Data/Sah/Compiler/human/TH/buf.pm',
     'Data/Sah/Compiler/human/TH/cistr.pm',
     'Data/Sah/Compiler/human/TH/code.pm',
+    'Data/Sah/Compiler/human/TH/date.pm',
     'Data/Sah/Compiler/human/TH/float.pm',
     'Data/Sah/Compiler/human/TH/hash.pm',
     'Data/Sah/Compiler/human/TH/int.pm',
@@ -45,6 +47,7 @@ my @module_files = (
     'Data/Sah/Compiler/js/TH/buf.pm',
     'Data/Sah/Compiler/js/TH/cistr.pm',
     'Data/Sah/Compiler/js/TH/code.pm',
+    'Data/Sah/Compiler/js/TH/date.pm',
     'Data/Sah/Compiler/js/TH/float.pm',
     'Data/Sah/Compiler/js/TH/hash.pm',
     'Data/Sah/Compiler/js/TH/int.pm',
@@ -62,6 +65,7 @@ my @module_files = (
     'Data/Sah/Compiler/perl/TH/buf.pm',
     'Data/Sah/Compiler/perl/TH/cistr.pm',
     'Data/Sah/Compiler/perl/TH/code.pm',
+    'Data/Sah/Compiler/perl/TH/date.pm',
     'Data/Sah/Compiler/perl/TH/float.pm',
     'Data/Sah/Compiler/perl/TH/hash.pm',
     'Data/Sah/Compiler/perl/TH/int.pm',
@@ -89,6 +93,7 @@ my @module_files = (
     'Data/Sah/Type/buf.pm',
     'Data/Sah/Type/cistr.pm',
     'Data/Sah/Type/code.pm',
+    'Data/Sah/Type/date.pm',
     'Data/Sah/Type/float.pm',
     'Data/Sah/Type/hash.pm',
     'Data/Sah/Type/int.pm',
@@ -112,11 +117,12 @@ use File::Spec;
 use IPC::Open3;
 use IO::Handle;
 
+open my $stdin, '<', File::Spec->devnull or die "can't open devnull: $!";
+
 my @warnings;
 for my $lib (@module_files)
 {
     # see L<perlfaq8/How can I capture STDERR from an external command?>
-    open my $stdin, '<', File::Spec->devnull or die "can't open devnull: $!";
     my $stderr = IO::Handle->new;
 
     my $pid = open3($stdin, '>&STDERR', $stderr, $^X, $inc_switch, '-e', "require q[$lib]");

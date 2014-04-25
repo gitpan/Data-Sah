@@ -7,7 +7,7 @@ extends 'Data::Sah::Compiler::Prog';
 
 use SHARYANTO::String::Util;
 
-our $VERSION = '0.22'; # VERSION
+our $VERSION = '0.23'; # VERSION
 
 sub BUILD {
     my ($self, $args) = @_;
@@ -173,7 +173,6 @@ sub expr_reset_err_full {
 sub expr_log {
     my ($self, $cd, @expr) = @_;
 
-    $self->add_module($cd, 'Log::Any');
     "\$log->tracef('[sah validator](spath=%s) %s', " .
         $self->literal($cd->{spath}).", " . join(", ", @expr) . ")";
 }
@@ -209,7 +208,7 @@ sub expr_anon_sub {
             $self->indent_character,
             join(
                 "",
-                ("my(".join(", ", @$args).") = \@_;\n") x !!@$args,
+                ("my (".join(", ", @$args).") = \@_;\n") x !!@$args,
                 $code,
             ),
         ),
@@ -251,13 +250,15 @@ sub stmt_return {
 sub expr_validator_sub {
     my ($self, %args) = @_;
 
+    $self->check_compile_args(\%args);
+
     my $aref = delete $args{accept_ref};
     if ($aref) {
-        $args{var_term}  = '$ref_data';
-        $args{data_term} = '$$ref_data';
+        $args{var_term}  = '$ref_'.$args{data_name};
+        $args{data_term} = '$$ref_'.$args{data_name};
     } else {
-        $args{var_term}  = '$data';
-        $args{data_term} = '$data';
+        $args{var_term}  = '$'.$args{data_name};
+        $args{data_term} = '$'.$args{data_name};
     }
 
     $self->SUPER::expr_validator_sub(%args);
@@ -295,7 +296,11 @@ Data::Sah::Compiler::perl - Compile Sah schema to Perl code
 
 =head1 VERSION
 
-version 0.22
+version 0.23
+
+=head1 RELEASE DATE
+
+2014-04-25
 
 =head1 SYNOPSIS
 

@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::js::TH::str';
 with 'Data::Sah::Type::buf';
 
-our $VERSION = '0.22'; # VERSION
+our $VERSION = '0.23'; # VERSION
 
 1;
 # ABSTRACT: js's type handler for type "buf"
@@ -23,7 +23,11 @@ Data::Sah::Compiler::js::TH::buf - js's type handler for type "buf"
 
 =head1 VERSION
 
-version 0.22
+version 0.23
+
+=head1 RELEASE DATE
+
+2014-04-25
 
 =for Pod::Coverage ^(clause_.+|superclause_.+|handle_.+|before_.+|after_.+)$
 

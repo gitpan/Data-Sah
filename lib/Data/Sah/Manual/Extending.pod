@@ -13,7 +13,11 @@ Data::Sah::Manual::Extending - Extending Data::Sah
 
 =head1 VERSION
 
-version 0.22
+version 0.23
+
+=head1 RELEASE DATE
+
+2014-04-25
 
 =head1 DESCRIPTION
 

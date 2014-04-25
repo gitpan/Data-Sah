@@ -9,7 +9,7 @@ use Log::Any qw($log);
 use POSIX qw(locale_h);
 use Text::sprintfn;
 
-our $VERSION = '0.22'; # VERSION
+our $VERSION = '0.23'; # VERSION
 
 # every type extension is registered here
 our %typex; # key = type, val = [clause, ...]
@@ -510,7 +510,11 @@ Data::Sah::Compiler::human - Compile Sah schema to human language
 
 =head1 VERSION
 
-version 0.22
+version 0.23
+
+=head1 RELEASE DATE
+
+2014-04-25
 
 =head1 SYNOPSIS
 
