@@ -3,7 +3,7 @@ package Data::Sah::Compiler::perl::TH;
 use Moo;
 extends 'Data::Sah::Compiler::Prog::TH';
 
-our $VERSION = '0.25'; # VERSION
+our $VERSION = '0.26'; # VERSION
 
 sub gen_each {
     my ($self, $which, $cd, $indices_expr, $elems_expr) = @_;
@@ -50,11 +50,7 @@ Data::Sah::Compiler::perl::TH - Base class for perl type handlers
 
 =head1 VERSION
 
-version 0.25
-
-=head1 RELEASE DATE
-
-2014-04-25
+This document describes version 0.26 of module Data::Sah::Compiler::perl::TH (in distribution Data-Sah), released on 2014-04-28.
 
 =for Pod::Coverage ^(compiler|clause_.+|gen_.+)$
 

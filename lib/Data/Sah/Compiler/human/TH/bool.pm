@@ -8,7 +8,7 @@ with 'Data::Sah::Compiler::human::TH::Comparable';
 with 'Data::Sah::Compiler::human::TH::Sortable';
 with 'Data::Sah::Type::bool';
 
-our $VERSION = '0.25'; # VERSION
+our $VERSION = '0.26'; # VERSION
 
 sub name { "boolean value" }
 
@@ -62,11 +62,7 @@ Data::Sah::Compiler::human::TH::bool - perl's type handler for type "bool"
 
 =head1 VERSION
 
-version 0.25
-
-=head1 RELEASE DATE
-
-2014-04-25
+This document describes version 0.26 of module Data::Sah::Compiler::human::TH::bool (in distribution Data-Sah), released on 2014-04-28.
 
 =for Pod::Coverage ^(name|clause_.+|superclause_.+|before_.+|after_.+)$
 

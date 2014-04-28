@@ -13,11 +13,7 @@ Data::Sah::Manual::Extending - Extending Data::Sah
 
 =head1 VERSION
 
-version 0.25
-
-=head1 RELEASE DATE
-
-2014-04-25
+This document describes version 0.26 of module Data::Sah::Manual::Extending (in distribution Data-Sah), released on 2014-04-28.
 
 =head1 DESCRIPTION
 

@@ -4,7 +4,7 @@ use 5.010001;
 use Moo;
 use Log::Any qw($log);
 
-our $VERSION = '0.25'; # VERSION
+our $VERSION = '0.26'; # VERSION
 
 our $Log_Validator_Code = $ENV{LOG_SAH_VALIDATOR_CODE} // 0;
 
@@ -328,11 +328,7 @@ Data::Sah - Fast and featureful data structure validation
 
 =head1 VERSION
 
-version 0.25
-
-=head1 RELEASE DATE
-
-2014-04-25
+This document describes version 0.26 of module Data::Sah (in distribution Data-Sah), released on 2014-04-28.
 
 =head1 SYNOPSIS
 
@@ -574,9 +570,10 @@ translations. They are further organized according to the organization of other
 Data::Sah modules, e.g. L<Data::Sah::Lang::en_US::Type::int> or
 C<Data::Sah::Lang::en_US::TypeX::str::is_palindrome>.
 
-B<Data::Sah::Schema::> namespace is reserved for modules that contain bundles of
-schemas. For example, C<Data::Sah::Schema::CPANMeta> contains the schema to
-validate CPAN META.yml. L<Data::Sah::Schema::Sah> contains the schema for Sah
+B<Sah::Schema::> namespace is reserved for modules that contain bundles of
+schemas. For example, C<Sah::Schema::CPANMeta> contains the schema to validate
+CPAN META.yml. L<Sah::Schema::Int> contains various schemas for integers such as
+C<pos_int>, C<int8>, C<uint32>. L<Sah::Schema::Sah> contains the schema for Sah
 schema itself.
 
 =head1 FAQ

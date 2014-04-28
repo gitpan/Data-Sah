@@ -4,11 +4,11 @@ package Data::Sah::Type::BaseType;
 # Compiler::*::Type::Base).
 
 use Moo::Role;
-#use Data::Sah::Schema::Common;
-#use Data::Sah::Schema::sah;
+#use Sah::Schema::Common;
+#use Sah::Schema::Sah;
 use Data::Sah::Util::Role 'has_clause';
 
-our $VERSION = '0.25'; # VERSION
+our $VERSION = '0.26'; # VERSION
 
 requires 'handle_type';
 
@@ -132,11 +132,7 @@ Data::Sah::Type::BaseType - Base type
 
 =head1 VERSION
 
-version 0.25
-
-=head1 RELEASE DATE
-
-2014-04-25
+This document describes version 0.26 of module Data::Sah::Type::BaseType (in distribution Data-Sah), released on 2014-04-28.
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

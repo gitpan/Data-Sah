@@ -2,9 +2,9 @@ use 5.006;
 use strict;
 use warnings;
 
-# this test was generated with Dist::Zilla::Plugin::Test::Compile 2.040
+# this test was generated with Dist::Zilla::Plugin::Test::Compile 2.039
 
-use Test::More  tests => 97 + ($ENV{AUTHOR_TESTING} ? 1 : 0);
+use Test::More  tests => 95 + ($ENV{AUTHOR_TESTING} ? 1 : 0);
 
 
 
@@ -80,8 +80,6 @@ my @module_files = (
     'Data/Sah/Lang/fr_FR.pm',
     'Data/Sah/Lang/id_ID.pm',
     'Data/Sah/Lang/zh_CN.pm',
-    'Data/Sah/Schema/Common.pm',
-    'Data/Sah/Schema/sah.pm',
     'Data/Sah/Type/BaseType.pm',
     'Data/Sah/Type/Comparable.pm',
     'Data/Sah/Type/HasElems.pm',

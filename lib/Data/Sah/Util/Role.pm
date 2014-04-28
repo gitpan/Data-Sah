@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Log::Any '$log';
 
-our $VERSION = '0.25'; # VERSION
+our $VERSION = '0.26'; # VERSION
 
 use Sub::Install qw(install_sub);
 
@@ -123,11 +123,7 @@ Data::Sah::Util::Role - Sah utility routines for roles
 
 =head1 VERSION
 
-version 0.25
-
-=head1 RELEASE DATE
-
-2014-04-25
+This document describes version 0.26 of module Data::Sah::Util::Role (in distribution Data-Sah), released on 2014-04-28.
 
 =head1 DESCRIPTION
 

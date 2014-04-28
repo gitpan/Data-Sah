@@ -7,7 +7,7 @@ extends
     'Data::Sah::Compiler::js::TH',
     'Data::Sah::Compiler::Prog::TH::all';
 
-our $VERSION = '0.25'; # VERSION
+our $VERSION = '0.26'; # VERSION
 
 1;
 # ABSTRACT: js's type handler for type "all"
@@ -24,11 +24,7 @@ Data::Sah::Compiler::js::TH::all - js's type handler for type "all"
 
 =head1 VERSION
 
-version 0.25
-
-=head1 RELEASE DATE
-
-2014-04-25
+This document describes version 0.26 of module Data::Sah::Compiler::js::TH::all (in distribution Data-Sah), released on 2014-04-28.
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

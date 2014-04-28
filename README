@@ -2,10 +2,8 @@ NAME
     Data::Sah - Fast and featureful data structure validation
 
 VERSION
-    version 0.25
-
-RELEASE DATE
-    2014-04-25
+    This document describes version 0.26 of module Data::Sah (in
+    distribution Data-Sah), released on 2014-04-28.
 
 SYNOPSIS
     Non-OO interface:
@@ -212,9 +210,10 @@ MODULE ORGANIZATION
     of other Data::Sah modules, e.g. Data::Sah::Lang::en_US::Type::int or
     "Data::Sah::Lang::en_US::TypeX::str::is_palindrome".
 
-    Data::Sah::Schema:: namespace is reserved for modules that contain
-    bundles of schemas. For example, "Data::Sah::Schema::CPANMeta" contains
-    the schema to validate CPAN META.yml. Data::Sah::Schema::Sah contains
+    Sah::Schema:: namespace is reserved for modules that contain bundles of
+    schemas. For example, "Sah::Schema::CPANMeta" contains the schema to
+    validate CPAN META.yml. Sah::Schema::Int contains various schemas for
+    integers such as "pos_int", "int8", "uint32". Sah::Schema::Sah contains
     the schema for Sah schema itself.
 
 FAQ
