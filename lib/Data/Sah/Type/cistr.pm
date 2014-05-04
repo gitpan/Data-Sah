@@ -4,7 +4,7 @@ use Moo::Role;
 
 with 'Data::Sah::Type::str';
 
-our $VERSION = '0.26'; # VERSION
+our $VERSION = '0.27'; # VERSION
 
 1;
 # ABSTRACT: cistr type
@@ -21,7 +21,7 @@ Data::Sah::Type::cistr - cistr type
 
 =head1 VERSION
 
-This document describes version 0.26 of module Data::Sah::Type::cistr (in distribution Data-Sah), released on 2014-04-28.
+This document describes version 0.27 of Data::Sah::Type::cistr (from Perl distribution Data-Sah), released on 2014-05-04.
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

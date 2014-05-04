@@ -8,7 +8,7 @@ with 'Data::Sah::Compiler::human::TH::Comparable';
 with 'Data::Sah::Compiler::human::TH::HasElems';
 with 'Data::Sah::Type::array';
 
-our $VERSION = '0.26'; # VERSION
+our $VERSION = '0.27'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -117,7 +117,7 @@ Data::Sah::Compiler::human::TH::array - human's type handler for type "array"
 
 =head1 VERSION
 
-This document describes version 0.26 of module Data::Sah::Compiler::human::TH::array (in distribution Data-Sah), released on 2014-04-28.
+This document describes version 0.27 of Data::Sah::Compiler::human::TH::array (from Perl distribution Data-Sah), released on 2014-05-04.
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

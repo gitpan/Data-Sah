@@ -3,7 +3,7 @@ package Data::Sah::Type::buf;
 use Moo::Role;
 with 'Data::Sah::Type::str';
 
-our $VERSION = '0.26'; # VERSION
+our $VERSION = '0.27'; # VERSION
 
 1;
 # ABSTRACT: buf type
@@ -20,7 +20,7 @@ Data::Sah::Type::buf - buf type
 
 =head1 VERSION
 
-This document describes version 0.26 of module Data::Sah::Type::buf (in distribution Data-Sah), released on 2014-04-28.
+This document describes version 0.27 of Data::Sah::Type::buf (from Perl distribution Data-Sah), released on 2014-05-04.
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

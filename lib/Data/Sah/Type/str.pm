@@ -7,7 +7,7 @@ with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::Sortable';
 with 'Data::Sah::Type::HasElems';
 
-our $VERSION = '0.26'; # VERSION
+our $VERSION = '0.27'; # VERSION
 
 my $t_re = 'regex*|{*=>regex*}';
 
@@ -37,7 +37,7 @@ Data::Sah::Type::str - str type
 
 =head1 VERSION
 
-This document describes version 0.26 of module Data::Sah::Type::str (in distribution Data-Sah), released on 2014-04-28.
+This document describes version 0.27 of Data::Sah::Type::str (from Perl distribution Data-Sah), released on 2014-05-04.
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

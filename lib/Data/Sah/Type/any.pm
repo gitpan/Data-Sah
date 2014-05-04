@@ -4,7 +4,7 @@ use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 with 'Data::Sah::Type::BaseType';
 
-our $VERSION = '0.26'; # VERSION
+our $VERSION = '0.27'; # VERSION
 
 has_clause 'of',
     tags       => ['constraint'],
@@ -27,7 +27,7 @@ Data::Sah::Type::any - any type
 
 =head1 VERSION
 
-This document describes version 0.26 of module Data::Sah::Type::any (in distribution Data-Sah), released on 2014-04-28.
+This document describes version 0.27 of Data::Sah::Type::any (from Perl distribution Data-Sah), released on 2014-05-04.
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

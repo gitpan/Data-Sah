@@ -8,8 +8,8 @@ with 'Data::Sah::Type::date';
 
 use Scalar::Util qw(blessed looks_like_number);
 
-our $VERSION = '0.26'; # VERSION
-our $DATE = '2014-04-28'; # DATE
+our $VERSION = '0.27'; # VERSION
+our $DATE = '2014-05-04'; # DATE
 
 my $epoch_low  = 10**8;
 my $epoch_high = 2**31;
@@ -57,6 +57,13 @@ sub expr_coerce_value {
         );
     } elsif (looks_like_number($v) && $v >= 10**8 && $v <= 2**31) {
         return "(new Date($v*1000))";
+    } elsif ($v =~ /\A([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z\z/) {
+        require DateTime;
+        eval { DateTime->new(year=>$1, month=>$2, day=>$3,
+                             hour=>$4, minute=>$5, second=>$6,
+                             time_zone=>'UTC') ; 1 }
+            or die "Invalid date literal '$v': $@";
+        return "(new Date(\"$v\"))";
     } elsif ($v =~ /\A([0-9]{4})-([0-9]{2})-([0-9]{2})\z/) {
         require DateTime;
         eval { DateTime->new(year=>$1, month=>$2, day=>$3) ; 1 }
@@ -169,7 +176,7 @@ Data::Sah::Compiler::js::TH::date - js's type handler for type "date"
 
 =head1 VERSION
 
-This document describes version 0.26 of module Data::Sah::Compiler::js::TH::date (in distribution Data-Sah), released on 2014-04-28.
+This document describes version 0.27 of Data::Sah::Compiler::js::TH::date (from Perl distribution Data-Sah), released on 2014-05-04.
 
 =for Pod::Coverage ^(clause_.+|superclause_.+|handle_.+|before_.+|after_.+|expr_coerce_.+)$
 

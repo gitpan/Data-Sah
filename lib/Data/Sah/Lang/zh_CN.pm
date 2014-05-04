@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Tie::IxHash;
 
-our $VERSION = '0.26'; # VERSION
+our $VERSION = '0.27'; # VERSION
 
 # currently incomplete
 
@@ -110,7 +110,7 @@ Data::Sah::Lang::zh_CN - zh_CN locale
 
 =head1 VERSION
 
-This document describes version 0.26 of module Data::Sah::Lang::zh_CN (in distribution Data-Sah), released on 2014-04-28.
+This document describes version 0.27 of Data::Sah::Lang::zh_CN (from Perl distribution Data-Sah), released on 2014-05-04.
 
 =for Pod::Coverage .+
 

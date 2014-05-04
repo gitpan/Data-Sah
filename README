@@ -2,8 +2,8 @@ NAME
     Data::Sah - Fast and featureful data structure validation
 
 VERSION
-    This document describes version 0.26 of module Data::Sah (in
-    distribution Data-Sah), released on 2014-04-28.
+    This document describes version 0.27 of Data::Sah (from Perl
+    distribution Data-Sah), released on 2014-05-04.
 
 SYNOPSIS
     Non-OO interface:
