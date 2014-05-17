@@ -6,7 +6,7 @@ with 'Data::Sah::Type::BaseType';
 with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::Sortable';
 
-our $VERSION = '0.27'; # VERSION
+our $VERSION = '0.28'; # VERSION
 
 has_clause 'is_true',
     tags       => ['constraint'],
@@ -29,7 +29,7 @@ Data::Sah::Type::bool - bool type
 
 =head1 VERSION
 
-This document describes version 0.27 of Data::Sah::Type::bool (from Perl distribution Data-Sah), released on 2014-05-04.
+This document describes version 0.28 of Data::Sah::Type::bool (from Perl distribution Data-Sah), released on 2014-05-17.
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH::num';
 with 'Data::Sah::Type::float';
 
-our $VERSION = '0.27'; # VERSION
+our $VERSION = '0.28'; # VERSION
 
 my $LLN = "Scalar::Util::looks_like_number";
 
@@ -113,7 +113,7 @@ Data::Sah::Compiler::perl::TH::float - perl's type handler for type "float"
 
 =head1 VERSION
 
-This document describes version 0.27 of Data::Sah::Compiler::perl::TH::float (from Perl distribution Data-Sah), released on 2014-05-04.
+This document describes version 0.28 of Data::Sah::Compiler::perl::TH::float (from Perl distribution Data-Sah), released on 2014-05-17.
 
 =for Pod::Coverage ^(compiler|clause_.+|handle_.+)$
 

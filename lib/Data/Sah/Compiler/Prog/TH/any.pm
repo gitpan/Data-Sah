@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::js::TH';
 with 'Data::Sah::Type::any';
 
-our $VERSION = '0.27'; # VERSION
+our $VERSION = '0.28'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -36,7 +36,7 @@ Data::Sah::Compiler::Prog::TH::any - Base class for programming language compile
 
 =head1 VERSION
 
-This document describes version 0.27 of Data::Sah::Compiler::Prog::TH::any (from Perl distribution Data-Sah), released on 2014-05-04.
+This document describes version 0.28 of Data::Sah::Compiler::Prog::TH::any (from Perl distribution Data-Sah), released on 2014-05-17.
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

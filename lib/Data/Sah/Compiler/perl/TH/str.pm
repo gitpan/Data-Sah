@@ -7,7 +7,7 @@ use experimental 'smartmatch';
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::str';
 
-our $VERSION = '0.27'; # VERSION
+our $VERSION = '0.28'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -165,7 +165,7 @@ Data::Sah::Compiler::perl::TH::str - perl's type handler for type "str"
 
 =head1 VERSION
 
-This document describes version 0.27 of Data::Sah::Compiler::perl::TH::str (from Perl distribution Data-Sah), released on 2014-05-04.
+This document describes version 0.28 of Data::Sah::Compiler::perl::TH::str (from Perl distribution Data-Sah), released on 2014-05-17.
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

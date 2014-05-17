@@ -8,8 +8,8 @@ with 'Data::Sah::Type::date';
 
 use Scalar::Util qw(blessed looks_like_number);
 
-our $VERSION = '0.27'; # VERSION
-our $DATE = '2014-05-04'; # DATE
+our $VERSION = '0.28'; # VERSION
+our $DATE = '2014-05-17'; # DATE
 
 my $epoch_low  = 10**8;
 my $epoch_high = 2**31;
@@ -176,7 +176,7 @@ Data::Sah::Compiler::js::TH::date - js's type handler for type "date"
 
 =head1 VERSION
 
-This document describes version 0.27 of Data::Sah::Compiler::js::TH::date (from Perl distribution Data-Sah), released on 2014-05-04.
+This document describes version 0.28 of Data::Sah::Compiler::js::TH::date (from Perl distribution Data-Sah), released on 2014-05-17.
 
 =for Pod::Coverage ^(clause_.+|superclause_.+|handle_.+|before_.+|after_.+|expr_coerce_.+)$
 

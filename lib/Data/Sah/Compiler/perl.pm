@@ -7,7 +7,7 @@ extends 'Data::Sah::Compiler::Prog';
 
 use SHARYANTO::String::Util;
 
-our $VERSION = '0.27'; # VERSION
+our $VERSION = '0.28'; # VERSION
 
 sub BUILD {
     my ($self, $args) = @_;
@@ -296,7 +296,7 @@ Data::Sah::Compiler::perl - Compile Sah schema to Perl code
 
 =head1 VERSION
 
-This document describes version 0.27 of Data::Sah::Compiler::perl (from Perl distribution Data-Sah), released on 2014-05-04.
+This document describes version 0.28 of Data::Sah::Compiler::perl (from Perl distribution Data-Sah), released on 2014-05-17.
 
 =head1 SYNOPSIS
 

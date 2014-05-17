@@ -4,7 +4,7 @@ use 5.010001;
 use Moo;
 use Log::Any qw($log);
 
-our $VERSION = '0.27'; # VERSION
+our $VERSION = '0.28'; # VERSION
 
 our $Log_Validator_Code = $ENV{LOG_SAH_VALIDATOR_CODE} // 0;
 
@@ -328,7 +328,7 @@ Data::Sah - Fast and featureful data structure validation
 
 =head1 VERSION
 
-This document describes version 0.27 of Data::Sah (from Perl distribution Data-Sah), released on 2014-05-04.
+This document describes version 0.28 of Data::Sah (from Perl distribution Data-Sah), released on 2014-05-17.
 
 =head1 SYNOPSIS
 

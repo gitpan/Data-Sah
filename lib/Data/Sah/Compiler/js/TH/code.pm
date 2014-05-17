@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::js::TH';
 with 'Data::Sah::Type::code';
 
-our $VERSION = '0.27'; # VERSION
+our $VERSION = '0.28'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -31,7 +31,7 @@ Data::Sah::Compiler::js::TH::code - js's type handler for type "code"
 
 =head1 VERSION
 
-This document describes version 0.27 of Data::Sah::Compiler::js::TH::code (from Perl distribution Data-Sah), released on 2014-05-04.
+This document describes version 0.28 of Data::Sah::Compiler::js::TH::code (from Perl distribution Data-Sah), released on 2014-05-17.
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

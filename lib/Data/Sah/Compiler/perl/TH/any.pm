@@ -7,7 +7,7 @@ extends
     'Data::Sah::Compiler::perl::TH',
     'Data::Sah::Compiler::Prog::TH::any';
 
-our $VERSION = '0.27'; # VERSION
+our $VERSION = '0.28'; # VERSION
 
 1;
 # ABSTRACT: perl's type handler for type "any"
@@ -24,7 +24,7 @@ Data::Sah::Compiler::perl::TH::any - perl's type handler for type "any"
 
 =head1 VERSION
 
-This document describes version 0.27 of Data::Sah::Compiler::perl::TH::any (from Perl distribution Data-Sah), released on 2014-05-04.
+This document describes version 0.28 of Data::Sah::Compiler::perl::TH::any (from Perl distribution Data-Sah), released on 2014-05-17.
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 
