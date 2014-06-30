@@ -6,7 +6,7 @@ use experimental 'smartmatch';
 extends 'Data::Sah::Compiler';
 use Log::Any qw($log);
 
-our $VERSION = '0.28'; # VERSION
+our $VERSION = '0.29'; # VERSION
 
 #use Digest::MD5 qw(md5_hex);
 
@@ -762,7 +762,7 @@ Data::Sah::Compiler::Prog - Base class for programming language compilers
 
 =head1 VERSION
 
-This document describes version 0.28 of Data::Sah::Compiler::Prog (from Perl distribution Data-Sah), released on 2014-05-17.
+This document describes version 0.29 of Data::Sah::Compiler::Prog (from Perl distribution Data-Sah), released on 2014-06-30.
 
 =head1 SYNOPSIS
 

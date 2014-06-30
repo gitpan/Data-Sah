@@ -6,16 +6,16 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH::num';
 with 'Data::Sah::Type::int';
 
-our $VERSION = '0.28'; # VERSION
+our $VERSION = '0.29'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
     my $c = $self->compiler;
 
     my $dt = $cd->{data_term};
-    $c->add_module($cd, 'Scalar::Util');
+    $c->add_module($cd, 'Scalar::Util::Numeric');
     $cd->{_ccl_check_type} =
-        "Scalar::Util::looks_like_number($dt) =~ " . '/^(?:1|2|9|10|4352)$/';
+        "Scalar::Util::Numeric::isint($dt)";
 }
 
 sub clause_div_by {
@@ -51,7 +51,7 @@ Data::Sah::Compiler::perl::TH::int - perl's type handler for type "int"
 
 =head1 VERSION
 
-This document describes version 0.28 of Data::Sah::Compiler::perl::TH::int (from Perl distribution Data-Sah), released on 2014-05-17.
+This document describes version 0.29 of Data::Sah::Compiler::perl::TH::int (from Perl distribution Data-Sah), released on 2014-06-30.
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

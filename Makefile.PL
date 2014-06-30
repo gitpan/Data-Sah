@@ -34,6 +34,7 @@ my %WriteMakefileArgs = (
     "Moo" => 0,
     "Moo::Role" => 0,
     "SHARYANTO::String::Util" => 0,
+    "Scalar::Util::Numeric" => 0,
     "Sub::Install" => 0,
     "Text::sprintfn" => 0,
     "Tie::IxHash" => 0,
@@ -54,7 +55,7 @@ my %WriteMakefileArgs = (
     "Test::More" => "0.98",
     "Test::Warn" => 0
   },
-  "VERSION" => "0.28",
+  "VERSION" => "0.29",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -84,6 +85,7 @@ my %FallbackPrereqs = (
   "Moo::Role" => 0,
   "SHARYANTO::String::Util" => 0,
   "Sah" => "v0.9.30",
+  "Scalar::Util::Numeric" => 0,
   "Sub::Install" => 0,
   "Test::Exception" => 0,
   "Test::More" => "0.98",

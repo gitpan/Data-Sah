@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Tie::IxHash;
 
-our $VERSION = '0.28'; # VERSION
+our $VERSION = '0.29'; # VERSION
 
 # currently incomplete
 
@@ -110,7 +110,7 @@ Data::Sah::Lang::fr_FR - fr_FR locale
 
 =head1 VERSION
 
-This document describes version 0.28 of Data::Sah::Lang::fr_FR (from Perl distribution Data-Sah), released on 2014-05-17.
+This document describes version 0.29 of Data::Sah::Lang::fr_FR (from Perl distribution Data-Sah), released on 2014-06-30.
 
 =for Pod::Coverage .+
 

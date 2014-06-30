@@ -6,18 +6,16 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH::num';
 with 'Data::Sah::Type::float';
 
-our $VERSION = '0.28'; # VERSION
-
-my $LLN = "Scalar::Util::looks_like_number";
+our $VERSION = '0.29'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
     my $c = $self->compiler;
 
     my $dt = $cd->{data_term};
-    $c->add_module($cd, 'Scalar::Util');
-    $cd->{_ccl_check_type} = "$LLN($dt) =~ " .
-        '/^(?:1|2|9|10|4352|4|5|6|12|13|14|20|28|36|44|8704)$/';
+    $c->add_module($cd, 'Scalar::Util::Numeric');
+    # we use isnum = isint + isfloat, because isfloat(3) is false
+    $cd->{_ccl_check_type} = "Scalar::Util::Numeric::isnum($dt)";
 }
 
 sub clause_is_nan {
@@ -31,15 +29,15 @@ sub clause_is_nan {
             $cd,
             join(
                 "",
-                "$ct ? $LLN($dt) =~ /^(36|44)\$/ : ",
-                "defined($ct) ? $LLN($dt) !~ /^(36|44)\$/ : 1",
+                "$ct ? Scalar::Util::Numeric::isnan($dt) : ",
+                "defined($ct) ? !Scalar::Util::Numeric::isnan($dt) : 1",
             )
         );
     } else {
         if ($cd->{cl_value}) {
-            $c->add_ccl($cd, "$LLN($dt) =~ /^(36|44)\$/");
+            $c->add_ccl($cd, "Scalar::Util::Numeric::isnan($dt)");
         } elsif (defined $cd->{cl_value}) {
-            $c->add_ccl($cd, "$LLN($dt) !~ /^(36|44)\$/");
+            $c->add_ccl($cd, "!Scalar::Util::Numeric::isnan($dt)");
         }
     }
 }
@@ -113,7 +111,7 @@ Data::Sah::Compiler::perl::TH::float - perl's type handler for type "float"
 
 =head1 VERSION
 
-This document describes version 0.28 of Data::Sah::Compiler::perl::TH::float (from Perl distribution Data-Sah), released on 2014-05-17.
+This document describes version 0.29 of Data::Sah::Compiler::perl::TH::float (from Perl distribution Data-Sah), released on 2014-06-30.
 
 =for Pod::Coverage ^(compiler|clause_.+|handle_.+)$
 

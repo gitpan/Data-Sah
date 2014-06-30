@@ -3,7 +3,7 @@ package Data::Sah::Type::Comparable;
 use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 
-our $VERSION = '0.28'; # VERSION
+our $VERSION = '0.29'; # VERSION
 
 requires 'superclause_comparable';
 
@@ -39,7 +39,7 @@ Data::Sah::Type::Comparable - Comparable type role
 
 =head1 VERSION
 
-This document describes version 0.28 of Data::Sah::Type::Comparable (from Perl distribution Data-Sah), released on 2014-05-17.
+This document describes version 0.29 of Data::Sah::Type::Comparable (from Perl distribution Data-Sah), released on 2014-06-30.
 
 =head1 DESCRIPTION
 

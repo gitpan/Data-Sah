@@ -4,7 +4,7 @@ use 5.010001;
 use Moo;
 use Log::Any qw($log);
 
-our $VERSION = '0.28'; # VERSION
+our $VERSION = '0.29'; # VERSION
 
 our $Log_Validator_Code = $ENV{LOG_SAH_VALIDATOR_CODE} // 0;
 
@@ -328,7 +328,7 @@ Data::Sah - Fast and featureful data structure validation
 
 =head1 VERSION
 
-This document describes version 0.28 of Data::Sah (from Perl distribution Data-Sah), released on 2014-05-17.
+This document describes version 0.29 of Data::Sah (from Perl distribution Data-Sah), released on 2014-06-30.
 
 =head1 SYNOPSIS
 
@@ -651,7 +651,7 @@ Sample output:
  schema already normalized, skipped normalization
  validator code:
     1|do {
-    2|    require Scalar::Util;
+    2|    require Scalar::Util::Numeric;
     3|    sub {
     4|        my ($data) = @_;
     5|        my $_sahv_res =
@@ -660,7 +660,7 @@ Sample output:
     8|            (!defined($data) ? 1 :
      |
    10|            (# check type 'int'
-   11|            (Scalar::Util::looks_like_number($data) =~ /^(?:1|2|9|10|4352)$/)
+   11|            (Scalar::Util::Numeric::isint($data))
      |
    13|            &&
      |

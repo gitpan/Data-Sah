@@ -42,6 +42,7 @@
             "Moo" : "0",
             "Moo::Role" : "0",
             "SHARYANTO::String::Util" : "0",
+            "Scalar::Util::Numeric" : "0",
             "Sub::Install" : "0",
             "Text::sprintfn" : "0",
             "Tie::IxHash" : "0",
@@ -79,7 +80,7 @@
          "web" : "https://github.com/sharyanto/perl-Data-Sah"
       }
    },
-   "version" : "0.28",
+   "version" : "0.29",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018001"

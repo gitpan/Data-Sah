@@ -3,7 +3,7 @@ package Data::Sah::Compiler::TH;
 use 5.010;
 use Moo;
 
-our $VERSION = '0.28'; # VERSION
+our $VERSION = '0.29'; # VERSION
 
 # reference to compiler object
 has compiler => (is => 'rw');
@@ -61,7 +61,7 @@ Data::Sah::Compiler::TH - Base class for type handlers
 
 =head1 VERSION
 
-This document describes version 0.28 of Data::Sah::Compiler::TH (from Perl distribution Data-Sah), released on 2014-05-17.
+This document describes version 0.29 of Data::Sah::Compiler::TH (from Perl distribution Data-Sah), released on 2014-06-30.
 
 =for Pod::Coverage ^(compiler|clause_.+)$
 

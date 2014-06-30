@@ -2,8 +2,8 @@ NAME
     Data::Sah - Fast and featureful data structure validation
 
 VERSION
-    This document describes version 0.28 of Data::Sah (from Perl
-    distribution Data-Sah), released on 2014-05-17.
+    This document describes version 0.29 of Data::Sah (from Perl
+    distribution Data-Sah), released on 2014-06-30.
 
 SYNOPSIS
     Non-OO interface:
@@ -290,7 +290,7 @@ FAQ
      schema already normalized, skipped normalization
      validator code:
         1|do {
-        2|    require Scalar::Util;
+        2|    require Scalar::Util::Numeric;
         3|    sub {
         4|        my ($data) = @_;
         5|        my $_sahv_res =
@@ -299,7 +299,7 @@ FAQ
         8|            (!defined($data) ? 1 :
          |
        10|            (# check type 'int'
-       11|            (Scalar::Util::looks_like_number($data) =~ /^(?:1|2|9|10|4352)$/)
+       11|            (Scalar::Util::Numeric::isint($data))
          |
        13|            &&
          |

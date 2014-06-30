@@ -7,7 +7,7 @@ use Log::Any qw($log);
 
 use SHARYANTO::String::Util;
 
-our $VERSION = '0.28'; # VERSION
+our $VERSION = '0.29'; # VERSION
 
 sub BUILD {
     my ($self, $args) = @_;
@@ -257,7 +257,7 @@ Data::Sah::Compiler::js - Compile Sah schema to JavaScript code
 
 =head1 VERSION
 
-This document describes version 0.28 of Data::Sah::Compiler::js (from Perl distribution Data-Sah), released on 2014-05-17.
+This document describes version 0.29 of Data::Sah::Compiler::js (from Perl distribution Data-Sah), released on 2014-06-30.
 
 =head1 SYNOPSIS
 
