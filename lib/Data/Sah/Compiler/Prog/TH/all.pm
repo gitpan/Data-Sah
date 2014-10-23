@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::Prog::TH';
 with 'Data::Sah::Type::all';
 
-our $VERSION = '0.29'; # VERSION
+our $VERSION = '0.30'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -36,7 +36,7 @@ Data::Sah::Compiler::Prog::TH::all - Base class for programming language compile
 
 =head1 VERSION
 
-This document describes version 0.29 of Data::Sah::Compiler::Prog::TH::all (from Perl distribution Data-Sah), released on 2014-06-30.
+This document describes version 0.30 of Data::Sah::Compiler::Prog::TH::all (from Perl distribution Data-Sah), released on 2014-10-23.
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 
@@ -46,7 +46,7 @@ Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
 
 =head1 SOURCE
 
-Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+Source repository is at L<https://github.com/perlancar/perl-Data-Sah>.
 
 =head1 BUGS
 
@@ -58,11 +58,11 @@ feature.
 
 =head1 AUTHOR
 
-Steven Haryanto <stevenharyanto@gmail.com>
+perlancar <perlancar@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2014 by Steven Haryanto.
+This software is copyright (c) 2014 by perlancar@cpan.org.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
