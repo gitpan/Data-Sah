@@ -5,7 +5,7 @@ use Moo::Role;
 
 use SHARYANTO::String::Util;
 
-our $VERSION = '0.30'; # VERSION
+our $VERSION = '0.31'; # VERSION
 
 # can be changed to tab, for example
 has indent_character => (is => 'rw', default => sub {''});
@@ -56,7 +56,7 @@ Data::Sah::Compiler::TextResultRole - Role for compilers that produce text resul
 
 =head1 VERSION
 
-This document describes version 0.30 of Data::Sah::Compiler::TextResultRole (from Perl distribution Data-Sah), released on 2014-10-23.
+This document describes version 0.31 of Data::Sah::Compiler::TextResultRole (from Perl distribution Data-Sah), released on 2014-11-07.
 
 =head1 ATTRIBUTES
 

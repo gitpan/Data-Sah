@@ -5,7 +5,7 @@ use Log::Any '$log';
 use Moo;
 extends 'Data::Sah::Compiler::TH';
 
-our $VERSION = '0.30'; # VERSION
+our $VERSION = '0.31'; # VERSION
 
 sub name { undef }
 
@@ -75,7 +75,7 @@ Data::Sah::Compiler::human::TH - Base class for human type handlers
 
 =head1 VERSION
 
-This document describes version 0.30 of Data::Sah::Compiler::human::TH (from Perl distribution Data-Sah), released on 2014-10-23.
+This document describes version 0.31 of Data::Sah::Compiler::human::TH (from Perl distribution Data-Sah), released on 2014-11-07.
 
 =for Pod::Coverage ^(name|compiler|clause_.+|handle_.+|before_.+|after_.+)$
 

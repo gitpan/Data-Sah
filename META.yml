@@ -50,7 +50,7 @@ resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah
   homepage: https://metacpan.org/release/Data-Sah
   repository: git://github.com/perlancar/perl-Data-Sah.git
-version: '0.30'
+version: '0.31'
 x_Dist_Zilla:
   perl:
     version: '5.018002'
@@ -243,7 +243,7 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::Rinci::Validate
       name: '@Author::PERLANCAR/Rinci::Validate'
-      version: '0.18'
+      version: '0.19'
     -
       class: Dist::Zilla::Plugin::SetScriptShebang
       name: '@Author::PERLANCAR/SetScriptShebang'

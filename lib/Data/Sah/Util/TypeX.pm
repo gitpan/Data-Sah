@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Log::Any '$log';
 
-our $VERSION = '0.30'; # VERSION
+our $VERSION = '0.31'; # VERSION
 
 #use Sub::Install qw(install_sub);
 
@@ -41,7 +41,7 @@ Data::Sah::Util::TypeX - Sah utility routines for type extensions
 
 =head1 VERSION
 
-This document describes version 0.30 of Data::Sah::Util::TypeX (from Perl distribution Data-Sah), released on 2014-10-23.
+This document describes version 0.31 of Data::Sah::Util::TypeX (from Perl distribution Data-Sah), released on 2014-11-07.
 
 =head1 DESCRIPTION
 

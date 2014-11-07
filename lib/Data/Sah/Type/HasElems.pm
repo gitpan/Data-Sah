@@ -3,7 +3,7 @@ package Data::Sah::Type::HasElems;
 use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 
-our $VERSION = '0.30'; # VERSION
+our $VERSION = '0.31'; # VERSION
 
 requires 'superclause_has_elems';
 
@@ -117,7 +117,7 @@ Data::Sah::Type::HasElems - HasElems role
 
 =head1 VERSION
 
-This document describes version 0.30 of Data::Sah::Type::HasElems (from Perl distribution Data-Sah), released on 2014-10-23.
+This document describes version 0.31 of Data::Sah::Type::HasElems (from Perl distribution Data-Sah), released on 2014-11-07.
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

@@ -6,7 +6,7 @@ with 'Data::Sah::Type::BaseType';
 with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::HasElems';
 
-our $VERSION = '0.30'; # VERSION
+our $VERSION = '0.31'; # VERSION
 
 has_clause 'elems',
     tags       => ['constraint'],
@@ -36,7 +36,7 @@ Data::Sah::Type::array - array type
 
 =head1 VERSION
 
-This document describes version 0.30 of Data::Sah::Type::array (from Perl distribution Data-Sah), released on 2014-10-23.
+This document describes version 0.31 of Data::Sah::Type::array (from Perl distribution Data-Sah), released on 2014-11-07.
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

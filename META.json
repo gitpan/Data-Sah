@@ -81,7 +81,7 @@
          "web" : "https://github.com/perlancar/perl-Data-Sah"
       }
    },
-   "version" : "0.30",
+   "version" : "0.31",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018002"
@@ -325,7 +325,7 @@
          {
             "class" : "Dist::Zilla::Plugin::Rinci::Validate",
             "name" : "@Author::PERLANCAR/Rinci::Validate",
-            "version" : "0.18"
+            "version" : "0.19"
          },
          {
             "class" : "Dist::Zilla::Plugin::SetScriptShebang",

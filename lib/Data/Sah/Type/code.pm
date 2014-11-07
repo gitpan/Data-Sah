@@ -3,7 +3,7 @@ package Data::Sah::Type::code;
 use Moo::Role;
 with 'Data::Sah::Type::BaseType';
 
-our $VERSION = '0.30'; # VERSION
+our $VERSION = '0.31'; # VERSION
 
 1;
 # ABSTRACT: code type
@@ -20,7 +20,7 @@ Data::Sah::Type::code - code type
 
 =head1 VERSION
 
-This document describes version 0.30 of Data::Sah::Type::code (from Perl distribution Data-Sah), released on 2014-10-23.
+This document describes version 0.31 of Data::Sah::Type::code (from Perl distribution Data-Sah), released on 2014-11-07.
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

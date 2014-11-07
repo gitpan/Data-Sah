@@ -13,7 +13,7 @@ Data::Sah::Manual::Contributing - Contributing to Data::Sah
 
 =head1 VERSION
 
-This document describes version 0.30 of Data::Sah::Manual::Contributing (from Perl distribution Data-Sah), released on 2014-10-23.
+This document describes version 0.31 of Data::Sah::Manual::Contributing (from Perl distribution Data-Sah), released on 2014-11-07.
 
 =head1 DESCRIPTION
 

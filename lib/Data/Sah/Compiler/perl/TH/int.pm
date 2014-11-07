@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH::num';
 with 'Data::Sah::Type::int';
 
-our $VERSION = '0.30'; # VERSION
+our $VERSION = '0.31'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -51,7 +51,7 @@ Data::Sah::Compiler::perl::TH::int - perl's type handler for type "int"
 
 =head1 VERSION
 
-This document describes version 0.30 of Data::Sah::Compiler::perl::TH::int (from Perl distribution Data-Sah), released on 2014-10-23.
+This document describes version 0.31 of Data::Sah::Compiler::perl::TH::int (from Perl distribution Data-Sah), released on 2014-11-07.
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 
