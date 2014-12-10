@@ -1,11 +1,12 @@
 package Data::Sah::Compiler::TextResultRole;
 
+our $DATE = '2014-12-10'; # DATE
+our $VERSION = '0.32'; # VERSION
+
 use 5.010;
 use Moo::Role;
 
-use SHARYANTO::String::Util;
-
-our $VERSION = '0.31'; # VERSION
+use String::Indent ();
 
 # can be changed to tab, for example
 has indent_character => (is => 'rw', default => sub {''});
@@ -20,7 +21,7 @@ sub add_result {
 
 sub indent {
     my ($self, $cd, $str) = @_;
-    SHARYANTO::String::Util::indent(
+    String::Indent::indent(
         $self->indent_character x $cd->{indent_level},
         $str,
     );
@@ -56,7 +57,7 @@ Data::Sah::Compiler::TextResultRole - Role for compilers that produce text resul
 
 =head1 VERSION
 
-This document describes version 0.31 of Data::Sah::Compiler::TextResultRole (from Perl distribution Data-Sah), released on 2014-11-07.
+This document describes version 0.32 of Data::Sah::Compiler::TextResultRole (from Perl distribution Data-Sah), released on 2014-12-10.
 
 =head1 ATTRIBUTES
 

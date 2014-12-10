@@ -7,7 +7,7 @@ use experimental 'smartmatch';
 extends 'Data::Sah::Compiler::perl::TH::str';
 with 'Data::Sah::Type::buf';
 
-our $VERSION = '0.31'; # VERSION
+our $VERSION = '0.32'; # VERSION
 
 1;
 # ABSTRACT: perl's type handler for type "buf"
@@ -24,7 +24,7 @@ Data::Sah::Compiler::perl::TH::buf - perl's type handler for type "buf"
 
 =head1 VERSION
 
-This document describes version 0.31 of Data::Sah::Compiler::perl::TH::buf (from Perl distribution Data-Sah), released on 2014-11-07.
+This document describes version 0.32 of Data::Sah::Compiler::perl::TH::buf (from Perl distribution Data-Sah), released on 2014-12-10.
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

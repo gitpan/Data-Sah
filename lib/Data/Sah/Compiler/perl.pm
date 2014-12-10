@@ -1,13 +1,14 @@
 package Data::Sah::Compiler::perl;
 
+our $DATE = '2014-12-10'; # DATE
+our $VERSION = '0.32'; # VERSION
+
 use 5.010;
 use Moo;
 use Log::Any qw($log);
 extends 'Data::Sah::Compiler::Prog';
 
-use SHARYANTO::String::Util;
-
-our $VERSION = '0.31'; # VERSION
+use String::Indent ();
 
 sub BUILD {
     my ($self, $args) = @_;
@@ -183,7 +184,7 @@ sub expr_block {
     join(
         "",
         "do {\n",
-        SHARYANTO::String::Util::indent(
+        String::Indent::indent(
             $self->indent_character,
             $code,
         ),
@@ -204,7 +205,7 @@ sub expr_anon_sub {
     join(
         "",
         "sub {\n",
-        SHARYANTO::String::Util::indent(
+        String::Indent::indent(
             $self->indent_character,
             join(
                 "",
@@ -296,7 +297,7 @@ Data::Sah::Compiler::perl - Compile Sah schema to Perl code
 
 =head1 VERSION
 
-This document describes version 0.31 of Data::Sah::Compiler::perl (from Perl distribution Data-Sah), released on 2014-11-07.
+This document describes version 0.32 of Data::Sah::Compiler::perl (from Perl distribution Data-Sah), released on 2014-12-10.
 
 =head1 SYNOPSIS
 

@@ -10,7 +10,7 @@ with 'Data::Sah::Compiler::TextResultRole';
 
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.31'; # VERSION
+our $VERSION = '0.32'; # VERSION
 
 has main => (is => 'rw');
 
@@ -609,11 +609,11 @@ sub compile {
     }
 
     if ($args{log_result} && $log->is_trace) {
-        require SHARYANTO::String::Util;
+        require String::LineNumber;
         $log->tracef(
             "Schema compilation result:\n%s",
             !ref($cd->{result}) && ($ENV{LINENUM} // 1) ?
-                SHARYANTO::String::Util::linenum($cd->{result}) :
+                String::LineNumber::linenum($cd->{result}) :
                       $cd->{result}
                   );
     }
@@ -675,7 +675,7 @@ Data::Sah::Compiler - Base class for Sah compilers (Data::Sah::Compiler::*)
 
 =head1 VERSION
 
-This document describes version 0.31 of Data::Sah::Compiler (from Perl distribution Data-Sah), released on 2014-11-07.
+This document describes version 0.32 of Data::Sah::Compiler (from Perl distribution Data-Sah), released on 2014-12-10.
 
 =for Pod::Coverage ^(check_compile_args|def|expr|init_cd|literal|name)$
 

@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::Prog::TH';
 with 'Data::Sah::Type::all';
 
-our $VERSION = '0.31'; # VERSION
+our $VERSION = '0.32'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -36,7 +36,7 @@ Data::Sah::Compiler::Prog::TH::all - Base class for programming language compile
 
 =head1 VERSION
 
-This document describes version 0.31 of Data::Sah::Compiler::Prog::TH::all (from Perl distribution Data-Sah), released on 2014-11-07.
+This document describes version 0.32 of Data::Sah::Compiler::Prog::TH::all (from Perl distribution Data-Sah), released on 2014-12-10.
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

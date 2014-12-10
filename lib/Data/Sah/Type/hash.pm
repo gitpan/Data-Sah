@@ -6,7 +6,7 @@ with 'Data::Sah::Type::BaseType';
 with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::HasElems';
 
-our $VERSION = '0.31'; # VERSION
+our $VERSION = '0.32'; # VERSION
 
 has_clause_alias each_elem => 'of';
 
@@ -88,7 +88,7 @@ Data::Sah::Type::hash - hash type
 
 =head1 VERSION
 
-This document describes version 0.31 of Data::Sah::Type::hash (from Perl distribution Data-Sah), released on 2014-11-07.
+This document describes version 0.32 of Data::Sah::Type::hash (from Perl distribution Data-Sah), released on 2014-12-10.
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

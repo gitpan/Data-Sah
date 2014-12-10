@@ -8,7 +8,7 @@ with 'Data::Sah::Compiler::human::TH::Comparable';
 with 'Data::Sah::Compiler::human::TH::Sortable';
 with 'Data::Sah::Type::float';
 
-our $VERSION = '0.31'; # VERSION
+our $VERSION = '0.32'; # VERSION
 
 sub name { "decimal number" }
 
@@ -101,7 +101,7 @@ Data::Sah::Compiler::human::TH::float - human's type handler for type "num"
 
 =head1 VERSION
 
-This document describes version 0.31 of Data::Sah::Compiler::human::TH::float (from Perl distribution Data-Sah), released on 2014-11-07.
+This document describes version 0.32 of Data::Sah::Compiler::human::TH::float (from Perl distribution Data-Sah), released on 2014-12-10.
 
 =for Pod::Coverage ^(name|clause_.+|superclause_.+)$
 

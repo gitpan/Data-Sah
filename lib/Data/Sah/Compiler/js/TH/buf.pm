@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::js::TH::str';
 with 'Data::Sah::Type::buf';
 
-our $VERSION = '0.31'; # VERSION
+our $VERSION = '0.32'; # VERSION
 
 1;
 # ABSTRACT: js's type handler for type "buf"
@@ -23,7 +23,7 @@ Data::Sah::Compiler::js::TH::buf - js's type handler for type "buf"
 
 =head1 VERSION
 
-This document describes version 0.31 of Data::Sah::Compiler::js::TH::buf (from Perl distribution Data-Sah), released on 2014-11-07.
+This document describes version 0.32 of Data::Sah::Compiler::js::TH::buf (from Perl distribution Data-Sah), released on 2014-12-10.
 
 =for Pod::Coverage ^(clause_.+|superclause_.+|handle_.+|before_.+|after_.+)$
 

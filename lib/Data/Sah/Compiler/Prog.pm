@@ -1,12 +1,13 @@
 package Data::Sah::Compiler::Prog;
 
+our $DATE = '2014-12-10'; # DATE
+our $VERSION = '0.32'; # VERSION
+
 use 5.010;
 use Moo;
 use experimental 'smartmatch';
 extends 'Data::Sah::Compiler';
 use Log::Any qw($log);
-
-our $VERSION = '0.31'; # VERSION
 
 #use Digest::MD5 qw(md5_hex);
 
@@ -234,9 +235,10 @@ sub expr_validator_sub {
     }
 
     if ($log_result && $log->is_trace) {
+        require String::LineNumber;
         $log->tracef("validator code:\n%s",
                      ($ENV{LINENUM} // 1) ?
-                         SHARYANTO::String::Util::linenum($code) :
+                         String::LineNumber::linenum($code) :
                                $code);
     }
 
@@ -762,7 +764,7 @@ Data::Sah::Compiler::Prog - Base class for programming language compilers
 
 =head1 VERSION
 
-This document describes version 0.31 of Data::Sah::Compiler::Prog (from Perl distribution Data-Sah), released on 2014-11-07.
+This document describes version 0.32 of Data::Sah::Compiler::Prog (from Perl distribution Data-Sah), released on 2014-12-10.
 
 =head1 SYNOPSIS
 
