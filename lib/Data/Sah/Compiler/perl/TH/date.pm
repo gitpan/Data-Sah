@@ -9,8 +9,8 @@ with 'Data::Sah::Type::date';
 
 use Scalar::Util qw(blessed looks_like_number);
 
-our $VERSION = '0.32'; # VERSION
-our $DATE = '2014-12-10'; # DATE
+our $VERSION = '0.33'; # VERSION
+our $DATE = '2014-12-19'; # DATE
 
 sub expr_coerce_term {
     my ($self, $cd, $t) = @_;
@@ -192,7 +192,7 @@ Data::Sah::Compiler::perl::TH::date - perl's type handler for type "date"
 
 =head1 VERSION
 
-This document describes version 0.32 of Data::Sah::Compiler::perl::TH::date (from Perl distribution Data-Sah), released on 2014-12-10.
+This document describes version 0.33 of Data::Sah::Compiler::perl::TH::date (from Perl distribution Data-Sah), released on 2014-12-19.
 
 =head1 DESCRIPTION
 

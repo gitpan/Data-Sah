@@ -13,7 +13,8 @@ my %WriteMakefileArgs = (
   "ABSTRACT" => "Fast and featureful data structure validation",
   "AUTHOR" => "perlancar <perlancar\@cpan.org>",
   "CONFIGURE_REQUIRES" => {
-    "ExtUtils::MakeMaker" => 0
+    "ExtUtils::MakeMaker" => 0,
+    "Perl::osnames" => "0.09"
   },
   "DISTNAME" => "Data-Sah",
   "EXE_FILES" => [],
@@ -44,7 +45,7 @@ my %WriteMakefileArgs = (
     "experimental" => 0
   },
   "TEST_REQUIRES" => {
-    "Data::Dump::OneLine" => 0,
+    "Data::Dump" => 0,
     "File::ShareDir" => 0,
     "File::ShareDir::Tarball" => 0,
     "File::Slurp::Tiny" => 0,
@@ -57,7 +58,7 @@ my %WriteMakefileArgs = (
     "Test::More" => "0.98",
     "Test::Warn" => 0
   },
-  "VERSION" => "0.32",
+  "VERSION" => "0.33",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -68,7 +69,7 @@ my %FallbackPrereqs = (
   "Algorithm::Dependency::Ordered" => 0,
   "Algorithm::Dependency::Source::HoA" => 0,
   "Data::Clean::JSON" => "0.11",
-  "Data::Dump::OneLine" => 0,
+  "Data::Dump" => 0,
   "Data::ModeMerge" => "0.21",
   "Data::Sah::Normalize" => 0,
   "DateTime" => 0,
@@ -87,6 +88,7 @@ my %FallbackPrereqs = (
   "Module::Path" => "0.08",
   "Moo" => 0,
   "Moo::Role" => 0,
+  "Perl::osnames" => "0.09",
   "Sah" => "0.9.31",
   "Scalar::Util::Numeric" => 0,
   "String::Indent" => 0,

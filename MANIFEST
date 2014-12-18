@@ -105,6 +105,7 @@ lib/Data/Sah/Util/Func.pm
 lib/Data/Sah/Util/Role.pm
 lib/Data/Sah/Util/Type.pm
 lib/Data/Sah/Util/TypeX.pm
+lib/Test/Data/Sah.pm
 t/00-compile.t
 t/01-basics.t
 t/99-various.t

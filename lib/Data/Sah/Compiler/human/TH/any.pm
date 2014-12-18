@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::human::TH';
 with 'Data::Sah::Type::any';
 
-our $VERSION = '0.32'; # VERSION
+our $VERSION = '0.33'; # VERSION
 
 sub handle_type {
     # does not have a noun
@@ -85,7 +85,7 @@ Data::Sah::Compiler::human::TH::any - perl's type handler for type "any"
 
 =head1 VERSION
 
-This document describes version 0.32 of Data::Sah::Compiler::human::TH::any (from Perl distribution Data-Sah), released on 2014-12-10.
+This document describes version 0.33 of Data::Sah::Compiler::human::TH::any (from Perl distribution Data-Sah), released on 2014-12-19.
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

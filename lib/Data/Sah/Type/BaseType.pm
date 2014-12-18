@@ -8,7 +8,7 @@ use Moo::Role;
 #use Sah::Schema::Sah;
 use Data::Sah::Util::Role 'has_clause';
 
-our $VERSION = '0.32'; # VERSION
+our $VERSION = '0.33'; # VERSION
 
 requires 'handle_type';
 
@@ -132,7 +132,7 @@ Data::Sah::Type::BaseType - Base type
 
 =head1 VERSION
 
-This document describes version 0.32 of Data::Sah::Type::BaseType (from Perl distribution Data-Sah), released on 2014-12-10.
+This document describes version 0.33 of Data::Sah::Type::BaseType (from Perl distribution Data-Sah), released on 2014-12-19.
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

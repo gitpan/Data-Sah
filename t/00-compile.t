@@ -6,7 +6,7 @@ use warnings;
 
 use Test::More;
 
-plan tests => 95 + ($ENV{AUTHOR_TESTING} ? 1 : 0);
+plan tests => 96 + ($ENV{AUTHOR_TESTING} ? 1 : 0);
 
 my @module_files = (
     'Data/Sah.pm',
@@ -103,7 +103,8 @@ my @module_files = (
     'Data/Sah/Util/Func.pm',
     'Data/Sah/Util/Role.pm',
     'Data/Sah/Util/Type.pm',
-    'Data/Sah/Util/TypeX.pm'
+    'Data/Sah/Util/TypeX.pm',
+    'Test/Data/Sah.pm'
 );
 
 
