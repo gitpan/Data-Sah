@@ -6,7 +6,7 @@ with 'Data::Sah::Type::BaseType';
 with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::Sortable';
 
-our $VERSION = '0.33'; # VERSION
+our $VERSION = '0.34'; # VERSION
 our $DATE = '2014-12-19'; # DATE
 
 # XXX prop: year
@@ -46,7 +46,7 @@ Data::Sah::Type::date - date type
 
 =head1 VERSION
 
-This document describes version 0.33 of Data::Sah::Type::date (from Perl distribution Data-Sah), released on 2014-12-19.
+This document describes version 0.34 of Data::Sah::Type::date (from Perl distribution Data-Sah), released on 2014-12-19.
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

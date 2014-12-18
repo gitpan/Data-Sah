@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::human::TH::num';
 with 'Data::Sah::Type::int';
 
-our $VERSION = '0.33'; # VERSION
+our $VERSION = '0.34'; # VERSION
 
 sub name { "integer" }
 
@@ -80,7 +80,7 @@ Data::Sah::Compiler::human::TH::int - human's type handler for type "int"
 
 =head1 VERSION
 
-This document describes version 0.33 of Data::Sah::Compiler::human::TH::int (from Perl distribution Data-Sah), released on 2014-12-19.
+This document describes version 0.34 of Data::Sah::Compiler::human::TH::int (from Perl distribution Data-Sah), released on 2014-12-19.
 
 =for Pod::Coverage ^(name|clause_.+|superclause_.+|before_.+|after_.+)$
 

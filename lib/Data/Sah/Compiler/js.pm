@@ -1,7 +1,7 @@
 package Data::Sah::Compiler::js;
 
 our $DATE = '2014-12-19'; # DATE
-our $VERSION = '0.33'; # VERSION
+our $VERSION = '0.34'; # VERSION
 
 use 5.010;
 use Moo;
@@ -258,7 +258,7 @@ Data::Sah::Compiler::js - Compile Sah schema to JavaScript code
 
 =head1 VERSION
 
-This document describes version 0.33 of Data::Sah::Compiler::js (from Perl distribution Data-Sah), released on 2014-12-19.
+This document describes version 0.34 of Data::Sah::Compiler::js (from Perl distribution Data-Sah), released on 2014-12-19.
 
 =head1 SYNOPSIS
 

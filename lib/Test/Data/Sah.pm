@@ -1,7 +1,7 @@
 package Test::Data::Sah;
 
 our $DATE = '2014-12-19'; # DATE
-our $VERSION = '0.33'; # VERSION
+our $VERSION = '0.34'; # VERSION
 
 use 5.010;
 use strict;
@@ -23,25 +23,31 @@ sub test_sah_cases {
 
     for my $test (@$tests) {
         my $v = gen_validator($test->{schema});
+        my $res = $v->($test->{input});
         my $name = $test->{name} //
             "data " . dump($test->{input}) . " should".
                 ($test->{valid} ? " pass" : " not pass"). " schema " .
                     dump($test->{schema});
-        my $res;
+        my $testres;
         if ($test->{valid}) {
-            $res = ok($v->($test->{input}), $name);
+            $testres = ok($res, $name);
         } else {
-            $res = ok(!$v->($test->{input}), $name);
+            $testres = ok(!$res, $name);
         }
-        next if $res;
+        next if $testres;
 
         # when test fails, show the validator generated code to help debugging
         my $cd = $plc->compile(schema => $test->{schema});
-        diag "schema compilation result: ", explain($cd->{result});
+        diag "schema compilation result:\n----begin generated code----\n",
+            explain($cd->{result}), "\n----end generated code----\n",
+                "that code should return ", ($test->{valid} ? "true":"false"),
+                    " when fed \$data=", dump($test->{input}),
+                        " but instead returns ", dump($res);
 
         # also show the result for return_type=full
         my $vfull = gen_validator($test->{schema}, {return_type=>"full"});
-        diag "validator result (full): ", explain($vfull->($test->{input}));
+        diag "\nvalidator result (full):\n----begin result----\n",
+            explain($vfull->($test->{input})), "----end result----";
     }
 }
 
@@ -60,7 +66,7 @@ Test::Data::Sah - Test routines for Data::Sah
 
 =head1 VERSION
 
-This document describes version 0.33 of Test::Data::Sah (from Perl distribution Data-Sah), released on 2014-12-19.
+This document describes version 0.34 of Test::Data::Sah (from Perl distribution Data-Sah), released on 2014-12-19.
 
 =head1 FUNCTIONS
 

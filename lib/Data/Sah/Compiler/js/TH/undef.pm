@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::js::TH';
 with 'Data::Sah::Type::undef';
 
-our $VERSION = '0.33'; # VERSION
+our $VERSION = '0.34'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -31,7 +31,7 @@ Data::Sah::Compiler::js::TH::undef - js's type handler for type "re"
 
 =head1 VERSION
 
-This document describes version 0.33 of Data::Sah::Compiler::js::TH::undef (from Perl distribution Data-Sah), released on 2014-12-19.
+This document describes version 0.34 of Data::Sah::Compiler::js::TH::undef (from Perl distribution Data-Sah), released on 2014-12-19.
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

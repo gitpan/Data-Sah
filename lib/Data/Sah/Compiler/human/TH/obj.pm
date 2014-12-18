@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::human::TH';
 with 'Data::Sah::Type::obj';
 
-our $VERSION = '0.33'; # VERSION
+our $VERSION = '0.34'; # VERSION
 
 sub name { "object" }
 
@@ -56,7 +56,7 @@ Data::Sah::Compiler::human::TH::obj - perl's type handler for type "obj"
 
 =head1 VERSION
 
-This document describes version 0.33 of Data::Sah::Compiler::human::TH::obj (from Perl distribution Data-Sah), released on 2014-12-19.
+This document describes version 0.34 of Data::Sah::Compiler::human::TH::obj (from Perl distribution Data-Sah), released on 2014-12-19.
 
 =for Pod::Coverage ^(name|clause_.+|superclause_.+|before_.+|after_.+)$
 
