@@ -83,7 +83,7 @@
          "web" : "https://github.com/perlancar/perl-Data-Sah"
       }
    },
-   "version" : "0.34",
+   "version" : "0.35",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018002"

@@ -4,7 +4,7 @@ use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 with 'Data::Sah::Type::num';
 
-our $VERSION = '0.34'; # VERSION
+our $VERSION = '0.35'; # VERSION
 
 has_clause 'mod',
     tags       => ['constraint'],
@@ -32,7 +32,7 @@ Data::Sah::Type::int - int type
 
 =head1 VERSION
 
-This document describes version 0.34 of Data::Sah::Type::int (from Perl distribution Data-Sah), released on 2014-12-19.
+This document describes version 0.35 of Data::Sah::Type::int (from Perl distribution Data-Sah), released on 2014-12-19.
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

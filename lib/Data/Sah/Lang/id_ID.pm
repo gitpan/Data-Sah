@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Tie::IxHash;
 
-our $VERSION = '0.34'; # VERSION
+our $VERSION = '0.35'; # VERSION
 
 sub ordinate {
     my ($n, $noun) = @_;
@@ -411,7 +411,7 @@ Data::Sah::Lang::id_ID - id_ID locale
 
 =head1 VERSION
 
-This document describes version 0.34 of Data::Sah::Lang::id_ID (from Perl distribution Data-Sah), released on 2014-12-19.
+This document describes version 0.35 of Data::Sah::Lang::id_ID (from Perl distribution Data-Sah), released on 2014-12-19.
 
 =for Pod::Coverage .+
 

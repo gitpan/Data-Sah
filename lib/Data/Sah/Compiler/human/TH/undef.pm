@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::human::TH';
 with 'Data::Sah::Type::undef';
 
-our $VERSION = '0.34'; # VERSION
+our $VERSION = '0.35'; # VERSION
 
 sub name { "undefined value" }
 
@@ -35,7 +35,7 @@ Data::Sah::Compiler::human::TH::undef - perl's type handler for type "undef"
 
 =head1 VERSION
 
-This document describes version 0.34 of Data::Sah::Compiler::human::TH::undef (from Perl distribution Data-Sah), released on 2014-12-19.
+This document describes version 0.35 of Data::Sah::Compiler::human::TH::undef (from Perl distribution Data-Sah), released on 2014-12-19.
 
 =for Pod::Coverage ^(name|clause_.+|superclause_.+|before_.+|after_.+)$
 

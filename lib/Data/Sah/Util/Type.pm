@@ -7,7 +7,7 @@ use Log::Any '$log';
 
 use Scalar::Util qw(blessed looks_like_number);
 
-our $VERSION = '0.34'; # VERSION
+our $VERSION = '0.35'; # VERSION
 our $DATE = '2014-12-19'; # DATE
 
 require Exporter;
@@ -51,7 +51,7 @@ Data::Sah::Util::Type - Utility related to data types
 
 =head1 VERSION
 
-This document describes version 0.34 of Data::Sah::Util::Type (from Perl distribution Data-Sah), released on 2014-12-19.
+This document describes version 0.35 of Data::Sah::Util::Type (from Perl distribution Data-Sah), released on 2014-12-19.
 
 =head1 DESCRIPTION
 

@@ -5,7 +5,7 @@ use Log::Any '$log';
 use Moo::Role;
 with 'Data::Sah::Type::Sortable';
 
-our $VERSION = '0.34'; # VERSION
+our $VERSION = '0.35'; # VERSION
 
 sub before_clause_between {
     my ($self, $cd) = @_;
@@ -70,7 +70,7 @@ Data::Sah::Compiler::human::TH::Sortable - human's type handler for role "Sortab
 
 =head1 VERSION
 
-This document describes version 0.34 of Data::Sah::Compiler::human::TH::Sortable (from Perl distribution Data-Sah), released on 2014-12-19.
+This document describes version 0.35 of Data::Sah::Compiler::human::TH::Sortable (from Perl distribution Data-Sah), released on 2014-12-19.
 
 =for Pod::Coverage ^(name|clause_.+|superclause_.+|before_.+|after_.+)$
 
