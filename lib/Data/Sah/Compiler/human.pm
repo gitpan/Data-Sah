@@ -9,7 +9,7 @@ use Log::Any qw($log);
 use POSIX qw(locale_h);
 use Text::sprintfn;
 
-our $VERSION = '0.35'; # VERSION
+our $VERSION = '0.36'; # VERSION
 
 # every type extension is registered here
 our %typex; # key = type, val = [clause, ...]
@@ -403,9 +403,9 @@ sub _load_lang_modules {
             if ($i == 1) {
                 # test to check whether Data::Sah::Lang::$lang exists. if it
                 # does not, we fallback to en_US.
-                require Module::Path;
+                require Module::Path::More;
                 my $mod = $modp; $mod =~ s/\.pm$//;
-                if (!Module::Path::module_path($mod)) {
+                if (!Module::Path::More::module_path(module=>$modp)) {
                     $log->debug("$mod cannot be found, falling back to en_US");
                     $cd->{args}{lang} = 'en_US';
                     last;
@@ -510,7 +510,7 @@ Data::Sah::Compiler::human - Compile Sah schema to human language
 
 =head1 VERSION
 
-This document describes version 0.35 of Data::Sah::Compiler::human (from Perl distribution Data-Sah), released on 2014-12-19.
+This document describes version 0.36 of Data::Sah::Compiler::human (from Perl distribution Data-Sah), released on 2014-12-27.
 
 =head1 SYNOPSIS
 
@@ -579,7 +579,7 @@ Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
 
 =head1 SOURCE
 
-Source repository is at L<https://github.com/perlancar/perl-Data-Sah>.
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
 
 =head1 BUGS
 

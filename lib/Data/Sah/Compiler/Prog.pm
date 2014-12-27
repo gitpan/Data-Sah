@@ -1,7 +1,7 @@
 package Data::Sah::Compiler::Prog;
 
-our $DATE = '2014-12-19'; # DATE
-our $VERSION = '0.35'; # VERSION
+our $DATE = '2014-12-27'; # DATE
+our $VERSION = '0.36'; # VERSION
 
 use 5.010;
 use Moo;
@@ -764,7 +764,7 @@ Data::Sah::Compiler::Prog - Base class for programming language compilers
 
 =head1 VERSION
 
-This document describes version 0.35 of Data::Sah::Compiler::Prog (from Perl distribution Data-Sah), released on 2014-12-19.
+This document describes version 0.36 of Data::Sah::Compiler::Prog (from Perl distribution Data-Sah), released on 2014-12-27.
 
 =head1 SYNOPSIS
 
@@ -1063,7 +1063,7 @@ Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
 
 =head1 SOURCE
 
-Source repository is at L<https://github.com/perlancar/perl-Data-Sah>.
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
 
 =head1 BUGS
 

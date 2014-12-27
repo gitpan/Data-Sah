@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::human::TH';
 with 'Data::Sah::Type::re';
 
-our $VERSION = '0.35'; # VERSION
+our $VERSION = '0.36'; # VERSION
 
 sub name { "regex pattern" }
 
@@ -35,7 +35,7 @@ Data::Sah::Compiler::human::TH::re - perl's type handler for type "re"
 
 =head1 VERSION
 
-This document describes version 0.35 of Data::Sah::Compiler::human::TH::re (from Perl distribution Data-Sah), released on 2014-12-19.
+This document describes version 0.36 of Data::Sah::Compiler::human::TH::re (from Perl distribution Data-Sah), released on 2014-12-27.
 
 =for Pod::Coverage ^(name|clause_.+|superclause_.+|before_.+|after_.+)$
 
@@ -45,7 +45,7 @@ Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
 
 =head1 SOURCE
 
-Source repository is at L<https://github.com/perlancar/perl-Data-Sah>.
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
 
 =head1 BUGS
 

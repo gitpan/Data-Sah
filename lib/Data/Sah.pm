@@ -1,7 +1,7 @@
 package Data::Sah;
 
-our $DATE = '2014-12-19'; # DATE
-our $VERSION = '0.35'; # VERSION
+our $DATE = '2014-12-27'; # DATE
+our $VERSION = '0.36'; # VERSION
 
 use 5.010001;
 use Moo;
@@ -175,7 +175,7 @@ Data::Sah - Fast and featureful data structure validation
 
 =head1 VERSION
 
-This document describes version 0.35 of Data::Sah (from Perl distribution Data-Sah), released on 2014-12-19.
+This document describes version 0.36 of Data::Sah (from Perl distribution Data-Sah), released on 2014-12-27.
 
 =head1 SYNOPSIS
 
@@ -204,6 +204,7 @@ Non-OO interface:
 
  # normalize a schema
  my $nschema = normalize_schema("int*"); # => ["int", {req=>1}, {}]
+ normalize_schema(["int*", min=>0]); # => ["int", {min=>0, req=>1}, {}]
 
 OO interface (more advanced usage):
 
@@ -214,7 +215,50 @@ OO interface (more advanced usage):
  my $pl = $sah->get_compiler("perl");
 
  # compile schema into Perl code
- my $cd = $pl->compile(schema => $schema, ...);
+ my $cd = $pl->compile(schema => ["int*", min=>0]);
+ say $cd->{result};
+
+will print something like:
+
+ # req #0
+ (defined($data))
+ &&
+ # check type 'int'
+ (Scalar::Util::Numeric::isint($data))
+ &&
+ (# clause: min
+ ($data >= 0))
+
+To see the full validator code (with C<sub {}> and all), you can do something
+like:
+
+ % LOG_SAH_VALIDATOR_CODE=1 TRACE=1 perl -MLog::Any::App -MData::Sah=gen_validator -E'gen_validator(["int*", min=>0])'
+
+which will print log message like:
+
+ normalized schema=['int',{min => 0,req => 1},{}]
+ validator code:
+    1|do {
+    2|    require Scalar::Util::Numeric;
+    3|    sub {
+    4|        my ($data) = @_;
+    5|        my $_sahv_res =
+     |
+    7|            # req #0
+    8|            (defined($data))
+     |
+   10|            &&
+     |
+   12|            # check type 'int'
+   13|            (Scalar::Util::Numeric::isint($data))
+     |
+   15|            &&
+     |
+   17|            (# clause: min
+   18|            ($data >= 0));
+     |
+   20|        return($_sahv_res);
+   21|    }}
 
 =head1 DESCRIPTION
 
@@ -436,11 +480,12 @@ renamed clauses). Also, some terminology have been changed, e.g. "attribute"
 become "clauses", "suffix" becomes "attributes". This warrants a new name.
 
 Compared to Data::Schema, Sah always compiles schemas and there is much greater
-flexibility in code generation (can generate data term, can generate code to
-validate multiple schemas, etc). There is no longer hash form, schema is either
-a string or an array. Some clauses have been renamed (mostly, commonly used
-clauses are abbreviated, Huffman encoding thingy), some removed (usually because
-they are replaced by a more general solution), and new ones have been added.
+flexibility in code generation (can customize data term, code can return boolean
+or error message string or detailed hash, can generate code to validate multiple
+schemas, etc). There is no longer hash form, schema is either a string or an
+array. Some clauses have been renamed (mostly, commonly used clauses are
+abbreviated, Huffman encoding thingy), some removed (usually because they are
+replaced by a more general solution), and new ones have been added.
 
 If you use Data::Schema, I recommend you migrate to Data::Sah as I will not be
 developing Data::Schema anymore. Sorry, there's currently no tool to convert
@@ -524,8 +569,8 @@ Sample output:
 
 =head2 How to show the validation error message? The validator only returns true/false!
 
-Pass the C<<return_type=>"str">> to get an error message string on error, or
-C<<return_type=>"full">> to get a hash of detailed error messages. Note also
+Pass the C<< return_type=>"str" >> to get an error message string on error, or
+C<< return_type=>"full" >> to get a hash of detailed error messages. Note also
 that the error messages are translateable (e.g. use C<LANG> or C<< lang=>... >>
 option. For example:
 
@@ -650,7 +695,7 @@ Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
 
 =head1 SOURCE
 
-Source repository is at L<https://github.com/perlancar/perl-Data-Sah>.
+Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
 
 =head1 BUGS
 
