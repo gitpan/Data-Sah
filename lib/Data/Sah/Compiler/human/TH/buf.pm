@@ -5,7 +5,7 @@ use Log::Any '$log';
 use Moo;
 extends 'Data::Sah::Compiler::human::TH::str';
 
-our $VERSION = '0.37'; # VERSION
+our $VERSION = '0.38'; # VERSION
 
 sub name { "buffer" }
 
@@ -34,7 +34,7 @@ Data::Sah::Compiler::human::TH::buf - perl's type handler for type "buf"
 
 =head1 VERSION
 
-This document describes version 0.37 of Data::Sah::Compiler::human::TH::buf (from Perl distribution Data-Sah), released on 2015-01-02.
+This document describes version 0.38 of Data::Sah::Compiler::human::TH::buf (from Perl distribution Data-Sah), released on 2015-01-02.
 
 =for Pod::Coverage ^(name|clause_.+|superclause_.+|before_.+|after_.+)$
 

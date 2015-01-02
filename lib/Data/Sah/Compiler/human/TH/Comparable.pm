@@ -5,7 +5,7 @@ use Log::Any '$log';
 use Moo::Role;
 with 'Data::Sah::Type::Comparable';
 
-our $VERSION = '0.37'; # VERSION
+our $VERSION = '0.38'; # VERSION
 
 sub superclause_comparable {
     my ($self, $which, $cd) = @_;
@@ -35,7 +35,7 @@ Data::Sah::Compiler::human::TH::Comparable - human's type handler for role "Comp
 
 =head1 VERSION
 
-This document describes version 0.37 of Data::Sah::Compiler::human::TH::Comparable (from Perl distribution Data-Sah), released on 2015-01-02.
+This document describes version 0.38 of Data::Sah::Compiler::human::TH::Comparable (from Perl distribution Data-Sah), released on 2015-01-02.
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

@@ -4,7 +4,7 @@ use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 with 'Data::Sah::Type::BaseType';
 
-our $VERSION = '0.37'; # VERSION
+our $VERSION = '0.38'; # VERSION
 
 1;
 # ABSTRACT: re type
@@ -21,7 +21,7 @@ Data::Sah::Type::re - re type
 
 =head1 VERSION
 
-This document describes version 0.37 of Data::Sah::Type::re (from Perl distribution Data-Sah), released on 2015-01-02.
+This document describes version 0.38 of Data::Sah::Type::re (from Perl distribution Data-Sah), released on 2015-01-02.
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

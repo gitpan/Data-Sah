@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::js::TH';
 with 'Data::Sah::Type::array';
 
-our $VERSION = '0.37'; # VERSION
+our $VERSION = '0.38'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -135,7 +135,7 @@ Data::Sah::Compiler::js::TH::array - js's type handler for type "array"
 
 =head1 VERSION
 
-This document describes version 0.37 of Data::Sah::Compiler::js::TH::array (from Perl distribution Data-Sah), released on 2015-01-02.
+This document describes version 0.38 of Data::Sah::Compiler::js::TH::array (from Perl distribution Data-Sah), released on 2015-01-02.
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

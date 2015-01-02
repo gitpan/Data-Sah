@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::human::TH';
 with 'Data::Sah::Type::all';
 
-our $VERSION = '0.37'; # VERSION
+our $VERSION = '0.38'; # VERSION
 
 sub handle_type {
 }
@@ -85,7 +85,7 @@ Data::Sah::Compiler::human::TH::all - perl's type handler for type "all"
 
 =head1 VERSION
 
-This document describes version 0.37 of Data::Sah::Compiler::human::TH::all (from Perl distribution Data-Sah), released on 2015-01-02.
+This document describes version 0.38 of Data::Sah::Compiler::human::TH::all (from Perl distribution Data-Sah), released on 2015-01-02.
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

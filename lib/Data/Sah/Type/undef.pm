@@ -3,7 +3,7 @@ package Data::Sah::Type::undef;
 use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 
-our $VERSION = '0.37'; # VERSION
+our $VERSION = '0.38'; # VERSION
 
 1;
 # ABSTRACT: undef type
@@ -20,7 +20,7 @@ Data::Sah::Type::undef - undef type
 
 =head1 VERSION
 
-This document describes version 0.37 of Data::Sah::Type::undef (from Perl distribution Data-Sah), released on 2015-01-02.
+This document describes version 0.38 of Data::Sah::Type::undef (from Perl distribution Data-Sah), released on 2015-01-02.
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

@@ -3,7 +3,7 @@ package Data::Sah::Compiler::js::TH;
 use Moo;
 extends 'Data::Sah::Compiler::Prog::TH';
 
-our $VERSION = '0.37'; # VERSION
+our $VERSION = '0.38'; # VERSION
 
 sub gen_each {
     my ($self, $which, $cd, $indices_expr, $elems_expr) = @_;
@@ -47,7 +47,7 @@ Data::Sah::Compiler::js::TH - Base class for js type handlers
 
 =head1 VERSION
 
-This document describes version 0.37 of Data::Sah::Compiler::js::TH (from Perl distribution Data-Sah), released on 2015-01-02.
+This document describes version 0.38 of Data::Sah::Compiler::js::TH (from Perl distribution Data-Sah), released on 2015-01-02.
 
 =for Pod::Coverage ^(compiler|clause_.+|gen_.+)$
 
