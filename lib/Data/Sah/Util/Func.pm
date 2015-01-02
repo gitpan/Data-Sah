@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Log::Any '$log';
 
-our $VERSION = '0.36'; # VERSION
+our $VERSION = '0.37'; # VERSION
 
 #use Sub::Install qw(install_sub);
 
@@ -35,7 +35,7 @@ Data::Sah::Util::Func - Sah utility routines for adding function
 
 =head1 VERSION
 
-This document describes version 0.36 of Data::Sah::Util::Func (from Perl distribution Data-Sah), released on 2014-12-27.
+This document describes version 0.37 of Data::Sah::Util::Func (from Perl distribution Data-Sah), released on 2015-01-02.
 
 =head1 DESCRIPTION
 
@@ -68,7 +68,7 @@ perlancar <perlancar@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2014 by perlancar@cpan.org.
+This software is copyright (c) 2015 by perlancar@cpan.org.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

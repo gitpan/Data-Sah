@@ -52,10 +52,10 @@ resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah
   homepage: https://metacpan.org/release/Data-Sah
   repository: git://github.com/sharyanto/perl-Data-Sah.git
-version: '0.36'
+version: '0.37'
 x_Dist_Zilla:
   perl:
-    version: '5.018001'
+    version: '5.018002'
   plugins:
     -
       class: Dist::Zilla::Plugin::GatherDir
@@ -232,7 +232,7 @@ x_Dist_Zilla:
             -
               class: Pod::Weaver::Section::Completion::PerinciCmdLine
               name: '@Author::PERLANCAR/Completion::PerinciCmdLine'
-              version: '0.08'
+              version: '0.09'
             -
               class: Pod::Weaver::Section::Homepage::DefaultCPAN
               name: '@Author::PERLANCAR/Homepage::DefaultCPAN'

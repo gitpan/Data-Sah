@@ -104,6 +104,7 @@ lib/Data/Sah/Type/undef.pm
 lib/Data/Sah/Util/Func.pm
 lib/Data/Sah/Util/Role.pm
 lib/Data/Sah/Util/Type.pm
+lib/Data/Sah/Util/Type/Date.pm
 lib/Data/Sah/Util/TypeX.pm
 lib/Test/Data/Sah.pm
 t/00-compile.t
@@ -126,5 +127,6 @@ t/spectest-human.t-
 t/spectest-js.t
 t/spectest-perl.t
 t/testlib.pl
+t/util-type-date.t
 t/util-type.t
 weaver.ini

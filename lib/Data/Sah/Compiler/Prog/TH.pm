@@ -4,7 +4,7 @@ use Log::Any '$log';
 use Moo;
 extends 'Data::Sah::Compiler::TH';
 
-our $VERSION = '0.36'; # VERSION
+our $VERSION = '0.37'; # VERSION
 
 # handled in compiler's before_all_clauses()
 
@@ -134,7 +134,7 @@ Data::Sah::Compiler::Prog::TH - Base class for programming-language emiting comp
 
 =head1 VERSION
 
-This document describes version 0.36 of Data::Sah::Compiler::Prog::TH (from Perl distribution Data-Sah), released on 2014-12-27.
+This document describes version 0.37 of Data::Sah::Compiler::Prog::TH (from Perl distribution Data-Sah), released on 2015-01-02.
 
 =for Pod::Coverage ^(compiler|clause_.+|handle_.+|gen_.+|set_tmp_data_term|restore_data_term)$
 
@@ -160,7 +160,7 @@ perlancar <perlancar@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2014 by perlancar@cpan.org.
+This software is copyright (c) 2015 by perlancar@cpan.org.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
