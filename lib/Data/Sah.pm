@@ -1,7 +1,7 @@
 package Data::Sah;
 
-our $DATE = '2015-01-02'; # DATE
-our $VERSION = '0.38'; # VERSION
+our $DATE = '2015-01-03'; # DATE
+our $VERSION = '0.39'; # VERSION
 
 use 5.010001;
 use Moo;
@@ -175,7 +175,7 @@ Data::Sah - Fast and featureful data structure validation
 
 =head1 VERSION
 
-This document describes version 0.38 of Data::Sah (from Perl distribution Data-Sah), released on 2015-01-02.
+This document describes version 0.39 of Data::Sah (from Perl distribution Data-Sah), released on 2015-01-03.
 
 =head1 SYNOPSIS
 
@@ -661,17 +661,6 @@ This module is part of the L<Perinci> family. What the module does is basically
 wrap your subroutine with a wrapper code that can include validation code (among
 others). This is a convenient way to add argument validation to an existing
 subroutine/code.
-
-=back
-
-=head1 TODO
-
-=over
-
-=item * (perl compiler) Replace smartmatch because of its inconsistent behavior
-
-C<<$data ~~ ["x", 1]>> will do string comparison, while C<<$data ~~ [1, "x"]>>
-or even C<<$data ~~ ["1", "x"]>> will do a numeric comparison.
 
 =back
 

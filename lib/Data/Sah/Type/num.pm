@@ -5,7 +5,7 @@ with 'Data::Sah::Type::BaseType';
 with 'Data::Sah::Type::Comparable';
 with 'Data::Sah::Type::Sortable';
 
-our $VERSION = '0.38'; # VERSION
+our $VERSION = '0.39'; # VERSION
 
 1;
 # ABSTRACT: num type
@@ -22,7 +22,7 @@ Data::Sah::Type::num - num type
 
 =head1 VERSION
 
-This document describes version 0.38 of Data::Sah::Type::num (from Perl distribution Data-Sah), released on 2015-01-02.
+This document describes version 0.39 of Data::Sah::Type::num (from Perl distribution Data-Sah), released on 2015-01-03.
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

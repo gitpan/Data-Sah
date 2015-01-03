@@ -9,7 +9,7 @@ use Log::Any qw($log);
 use POSIX qw(locale_h);
 use Text::sprintfn;
 
-our $VERSION = '0.38'; # VERSION
+our $VERSION = '0.39'; # VERSION
 
 # every type extension is registered here
 our %typex; # key = type, val = [clause, ...]
@@ -510,7 +510,7 @@ Data::Sah::Compiler::human - Compile Sah schema to human language
 
 =head1 VERSION
 
-This document describes version 0.38 of Data::Sah::Compiler::human (from Perl distribution Data-Sah), released on 2015-01-02.
+This document describes version 0.39 of Data::Sah::Compiler::human (from Perl distribution Data-Sah), released on 2015-01-03.
 
 =head1 SYNOPSIS
 

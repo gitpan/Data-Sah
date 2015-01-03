@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Log::Any qw($log);
 
-our $VERSION = '0.38'; # VERSION
+our $VERSION = '0.39'; # VERSION
 
 our $Log_Validator_Code = $ENV{LOG_SAH_VALIDATOR_CODE} // 0;
 
@@ -94,7 +94,7 @@ Data::Sah::JS - Some functions to use JavaScript Sah validator code from Perl
 
 =head1 VERSION
 
-This document describes version 0.38 of Data::Sah::JS (from Perl distribution Data-Sah), released on 2015-01-02.
+This document describes version 0.39 of Data::Sah::JS (from Perl distribution Data-Sah), released on 2015-01-03.
 
 =head1 SYNOPSIS
 

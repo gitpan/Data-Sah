@@ -4,7 +4,7 @@ use 5.010;
 use strict;
 use warnings;
 
-our $VERSION = '0.38'; # VERSION
+our $VERSION = '0.39'; # VERSION
 
 our @ISA    = qw(Exporter);
 our @EXPORT = qw(add_translations);
@@ -31,7 +31,7 @@ Data::Sah::Lang - Language routines
 
 =head1 VERSION
 
-This document describes version 0.38 of Data::Sah::Lang (from Perl distribution Data-Sah), released on 2015-01-02.
+This document describes version 0.39 of Data::Sah::Lang (from Perl distribution Data-Sah), released on 2015-01-03.
 
 =for Pod::Coverage add_translations
 

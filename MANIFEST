@@ -6,6 +6,7 @@ META.json
 META.yml
 Makefile.PL
 README
+TODO.md
 devscripts/list-missing-translations
 dist.ini
 lib/Data/Sah.pm

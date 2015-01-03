@@ -475,14 +475,6 @@ FAQ
       validation code (among others). This is a convenient way to add
       argument validation to an existing subroutine/code.
 
-TODO
-
-      * (perl compiler) Replace smartmatch because of its inconsistent
-      behavior
-
-      <$data ~~ ["x", 1]> will do string comparison, while <$data ~~ [1,
-      "x"]> or even <$data ~~ ["1", "x"]> will do a numeric comparison.
-
 SEE ALSO
 
   Other compiled validators

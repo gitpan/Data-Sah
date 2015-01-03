@@ -5,7 +5,7 @@ use Log::Any '$log';
 use Moo::Role;
 with 'Data::Sah::Type::HasElems';
 
-our $VERSION = '0.38'; # VERSION
+our $VERSION = '0.39'; # VERSION
 
 sub before_clause {
     my ($self_th, $which, $cd) = @_;
@@ -75,7 +75,7 @@ Data::Sah::Compiler::human::TH::HasElems - human's type handler for role "HasEle
 
 =head1 VERSION
 
-This document describes version 0.38 of Data::Sah::Compiler::human::TH::HasElems (from Perl distribution Data-Sah), released on 2015-01-02.
+This document describes version 0.39 of Data::Sah::Compiler::human::TH::HasElems (from Perl distribution Data-Sah), released on 2015-01-03.
 
 =for Pod::Coverage ^(name|clause_.+|superclause_.+|before_.+|after_.+)$
 

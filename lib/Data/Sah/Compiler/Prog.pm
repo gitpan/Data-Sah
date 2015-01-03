@@ -1,7 +1,7 @@
 package Data::Sah::Compiler::Prog;
 
-our $DATE = '2015-01-02'; # DATE
-our $VERSION = '0.38'; # VERSION
+our $DATE = '2015-01-03'; # DATE
+our $VERSION = '0.39'; # VERSION
 
 use 5.010;
 use Moo;
@@ -764,7 +764,7 @@ Data::Sah::Compiler::Prog - Base class for programming language compilers
 
 =head1 VERSION
 
-This document describes version 0.38 of Data::Sah::Compiler::Prog (from Perl distribution Data-Sah), released on 2015-01-02.
+This document describes version 0.39 of Data::Sah::Compiler::Prog (from Perl distribution Data-Sah), released on 2015-01-03.
 
 =head1 SYNOPSIS
 
