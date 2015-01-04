@@ -3,7 +3,7 @@ package Data::Sah::Type::Sortable;
 use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 
-our $VERSION = '0.39'; # VERSION
+our $VERSION = '0.40'; # VERSION
 
 requires 'superclause_sortable';
 
@@ -79,7 +79,7 @@ Data::Sah::Type::Sortable - Role for sortable types
 
 =head1 VERSION
 
-This document describes version 0.39 of Data::Sah::Type::Sortable (from Perl distribution Data-Sah), released on 2015-01-03.
+This document describes version 0.40 of Data::Sah::Type::Sortable (from Perl distribution Data-Sah), released on 2015-01-04.
 
 =head1 DESCRIPTION
 

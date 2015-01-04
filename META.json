@@ -10,7 +10,7 @@
    ],
    "meta-spec" : {
       "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
-      "version" : 2
+      "version" : "2"
    },
    "name" : "Data-Sah",
    "prereqs" : {
@@ -56,6 +56,7 @@
       },
       "test" : {
          "requires" : {
+            "Capture::Tiny" : "0",
             "Data::Dump" : "0",
             "File::ShareDir" : "0",
             "File::ShareDir::Tarball" : "0",
@@ -83,10 +84,10 @@
          "web" : "https://github.com/sharyanto/perl-Data-Sah"
       }
    },
-   "version" : "0.39",
+   "version" : "0.40",
    "x_Dist_Zilla" : {
       "perl" : {
-         "version" : "5.018002"
+         "version" : "5.018001"
       },
       "plugins" : [
          {
@@ -363,7 +364,7 @@
          {
             "class" : "Dist::Zilla::Plugin::Rinci::Validate",
             "name" : "@Author::PERLANCAR/Rinci::Validate",
-            "version" : "0.19"
+            "version" : "0.20"
          },
          {
             "class" : "Dist::Zilla::Plugin::SetScriptShebang",
@@ -405,7 +406,7 @@
          {
             "class" : "Dist::Zilla::Plugin::PERLANCAR::GenTodoMd",
             "name" : "@Author::PERLANCAR/PERLANCAR::GenTodoMd",
-            "version" : "0.01"
+            "version" : "0.02"
          },
          {
             "class" : "Dist::Zilla::Plugin::Prereqs",

@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::js::TH::num';
 with 'Data::Sah::Type::float';
 
-our $VERSION = '0.39'; # VERSION
+our $VERSION = '0.40'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -127,7 +127,7 @@ Data::Sah::Compiler::js::TH::float - js's type handler for type "float"
 
 =head1 VERSION
 
-This document describes version 0.39 of Data::Sah::Compiler::js::TH::float (from Perl distribution Data-Sah), released on 2015-01-03.
+This document describes version 0.40 of Data::Sah::Compiler::js::TH::float (from Perl distribution Data-Sah), released on 2015-01-04.
 
 =for Pod::Coverage ^(compiler|clause_.+|handle_.+)$
 

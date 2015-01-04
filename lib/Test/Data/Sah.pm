@@ -1,7 +1,7 @@
 package Test::Data::Sah;
 
-our $DATE = '2015-01-03'; # DATE
-our $VERSION = '0.39'; # VERSION
+our $DATE = '2015-01-04'; # DATE
+our $VERSION = '0.40'; # VERSION
 
 use 5.010;
 use strict;
@@ -66,7 +66,7 @@ Test::Data::Sah - Test routines for Data::Sah
 
 =head1 VERSION
 
-This document describes version 0.39 of Test::Data::Sah (from Perl distribution Data-Sah), released on 2015-01-03.
+This document describes version 0.40 of Test::Data::Sah (from Perl distribution Data-Sah), released on 2015-01-04.
 
 =head1 FUNCTIONS
 

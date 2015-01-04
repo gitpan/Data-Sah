@@ -3,6 +3,7 @@ abstract: 'Fast and featureful data structure validation'
 author:
   - 'perlancar <perlancar@cpan.org>'
 build_requires:
+  Capture::Tiny: '0'
   Data::Dump: '0'
   File::ShareDir: '0'
   File::ShareDir::Tarball: '0'
@@ -52,10 +53,10 @@ resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Sah
   homepage: https://metacpan.org/release/Data-Sah
   repository: git://github.com/sharyanto/perl-Data-Sah.git
-version: '0.39'
+version: '0.40'
 x_Dist_Zilla:
   perl:
-    version: '5.018002'
+    version: '5.018001'
   plugins:
     -
       class: Dist::Zilla::Plugin::GatherDir
@@ -274,7 +275,7 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::Rinci::Validate
       name: '@Author::PERLANCAR/Rinci::Validate'
-      version: '0.19'
+      version: '0.20'
     -
       class: Dist::Zilla::Plugin::SetScriptShebang
       name: '@Author::PERLANCAR/SetScriptShebang'
@@ -307,7 +308,7 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::PERLANCAR::GenTodoMd
       name: '@Author::PERLANCAR/PERLANCAR::GenTodoMd'
-      version: '0.01'
+      version: '0.02'
     -
       class: Dist::Zilla::Plugin::Prereqs
       config:

@@ -10,7 +10,7 @@ with 'Data::Sah::Compiler::TextResultRole';
 
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.39'; # VERSION
+our $VERSION = '0.40'; # VERSION
 
 has main => (is => 'rw');
 
@@ -675,7 +675,7 @@ Data::Sah::Compiler - Base class for Sah compilers (Data::Sah::Compiler::*)
 
 =head1 VERSION
 
-This document describes version 0.39 of Data::Sah::Compiler (from Perl distribution Data-Sah), released on 2015-01-03.
+This document describes version 0.40 of Data::Sah::Compiler (from Perl distribution Data-Sah), released on 2015-01-04.
 
 =for Pod::Coverage ^(check_compile_args|def|expr|init_cd|literal|name)$
 

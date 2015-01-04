@@ -7,7 +7,7 @@ use Log::Any qw($log);
 
 our $Log_Validator_Code = $ENV{LOG_SAH_VALIDATOR_CODE} // 0;
 
-our $VERSION = '0.39'; # VERSION
+our $VERSION = '0.40'; # VERSION
 
 require Exporter;
 our @ISA       = qw(Exporter);
@@ -44,7 +44,7 @@ Data::Sah::Human - Some functions to use Data::Sah human compiler
 
 =head1 VERSION
 
-This document describes version 0.39 of Data::Sah::Human (from Perl distribution Data-Sah), released on 2015-01-03.
+This document describes version 0.40 of Data::Sah::Human (from Perl distribution Data-Sah), released on 2015-01-04.
 
 =head1 SYNOPSIS
 

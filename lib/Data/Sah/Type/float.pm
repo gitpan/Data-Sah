@@ -4,7 +4,7 @@ use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 with 'Data::Sah::Type::num';
 
-our $VERSION = '0.39'; # VERSION
+our $VERSION = '0.40'; # VERSION
 
 has_clause 'is_nan',
     tags        => ['constraint'],
@@ -49,7 +49,7 @@ Data::Sah::Type::float - float type
 
 =head1 VERSION
 
-This document describes version 0.39 of Data::Sah::Type::float (from Perl distribution Data-Sah), released on 2015-01-03.
+This document describes version 0.40 of Data::Sah::Type::float (from Perl distribution Data-Sah), released on 2015-01-04.
 
 =for Pod::Coverage ^(clause_.+|clausemeta_.+)$
 

@@ -6,8 +6,8 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH::str';
 with 'Data::Sah::Type::cistr';
 
-our $VERSION = '0.39'; # VERSION
-our $DATE = '2015-01-03'; # DATE
+our $VERSION = '0.40'; # VERSION
+our $DATE = '2015-01-04'; # DATE
 
 sub before_all_clauses {
     my ($self, $cd) = @_;
@@ -144,7 +144,7 @@ Data::Sah::Compiler::perl::TH::cistr - perl's type handler for type "cistr"
 
 =head1 VERSION
 
-This document describes version 0.39 of Data::Sah::Compiler::perl::TH::cistr (from Perl distribution Data-Sah), released on 2015-01-03.
+This document describes version 0.40 of Data::Sah::Compiler::perl::TH::cistr (from Perl distribution Data-Sah), released on 2015-01-04.
 
 =for Pod::Coverage ^(clause_.+|superclause_.+|handle_.+|before_.+|after_.+)$
 

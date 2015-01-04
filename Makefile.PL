@@ -45,6 +45,7 @@ my %WriteMakefileArgs = (
     "experimental" => 0
   },
   "TEST_REQUIRES" => {
+    "Capture::Tiny" => 0,
     "Data::Dump" => 0,
     "File::ShareDir" => 0,
     "File::ShareDir::Tarball" => 0,
@@ -58,7 +59,7 @@ my %WriteMakefileArgs = (
     "Test::More" => "0.98",
     "Test::Warn" => 0
   },
-  "VERSION" => "0.39",
+  "VERSION" => "0.40",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -68,6 +69,7 @@ my %WriteMakefileArgs = (
 my %FallbackPrereqs = (
   "Algorithm::Dependency::Ordered" => 0,
   "Algorithm::Dependency::Source::HoA" => 0,
+  "Capture::Tiny" => 0,
   "Data::Clean::JSON" => "0.11",
   "Data::Dump" => 0,
   "Data::ModeMerge" => "0.21",

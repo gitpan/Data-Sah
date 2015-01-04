@@ -1,7 +1,7 @@
 package Data::Sah::Util::Type;
 
-our $DATE = '2015-01-03'; # DATE
-our $VERSION = '0.39'; # VERSION
+our $DATE = '2015-01-04'; # DATE
+our $VERSION = '0.40'; # VERSION
 
 use 5.010001;
 use strict;
@@ -131,7 +131,7 @@ Data::Sah::Util::Type - Utility functions related to types
 
 =head1 VERSION
 
-This document describes version 0.39 of Data::Sah::Util::Type (from Perl distribution Data-Sah), released on 2015-01-03.
+This document describes version 0.40 of Data::Sah::Util::Type (from Perl distribution Data-Sah), released on 2015-01-04.
 
 =head1 SYNOPSIS
 

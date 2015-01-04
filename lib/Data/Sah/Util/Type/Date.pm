@@ -1,7 +1,7 @@
 package Data::Sah::Util::Type::Date;
 
-our $DATE = '2015-01-03'; # DATE
-our $VERSION = '0.39'; # VERSION
+our $DATE = '2015-01-04'; # DATE
+our $VERSION = '0.40'; # VERSION
 
 use 5.010;
 use strict;
@@ -51,7 +51,7 @@ Data::Sah::Util::Type::Date - Utility related to date type
 
 =head1 VERSION
 
-This document describes version 0.39 of Data::Sah::Util::Type::Date (from Perl distribution Data-Sah), released on 2015-01-03.
+This document describes version 0.40 of Data::Sah::Util::Type::Date (from Perl distribution Data-Sah), released on 2015-01-04.
 
 =head1 DESCRIPTION
 

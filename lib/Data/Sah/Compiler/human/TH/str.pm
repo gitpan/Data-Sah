@@ -9,7 +9,7 @@ with 'Data::Sah::Compiler::human::TH::Comparable';
 with 'Data::Sah::Compiler::human::TH::HasElems';
 with 'Data::Sah::Type::str';
 
-our $VERSION = '0.39'; # VERSION
+our $VERSION = '0.40'; # VERSION
 
 sub name { "text" }
 
@@ -111,7 +111,7 @@ Data::Sah::Compiler::human::TH::str - perl's type handler for type "str"
 
 =head1 VERSION
 
-This document describes version 0.39 of Data::Sah::Compiler::human::TH::str (from Perl distribution Data-Sah), released on 2015-01-03.
+This document describes version 0.40 of Data::Sah::Compiler::human::TH::str (from Perl distribution Data-Sah), released on 2015-01-04.
 
 =for Pod::Coverage ^(name|clause_.+|superclause_.+|before_.+|after_.+)$
 

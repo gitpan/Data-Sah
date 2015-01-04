@@ -6,7 +6,7 @@ use Moo;
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::re';
 
-our $VERSION = '0.39'; # VERSION
+our $VERSION = '0.40'; # VERSION
 
 # XXX prefilter to convert string to regex object
 
@@ -34,7 +34,7 @@ Data::Sah::Compiler::perl::TH::re - perl's type handler for type "re"
 
 =head1 VERSION
 
-This document describes version 0.39 of Data::Sah::Compiler::perl::TH::re (from Perl distribution Data-Sah), released on 2015-01-03.
+This document describes version 0.40 of Data::Sah::Compiler::perl::TH::re (from Perl distribution Data-Sah), released on 2015-01-04.
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 

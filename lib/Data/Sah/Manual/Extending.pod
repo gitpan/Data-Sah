@@ -13,7 +13,7 @@ Data::Sah::Manual::Extending - Extending Data::Sah
 
 =head1 VERSION
 
-This document describes version 0.39 of Data::Sah::Manual::Extending (from Perl distribution Data-Sah), released on 2015-01-03.
+This document describes version 0.40 of Data::Sah::Manual::Extending (from Perl distribution Data-Sah), released on 2015-01-04.
 
 =head1 DESCRIPTION
 
@@ -101,7 +101,6 @@ For example, for Indonesian, in lib/Data/Sah/Lang/id_ID/Type/complex.pm write:
  ...
 
 Add more language files as necessary.
-
 
 =back
 
