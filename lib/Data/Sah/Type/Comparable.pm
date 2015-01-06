@@ -3,7 +3,7 @@ package Data::Sah::Type::Comparable;
 use Moo::Role;
 use Data::Sah::Util::Role 'has_clause';
 
-our $VERSION = '0.40'; # VERSION
+our $VERSION = '0.41'; # VERSION
 
 requires 'superclause_comparable';
 
@@ -39,7 +39,7 @@ Data::Sah::Type::Comparable - Comparable type role
 
 =head1 VERSION
 
-This document describes version 0.40 of Data::Sah::Type::Comparable (from Perl distribution Data-Sah), released on 2015-01-04.
+This document describes version 0.41 of Data::Sah::Type::Comparable (from Perl distribution Data-Sah), released on 2015-01-06.
 
 =head1 DESCRIPTION
 
@@ -55,7 +55,7 @@ Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
 
 =head1 SOURCE
 
-Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+Source repository is at L<https://github.com/perlancar/perl-Data-Sah>.
 
 =head1 BUGS
 

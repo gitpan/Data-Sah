@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Log::Any '$log';
 
-our $VERSION = '0.40'; # VERSION
+our $VERSION = '0.41'; # VERSION
 
 use Sub::Install qw(install_sub);
 
@@ -123,7 +123,7 @@ Data::Sah::Util::Role - Sah utility routines for roles
 
 =head1 VERSION
 
-This document describes version 0.40 of Data::Sah::Util::Role (from Perl distribution Data-Sah), released on 2015-01-04.
+This document describes version 0.41 of Data::Sah::Util::Role (from Perl distribution Data-Sah), released on 2015-01-06.
 
 =head1 DESCRIPTION
 
@@ -228,7 +228,7 @@ Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
 
 =head1 SOURCE
 
-Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+Source repository is at L<https://github.com/perlancar/perl-Data-Sah>.
 
 =head1 BUGS
 

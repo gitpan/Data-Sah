@@ -5,7 +5,7 @@ use Log::Any '$log';
 use Moo;
 extends 'Data::Sah::Compiler::human::TH::str';
 
-our $VERSION = '0.40'; # VERSION
+our $VERSION = '0.41'; # VERSION
 
 1;
 # ABSTRACT: perl's type handler for type "cistr"
@@ -22,7 +22,7 @@ Data::Sah::Compiler::human::TH::cistr - perl's type handler for type "cistr"
 
 =head1 VERSION
 
-This document describes version 0.40 of Data::Sah::Compiler::human::TH::cistr (from Perl distribution Data-Sah), released on 2015-01-04.
+This document describes version 0.41 of Data::Sah::Compiler::human::TH::cistr (from Perl distribution Data-Sah), released on 2015-01-06.
 
 =for Pod::Coverage ^(name|clause_.+|superclause_.+|before_.+|after_.+)$
 
@@ -32,7 +32,7 @@ Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
 
 =head1 SOURCE
 
-Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+Source repository is at L<https://github.com/perlancar/perl-Data-Sah>.
 
 =head1 BUGS
 

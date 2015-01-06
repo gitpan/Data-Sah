@@ -1,7 +1,7 @@
 package Data::Sah::Compiler::perl;
 
-our $DATE = '2015-01-04'; # DATE
-our $VERSION = '0.40'; # VERSION
+our $DATE = '2015-01-06'; # DATE
+our $VERSION = '0.41'; # VERSION
 
 use 5.010;
 use Moo;
@@ -266,7 +266,7 @@ sub expr_validator_sub {
 }
 
 sub _str2reliteral {
-    require re;
+    require Regexp::Stringify;
 
     my ($self, $cd, $str) = @_;
 
@@ -278,17 +278,7 @@ sub _str2reliteral {
         $self->_die($cd, "Invalid regex $str: $@") if $@;
     }
 
-    # i don't know if this is safe?
-    my ($pat, $mod) = re::regexp_pattern($re);
-
-    # let's be 5.10-compat for now instead of potentially producing 5.14
-    # stringification which is not supported in <5.14.
-    $pat =~ s|(?<!\\)((?:\\\\)*)/|$1\\/|g; # escape non-escaped slashes
-    if ($mod) {
-        "(?:(?$mod-)$pat)";
-    } else {
-        $pat;
-    }
+    Regexp::Stringify::stringify_regexp(regexp=>$re, plver=>5.010);
 }
 
 1;
@@ -306,7 +296,7 @@ Data::Sah::Compiler::perl - Compile Sah schema to Perl code
 
 =head1 VERSION
 
-This document describes version 0.40 of Data::Sah::Compiler::perl (from Perl distribution Data-Sah), released on 2015-01-04.
+This document describes version 0.41 of Data::Sah::Compiler::perl (from Perl distribution Data-Sah), released on 2015-01-06.
 
 =head1 SYNOPSIS
 
@@ -437,7 +427,7 @@ Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
 
 =head1 SOURCE
 
-Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+Source repository is at L<https://github.com/perlancar/perl-Data-Sah>.
 
 =head1 BUGS
 

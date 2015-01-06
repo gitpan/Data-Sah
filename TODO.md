@@ -1,3 +1,9 @@
+* TODO [2014-12-19 Jum] dsah: testlib.pl: refactor the other spectest routines to use test_sah cases() too
+
+  - UPDATE: not so straightforward because there are lots of per-compiler specific
+    code.
+  
+
 * TODO [2015-01-03 Sat] dsah: perl compiler: Replace smartmatch because of its inconsistent behavior
 
   C<<$data ~~ ["x", 1]>> will do string comparison, while C<<$data ~~ [1, "x"]>>

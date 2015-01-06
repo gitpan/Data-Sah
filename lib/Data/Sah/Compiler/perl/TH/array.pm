@@ -7,7 +7,7 @@ use experimental 'smartmatch';
 extends 'Data::Sah::Compiler::perl::TH';
 with 'Data::Sah::Type::array';
 
-our $VERSION = '0.40'; # VERSION
+our $VERSION = '0.41'; # VERSION
 
 sub handle_type {
     my ($self, $cd) = @_;
@@ -141,7 +141,7 @@ Data::Sah::Compiler::perl::TH::array - perl's type handler for type "array"
 
 =head1 VERSION
 
-This document describes version 0.40 of Data::Sah::Compiler::perl::TH::array (from Perl distribution Data-Sah), released on 2015-01-04.
+This document describes version 0.41 of Data::Sah::Compiler::perl::TH::array (from Perl distribution Data-Sah), released on 2015-01-06.
 
 =for Pod::Coverage ^(clause_.+|superclause_.+)$
 
@@ -151,7 +151,7 @@ Please visit the project's homepage at L<https://metacpan.org/release/Data-Sah>.
 
 =head1 SOURCE
 
-Source repository is at L<https://github.com/sharyanto/perl-Data-Sah>.
+Source repository is at L<https://github.com/perlancar/perl-Data-Sah>.
 
 =head1 BUGS
 
